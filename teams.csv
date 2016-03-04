@@ -1,30 +1,31 @@
-name,abbreviation
-Golden State Warriors,GSW
-Los Angeles Clippers,LAC
-Dallas Mavericks,DAL
-Oklahoma City Thunder,OKC
-Toronto Raptors,TOR
-Houston Rockets,HOU
-San Antonio Spurs,SAS
-Portland Trail Blazers,POR
-Atlanta Hawks,ATL
-Phoenix Suns,PHO
-Denver Nuggets,DEN
-Sacramento Kings,SAC
-Chicago Bulls,CHI
-New Orleans Pelicans,NOP
-Los Angeles Lakers,LAL
-Washington Wizards,WAS
-Detroit Pistons,DET
-Memphis Grizzlies,MEM
-Brooklyn Nets,BRK
-Minnesota Timberwolves,MIN
-Indiana Pacers,IND
-Orlando Magic,ORL
-Utah Jazz,UTA
-Miami Heat,MIA
-Charlotte Hornets,CHO
-Philadelphia 76ers,PHI
-New York Knicks,NYK
-Boston Celtics,BOS
-Milwaukee Bucks,MIL
+name,abbreviation,pbp_name
+Golden State Warriors,GSW,Golden State
+Los Angeles Clippers,LAC,LA Clippers
+Dallas Mavericks,DAL,Dallas
+Oklahoma City Thunder,OKC,Oklahoma City
+Toronto Raptors,TOR,Toronto
+Houston Rockets,HOU,Houston
+San Antonio Spurs,SAS,San Antonio
+Cleveland Cavaliers,CLE,Cleveland
+Portland Trail Blazers,POR,Portland
+Atlanta Hawks,ATL,Atlanta
+Phoenix Suns,PHO,Phoenix
+Denver Nuggets,DEN,Denver
+Boston Celtics,BOS,Boston
+Sacramento Kings,SAC,Sacramento
+Chicago Bulls,CHI,Chicago
+New Orleans Pelicans,NOP,New Orleans
+Los Angeles Lakers,LAL,LA Lakers
+Washington Wizards,WAS,Washington
+Detroit Pistons,DET,Detroit
+Memphis Grizzlies,MEM,Memphis
+Brooklyn Nets,BRK,Brooklyn
+Milwaukee Bucks,MIL,Milwaukee
+Minnesota Timberwolves,MIN,Minnesota
+Indiana Pacers,IND,Indiana
+Orlando Magic,ORL,Orlando
+Utah Jazz,UTA,Utah
+Miami Heat,MIA,Miami
+Charlotte Hornets,CHO,Charlotte
+Philadelphia 76ers,PHI,Philadelphia
+New York Knicks,NYK,New York

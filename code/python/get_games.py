@@ -13,7 +13,7 @@ def main():
 		for row in reader:
 			team_abr = row[1];
 			pbp_name = row[2];
-			with open(pbp_name + ".csv", "wb") as team_csv:
+			with open("data/" + pbp_name + ".csv", "wb") as team_csv:
 				writer = csv.writer(team_csv);
 				writer.writerow(["time", "quarter", "player", "player link", "make?", "distance", "2-pointer?", "game-id", "home game?"]);
 				schedule_url = "http://www.basketball-reference.com/teams/" + team_abr + "/2015_games.html";

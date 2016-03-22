@@ -7,7 +7,7 @@ def load_file():
     # data = []
     regular = []
     hothand = []
-    with open('../data/shooting_numbers.csv') as f:
+    with open('data/shooting_numbers.csv') as f:
     	reader = csv.DictReader(f)
     	for row in reader:
     		regular.append(float(row['regular_fgp']))

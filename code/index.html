@@ -4,7 +4,7 @@
 
         <title>Viz2</title>
         <meta charset="utf-8">
-        <meta name="description" content="Visualizations for Bootloader data">
+        <meta name="description" content="Midterm report">
         <meta name="author" content="Alex Wainger"> <!-- Your name here -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -26,48 +26,12 @@
         <!--# JAVASCRIPT #}-->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script> <!-- JQUERY -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.min.js"></script> <!-- D3.js -->
-        <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script> <!-- Topojson for map -->
-        <script src="js/datamaps.usa.min.js"></script> <!-- External libary for US map from  http://datamaps.github.io -->
-        <link rel="stylesheet" href="viz2.css"> <!-- Add CSS to this file -->
 
-        <script src="js/alex.js"></script> <!-- Alex's visualization -->
-        <script src="js/trent.js"></script> <!-- Trent's visualization -->
-        <script src="js/jing.js"></script> <!-- Jing's visualization -->
-        <script src="js/siyi.js"></script> <!-- Siyi's visualization -->
-        <script src="js/xiaoyi.js"></script> <!-- XiaoYi's visualization -->
-    </head>
+        <script src="js/scatterplot.js"></script> <!-- Scatterplot visualization -->
+	</head>
+
     <body>
-        <h1>VIZ2 - Alex Wainger (awainger), Trent Yee (tmyee), Jing Wang (jw12), Siyi Zhang (sz22), Xiaoyi Mao (xmao)</h1>
-        <hr><hr>
-        <h2>Views vs. Conversion Rate Scatter Plot</h2>
-        <p>Author: Alex Wainger, Login: awainger</p>
-        <p>This visualization aims to illustrate the conversion rate and number of views, grouped by different pieces of information.
-        For example, by selecting the "city" option from the drop down menu, you can see each city in the data set plotted with
-        view counts on the X axis and conversion rate (fund events / view events) on the Y axis. The X-axis uses a power scale of .1
-        so that the data at the smaller end of the spectrum is more spaced out.</p>
-        <p>There is also an "average conversion rate" line drawn, which shows the average conversion rate for the entire dataset (around 70%)
-        and serves as a reference to compare the data points with. A tooltip will also appear if you hover over a data point, which gives you
-        the name of the group, the view count, and the conversion rate, rounded to three decimal points.</p>
-        <p>Bootloader should be able to use this visualization to identify which demographics view the most/fewest projects, and which demographics
-        turn a view into a fund most frequently. This should help them focus their marketing strategies on taking advantage of their most productive
-        demographics, or trying to reach their underserved ones.</p>
-        <div class="viz" id="alex"></div>
-        
-        <hr>
-        <div class="viz" id="trent"></div>
-        <hr>
-        <div class="viz" id="jing"></div>
-        <hr>
-        <div class="viz" id="siyi">
-            <h1>Interactive Sunburst for Demography</h1>
-            <p>Author: Siyi Zhang; Login: sz22; Date: March 17, 2016</p>
-            <div id="siyi-info">
-                <div><span id="name">&nbsp;</span><span id="segment"></div>
-                <div><span id="count">&nbsp;</span>
-            </div>
-        </div>
-        </div>
-        <hr>
-        <div class="viz" id="xiaoyi"></div>
+        <div class="viz" id="alex"></div>    
     </body>
+
 </html>

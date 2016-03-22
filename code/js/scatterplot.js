@@ -33,11 +33,11 @@ $(document).ready(function() {
 		var xValue = function(d) { return d.regular_fgp; };
 		var yValue = function(d) { return d.hot_fgp; };
 
-		var xScale = d3.scale.linear()
+		var xScale = d3.scale.pow().exponent(.1)
 			.domain([d3.min(values, xValue) - .01, d3.max(values, xValue) + .01])
 			.range([margin, canvas_width - margin * 2]);
 
-		var yScale = d3.scale.linear()
+		var yScale = d3.scale.pow().exponent(.1)
         	.domain([d3.min(values, yValue) - .01, d3.max(values, yValue) + .01])
         	.range([canvas_height - margin, margin]);
 

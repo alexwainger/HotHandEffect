@@ -67,7 +67,7 @@ $(document).ready(function() {
             .attr("x", canvas_width-margin * 2)
             .attr("y", -6)
             .attr("text-anchor", "end")
-            .text("# Hot Shots");
+            .text("Regular FG%");
 
         svg.append("g")
             .attr("class", "y axis")
@@ -79,20 +79,8 @@ $(document).ready(function() {
             .attr("y", 12)
             .attr("x", -40)
             .style("text-anchor", "end")
-            .text("Percent Difference");
-        
-        svg.selectAll("circle")
-            .data(data_points.values())
-            .enter()
-            .append("circle")
-            .attr("cx", function(d) { return xScale(xValue(d)) })
-            .attr("cy", function(d) { return yScale(yValue(d)) })
-            .attr("class", function(d) { return d.player_link })
-            .on("mouseover", handleMouseIn)
-            .on("mouseout", handleMouseOut)
-            .attr("r", radius)
-            .attr("fill", "red");
-
+            .text("Hot Hand FG%");
+		
 		svg.append("line")
 			.attr({
 				class: "averageline",
@@ -105,7 +93,19 @@ $(document).ready(function() {
 				"stroke-width": "3px",
 				"stroke-linecap": "round"
 			});
-    
+        
+        svg.selectAll("circle")
+            .data(data_points.values())
+            .enter()
+            .append("circle")
+            .attr("cx", function(d) { return xScale(xValue(d)) })
+            .attr("cy", function(d) { return yScale(yValue(d)) })
+            .attr("class", function(d) { return d.player_link })
+            .on("mouseover", handleMouseIn)
+            .on("mouseout", handleMouseOut)
+            .attr("r", radius)
+            .attr("fill", "red");
+ 
 	});
     
 
@@ -116,8 +116,9 @@ $(document).ready(function() {
     function handleMouseIn() {
         var player_link = d3.select(this).attr("class");
         var point = data_points.get(player_link);
+		var difference = ((point.hot_fgp - point.regular_fgp) * 100).toFixed(1);
         
-		tooltip.html(point.player_name + "<br>Hot Percentage: " + point.hot_fgp.toFixed(3) + "<br>Regular Percentage: " + point.regular_fgp + "<br>Hot Shots Taken: " + point.num_hot_shots)
+		tooltip.html(point.player_name + "<br>Hot FG%: " + (point.hot_fgp * 100).toFixed(1) + "%<br>Regular FG%: " + (point.regular_fgp * 100).toFixed(1) + "%<br>% Difference: " + difference + "%<br>Hot Shots Taken: " + point.num_hot_shots)
 			.style("left", d3.event.pageX + "px")
 			.style("top", (d3.event.pageY -28) + "px");
         

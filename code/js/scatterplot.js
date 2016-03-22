@@ -29,14 +29,14 @@ $(document).ready(function() {
 		}
 
 		values = data_points.values();
+		
+		var xValue = function(d) { return d.regular_fgp; };
+		var yValue = function(d) { return d.hot_fgp; };
 
-    	var xValue = function(d) { return d.num_hot_shots; };
-    	var yValue = function(d) { return d.hot_fgp - d.regular_fgp; };
-
-    	var xScale = d3.scale.pow().exponent(.5)
-			.domain([d3.min(values, xValue) - 10, d3.max(values, xValue) + 10])
+		var xScale = d3.scale.linear()
+			.domain([d3.min(values, xValue) - .01, d3.max(values, xValue) + .01])
 			.range([margin, canvas_width - margin * 2]);
-    	
+
 		var yScale = d3.scale.linear()
         	.domain([d3.min(values, yValue) - .01, d3.max(values, yValue) + .01])
         	.range([canvas_height - margin, margin]);
@@ -44,12 +44,14 @@ $(document).ready(function() {
     	var xAxis = d3.svg.axis()
 			.scale(xScale)
 			.orient("bottom")
-			.ticks(5);
+			.ticks(10)
+			.tickFormat(d3.format(".0%"));
 
     	var yAxis = d3.svg.axis()
 	        .scale(yScale)
     	    .orient("left")
-        	.ticks(5);
+        	.ticks(10)
+			.tickFormat(d3.format(".0%"));
 		
         var svg = d3.select("#alex").append("svg")
             .attr("id", "alexsvg")
@@ -90,7 +92,21 @@ $(document).ready(function() {
             .on("mouseout", handleMouseOut)
             .attr("r", radius)
             .attr("fill", "red");
-    });
+
+		svg.append("line")
+			.attr({
+				class: "averageline",
+				x1: xScale(d3.min(values, xValue) - .01),
+				x2: xScale(d3.max(values, xValue) + .01),
+				y1: yScale(d3.min(values, xValue) - .01),
+				y2: yScale(d3.max(values, xValue) + .01)})
+			.style({
+				stroke: "gray",
+				"stroke-width": "3px",
+				"stroke-linecap": "round"
+			});
+    
+	});
     
 
     function handleMouseOut() {

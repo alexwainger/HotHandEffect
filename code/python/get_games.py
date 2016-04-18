@@ -7,15 +7,15 @@ from lxml import html
 from bs4 import BeautifulSoup
 
 def main():
-	with open("teams.csv", "rb") as file:
+	with open("data/teams.csv", "rb") as file:
 		reader = csv.reader(file);	
 		next(reader, None);
 		for row in reader:
 			team_abr = row[1];
 			pbp_name = row[2];
-			with open(pbp_name + ".csv", "wb") as team_csv:
+			with open("data/" + pbp_name + ".csv", "wb") as team_csv:
 				writer = csv.writer(team_csv);
-				writer.writerow(["time", "player", "player link", "score description", "game id", "home game"]);
+				writer.writerow(["time", "quarter", "player", "player link", "make?", "distance", "2-pointer?", "game-id", "home game?"]);
 				schedule_url = "http://www.basketball-reference.com/teams/" + team_abr + "/2015_games.html";
 				schedule_page = requests.get(schedule_url);
 				tree = html.fromstring(schedule_page.content);
@@ -31,10 +31,11 @@ def main():
 def parsePage(writer, play_by_play_link, pbp_name, gameID):
 	response = urllib2.urlopen(play_by_play_link, 'lxml');
 	page = response.read();
-	soup = BeautifulSoup(page);
+	soup = BeautifulSoup(page, "lxml");
 	table = soup.find("table", {"class" : "no_highlight stats_table"});
 
 	allRows = table.findAll('tr');
+	quarter = ""; 
 	left = True;
 	isHomeGame = False;
 	team1 = allRows[1].findAll('th')[1].string;
@@ -45,7 +46,8 @@ def parsePage(writer, play_by_play_link, pbp_name, gameID):
 	for r in allRows:
 
 		# check tr id if it is a quarter header
-		if r.id:
+		if r.get("id"):
+			quarter = r.get("id")[1:];
 			continue;
 
 		# check th if it is titles of the table
@@ -62,13 +64,25 @@ def parsePage(writer, play_by_play_link, pbp_name, gameID):
 		else:
 			description = tds[5];
 
-		if "misses" in description.getText() or "makes" in description.getText():
-			# I am assuming the first link is the player who scores
+		description_text = description.getText();
+		if ("misses" in description_text or "makes" in description_text) and ("free throw" not in description_text):
+			
 			player = description.findAll("a")[0];
 			player_link = player['href'];
-			writer.writerow([time, player.getText(), player_link, description.getText(), gameID, isHomeGame]);
+			
+			distance = -1;
+			if "rim" in description_text:
+				distance = 0;
+			else:
+				distance_regex = re.compile("^.* ([0-9]+) ft.*");
+				result = distance_regex.search(description_text);
+				distance = int(result.group(1));
+
+			two_point_regex = re.compile("^.* ([23])-pt.*");
+			is_two_pointer = int(two_point_regex.search(description_text).group(1)) == 2;
+
+			writer.writerow([time, quarter, player.getText(), player_link, "makes" in description_text, distance, is_two_pointer, gameID, isHomeGame]);
 
 if __name__ == "__main__":
 	main();
-
 

@@ -2,33 +2,53 @@ import csv
 import requests
 import re
 import urllib2
+import sqlite3
 from collections import defaultdict
 from lxml import html
 from bs4 import BeautifulSoup
 
 def main():
-	with open("data/teams.csv", "rb") as file:
-		reader = csv.reader(file);	
-		next(reader, None);
-		for row in reader:
-			team_abr = row[1];
-			pbp_name = row[2];
-			with open("data/" + pbp_name + ".csv", "wb") as team_csv:
-				writer = csv.writer(team_csv);
-				writer.writerow(["time", "quarter", "player", "player link", "make?", "distance", "2-pointer?", "game-id", "home game?"]);
-				schedule_url = "http://www.basketball-reference.com/teams/" + team_abr + "/2015_games.html";
-				schedule_page = requests.get(schedule_url);
-				tree = html.fromstring(schedule_page.content);
+
+	connection = sqlite3.connect("data/database.sqlite3");	
+	cursor = connection.cursor();
+	
+	## Add 2002 - 2014 later if we have time
+	years = ["2015"];
+
+	for year in years:
+	
+		count = 0;
+		year_page = html.fromstring(requests.get("http://www.basketball-reference.com/leagues/NBA_" + year + ".html").content);
+		
+		for i in range(1, 31):
+			team_link = year_page.xpath('//*[@id="team"]/tbody/tr[' + str(i) + ']/td[2]/a/@href')
+			if team_link:
+				abr_regex = re.compile("\/.*\/(.*)\/.*");
+				team_abr = abr_regex.search(team_link[0]).group(1);
+				games_link = "http://www.basketball-reference.com" + team_link[0][:-5] + "_games" + ".html";
+				games_page = requests.get(games_link);
+				tree = html.fromstring(games_page.content);
+
 				for i in range(87):
 					if not (i % 21 == 0):
 						link = tree.xpath('//*[@id="teams_games"]/tbody/tr[' + str(i) + ']/td[5]/a/@href');
 						gameID_regex = re.compile('^/boxscores/([^.]+).html');
 						gameID = gameID_regex.search(link[0]).group(1);
-						play_by_play_link = "http://www.basketball-reference.com/boxscores/pbp/" + gameID + ".html";
+						play_by_play_link = "http://www.basketball-reference.com/boxscores/pbp/" + gameID + ".html";	
+						parsePage(cursor, play_by_play_link, team_abr, gameID, year);
 
-						parsePage(writer, play_by_play_link, pbp_name, gameID);
+				print "Finished " + team_abr + ", " + year;
 
-def parsePage(writer, play_by_play_link, pbp_name, gameID):
+			else:
+				break;
+
+		print "Finished " + year;
+		connection.commit();
+
+	connection.close();
+
+
+def parsePage(cursor, play_by_play_link, team_abr, gameID, year):
 	response = urllib2.urlopen(play_by_play_link, 'lxml');
 	page = response.read();
 	soup = BeautifulSoup(page, "lxml");
@@ -38,11 +58,12 @@ def parsePage(writer, play_by_play_link, pbp_name, gameID):
 	quarter = ""; 
 	left = True;
 	isHomeGame = False;
-	team1 = allRows[1].findAll('th')[1].string;
-	team2 = allRows[1].findAll('th')[3].string;
-	if team1 != pbp_name:
+	
+	if team_abr in gameID:
 		left = False;
 		isHomeGame = True;
+
+	shots = [];
 	for r in allRows:
 
 		# check tr id if it is a quarter header
@@ -81,7 +102,13 @@ def parsePage(writer, play_by_play_link, pbp_name, gameID):
 			two_point_regex = re.compile("^.* ([23])-pt.*");
 			is_two_pointer = int(two_point_regex.search(description_text).group(1)) == 2;
 
-			writer.writerow([time, quarter, player.getText(), player_link, "makes" in description_text, distance, is_two_pointer, gameID, isHomeGame]);
+			if distance < 0:
+				print "Uh oh, negative distance...";
+
+			shots.append( (time, quarter, player.getText(), player_link, "makes" in description_text, distance, is_two_pointer, gameID, int(year), isHomeGame,) );
+		
+	cursor.executemany("INSERT INTO RAW_SHOTS VALUES(?,?,?,?,?,?,?,?,?,?);", shots);
+
 
 if __name__ == "__main__":
 	main();

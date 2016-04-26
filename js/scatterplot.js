@@ -10,7 +10,7 @@ $(document).ready(function() {
         .attr("class", "alextooltip")
         .style("opacity", 0);
 
-    d3.csv("/data/archive/shooting_numbers.csv", function(d) {
+    d3.csv("data/archive/shooting_numbers.csv", function(d) {
 		return {
 			player_link: d.player_link,
 			player_name: d.player_name,

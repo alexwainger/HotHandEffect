@@ -5,17 +5,12 @@ $(document).ready(function() {
     var radius = 4;
 	var data_points = d3.map();
 
-    var tooltip = d3.select("#alex")
+    var tooltip = d3.select("#scatterplot_div")
         .append("div")
         .attr("class", "alextooltip")
         .style("opacity", 0);
 
-// <<<<<<< HEAD
-    d3.csv("data/shooting_numbers.csv", function(d) {
-// =======
-//     d3.csv("../data/shooting_numbers.csv", function(d) {
-// >>>>>>> master
-	
+    d3.csv("../data/shooting_numbers.csv", function(d) {
 		return {
 			player_link: d.player_link,
 			player_name: d.player_name,
@@ -57,13 +52,13 @@ $(document).ready(function() {
         	.ticks(10)
 			.tickFormat(d3.format(".0%"));
 		
-        var svg = d3.select("#alex").append("svg")
+        var svg = d3.select("#scatterplot_div").append("svg")
             .attr("id", "alexsvg")
             .attr("width", canvas_width)
             .attr("height", canvas_height);
 
         svg.append("g")
-            .attr("class", "x axis")
+            .attr("class", "x axis scatteraxis")
             .attr("transform", "translate(0, " + (canvas_height - margin) + ")")
             .call(xAxis)
             .append("text")
@@ -74,7 +69,7 @@ $(document).ready(function() {
             .text("Regular FG%");
 
         svg.append("g")
-            .attr("class", "y axis")
+            .attr("class", "y axis scatteraxis")
             .attr("transform", "translate(" + margin + ",0)")
             .call(yAxis)
             .append("text")
@@ -123,8 +118,8 @@ $(document).ready(function() {
 		var difference = ((point.hot_fgp - point.regular_fgp) * 100).toFixed(1);
         
 		tooltip.html(point.player_name + "<br>Hot FG%: " + (point.hot_fgp * 100).toFixed(1) + "%<br>Regular FG%: " + (point.regular_fgp * 100).toFixed(1) + "%<br>% Difference: " + difference + "%<br>Hot Shots Taken: " + point.num_hot_shots)
-			.style("left", d3.event.pageX + "px")
-			.style("top", (d3.event.pageY -28) + "px");
+			.style("left", (d3.mouse(this)[0] + 100)+ "px")
+			.style("top",  d3.mouse(this)[1] + "px")
         
 		tooltip.transition()
             .duration(200)

@@ -10,7 +10,12 @@ $(document).ready(function() {
         .attr("class", "alextooltip")
         .style("opacity", 0);
 
+<<<<<<< HEAD:js/scatterplot.js
     d3.csv("/data/shooting_numbers.csv", function(d) {
+=======
+    d3.csv("../../data/shooting_numbers.csv", function(d) {
+	
+>>>>>>> master:code/js/scatterplot.js
 		return {
 			player_link: d.player_link,
 			player_name: d.player_name,

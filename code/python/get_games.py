@@ -12,8 +12,8 @@ def main():
 	connection = sqlite3.connect("data/database.sqlite3");	
 	cursor = connection.cursor();
 	
-	## Add 2002 - 2014 later if we have time
-	years = ["2015"];
+	## Add 2002 - 2013 later if we have time
+	years = ["2014"];
 
 	for year in years:
 	

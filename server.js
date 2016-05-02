@@ -43,20 +43,20 @@ io.sockets.on('connection', function(socket) {
 		// get home/away/both filter
 		var is_home = ""
 		if(data[5] == 1) {
-			is_home = "Is_Home_Game=1";
+			is_home = " AND Is_Home_Game=1";
 		} else if (data[5] == 2) {
-			is_home = "Is_Home_Game=0";
+			is_home = " AND Is_Home_Game=0";
 		}
 		
 		// get 2/3-pointer/both filter
 		var is_two_pointer = ""
 		if(data[6] == 1) {
-			is_two_pointer = "Is_Two_Pointer=1";
+			is_two_pointer = " AND Is_Two_Pointer=1";
 		} else if (data[6] == 2) {
-			is_two_pointer = "Is_Two_Pointer=0";
+			is_two_pointer = " AND Is_Two_Pointer=0";
 		}
 		
-		var queryStr = "SELECT Time, Quarter, Player_Name, Player_ID, Is_Make, Distance, Game_ID FROM RAW_SHOTS WHERE Year >=$1 AND Year<=$2 AND " + quarterfilter + " AND Distance>=$3 AND Distance<= $4 AND " + is_home + " AND " + is_two_pointer + ";";
+		var queryStr = "SELECT Time, Quarter, Player_Name, Player_ID, Is_Make, Distance, Game_ID FROM RAW_SHOTS WHERE Year >=$1 AND Year<=$2 AND " + quarterfilter + " AND Distance>=$3 AND Distance<= $4" + is_home + is_two_pointer + ";";
 		
 		console.log(queryStr);
 		

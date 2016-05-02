@@ -12,24 +12,24 @@ def main():
 	connection = sqlite3.connect("data/database.sqlite3");	
 	cursor = connection.cursor();
 	
-	## Add 2002 - 2013 later if we have time
-	years = ["2014"];
+	years_num_teams = [("2016", 30), ("2015", 30), ("2014",30), ("2013",30), ("2012",30), ("2011",30), ("2010",30), ("2009",30), ("2008",30), ("2007",30), ("2006",30), ("2005",30), ("2004",29), ("2003",29), ("2002",29), ("2001",29)];
 
-	for year in years:
-	
+	for year, num_teams in years_num_teams:
+
 		count = 0;
 		year_page = html.fromstring(requests.get("http://www.basketball-reference.com/leagues/NBA_" + year + ".html").content);
 		
-		for i in range(1, 31):
+		for i in range(1, num_teams + 1):
 			team_link = year_page.xpath('//*[@id="team"]/tbody/tr[' + str(i) + ']/td[2]/a/@href')
 			if team_link:
+				num_games = int(year_page.xpath('//*[@id="team"]/tbody/tr[' + str(i) + ']/td[3]/text()')[0]);
 				abr_regex = re.compile("\/.*\/(.*)\/.*");
 				team_abr = abr_regex.search(team_link[0]).group(1);
 				games_link = "http://www.basketball-reference.com" + team_link[0][:-5] + "_games" + ".html";
 				games_page = requests.get(games_link);
 				tree = html.fromstring(games_page.content);
 
-				for i in range(87):
+				for i in range(num_games + (num_games / 20) + 1):
 					if not (i % 21 == 0):
 						link = tree.xpath('//*[@id="teams_games"]/tbody/tr[' + str(i) + ']/td[5]/a/@href');
 						gameID_regex = re.compile('^/boxscores/([^.]+).html');
@@ -86,7 +86,7 @@ def parsePage(cursor, play_by_play_link, team_abr, gameID, year):
 			description = tds[5];
 
 		description_text = description.getText();
-		if ("misses" in description_text or "makes" in description_text) and ("free throw" not in description_text):
+		if ("misses" in description_text or "makes" in description_text) and ("free throw" not in description_text and "no shot" not in description_text):
 			
 			player = description.findAll("a")[0];
 			player_link = player['href'];

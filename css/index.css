@@ -1,0 +1,60 @@
+#season_filter_div {
+	/*border: 2px solid black;
+	border-left-width: 4px;*/
+	height: 200px;
+	width: 20%;
+	display: block;
+	float: left;
+}
+
+#quarter_filter_div {
+	/*border: 2px solid black;*/
+	height: 200px;
+	width: 20%;
+	display: block;
+	float: left;
+}
+
+#shot_distance_filter {
+	/*border: 2px solid black;*/
+	height: 200px;
+	width: 20%;
+	display: block;
+	float: left;
+}
+
+#shot_type_filter {
+	/*border: 2px solid black;*/
+	height: 200px;
+	width: 20%;
+	display: block;
+	float: left;
+}
+
+#game_type_filter {
+	/*border: 2px solid black;
+	border-right-width: 4px;*/
+	height: 200px;
+	width: 20%;
+	display: block;
+	float: left;
+}
+
+#consecutive_shots_filter {
+	width: 50%;
+	display: block;
+	float: left;
+}
+
+#time_span_filter {
+	width: 50%;
+	display: block;
+	float: left;
+}
+.filter_header {
+	font-weight: bold;
+}
+
+#form_div {
+	border: 1px solid black;
+}

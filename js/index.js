@@ -1,4 +1,4 @@
-var socket = io.connect();
+//var socket = io.connect();
 
 window.addEventListener('load', function() {
 	var messageForm = document.getElementById('messagesForm');
@@ -6,8 +6,11 @@ window.addEventListener('load', function() {
 	var shot_distance_error_check = 0;
 	function sendMessage(e) {
 		e.preventDefault();
+
+		/* list containing filter information to be sent to server */
 		var post_string = [];
 		
+		/* Seasons */
 		var season_min = messageForm.elements["season_year_min"];
 		var season_max = messageForm.elements["season_year_max"];
 
@@ -33,8 +36,8 @@ window.addEventListener('load', function() {
 		console.log("Season Min: " + season_min_val);
 		console.log("Season Max: " + season_max_val);
 
+		/* Quarters */
 		var quarters = [];
-
 		var q1 = messageForm.elements["q1_filter"].checked;
 		if(q1 == true) {
 			quarters.push(messageForm.elements["q1_filter"].value);
@@ -70,9 +73,11 @@ window.addEventListener('load', function() {
 
 		post_string[2] = quarters;
 
+		/* Shot Distance */
 		var shot_distance_min = messageForm.elements["shot_distance_min"].value;
 		var shot_distance_max = messageForm.elements["shot_distance_max"].value;
 
+		/* Shot Distance Error Check */
 		if(shot_distance_min > shot_distance_max || shot_distance_min < 0 || shot_distance_max <= 0) {
 			if (shot_distance_error_check) {
 				var distance_div = document.getElementById("shot_distance_filter");
@@ -103,16 +108,23 @@ window.addEventListener('load', function() {
 		console.log("Shot Distance Min: " + shot_distance_min);
 		console.log("Shot Distance Max: " + shot_distance_max);
 
+		/* Shot Type - 2, 3pt, or both */
 		var shot_type = messageForm.elements["shot_type"].value;
 		post_string[5] = shot_type;
 		
+		/* Game Type - home, away, or both*/
 		var game_type = messageForm.elements["game_type"].value;
 		post_string[6] = game_type;
 
 		console.log(post_string);
+
+		/* Hot Hand Definition */
+		var consecutive_makes = messageForm.elements["consecutive_shots"].value;
+		var time_span = messageForm.elements["time_span"].value;
 		if(shot_distance_error_check) {
 			console.log("ERROR");
 		}
+
 		else {
 			/* notify the server of the newly submitted message */
 		//socket.emit('filter', post_string);
@@ -120,4 +132,3 @@ window.addEventListener('load', function() {
 		
 	}
 }, false);
-

@@ -19,9 +19,11 @@
     <!-- Custom CSS -->
     <link href="css/scrolling-nav.css" rel="stylesheet">
     <link href="css/scatterplot.css" rel="stylesheet">
+    <link href="css/index.css" rel="stylesheet">
 
 
     <script src="js/scatterplot.js"></script>
+    <script src="js/index.js"></script>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -83,7 +85,172 @@
                     <a class="btn btn-default page-scroll" href="#scatterplot_div">Click Me to Scroll Down!</a>
                 </div>
             </div>
+
+
+          <div id = "form_div">
+
+            <form id = "messagesForm">
+                <div id = "data_filter_div">
+                    <h2> Data Filters </h2>
+                    <div id = "season_filter_div">
+                        <p class = "filter_header"> Seasons </p>
+                        <select name = "season_year_min" id = "season_year_min">
+                            <option value = "all" selected = "selected"> Any </option>
+                            <option value = "2002"> 2001-2002 </option>
+                            <option value = "2003"> 2002-2003 </option>
+                            <option value = "2004"> 2003-2004 </option>
+                            <option value = "2005"> 2004-2005 </option>
+                            <option value = "2006"> 2005-2006 </option>
+                            <option value = "2007"> 2006-2007 </option>
+                            <option value = "2008"> 2007-2008 </option>
+                            <option value = "2009"> 2008-2009 </option>
+                            <option value = "2010"> 2009-2010 </option>
+                            <option value = "2011"> 2010-2011 </option>
+                            <option value = "2012"> 2011-2012 </option>
+                            <option value = "2013"> 2012-2013 </option>
+                            <option value = "2014"> 2013-2014 </option>
+                            <option value = "2015"> 2014-2015 </option>
+                            <option value = "2016"> 2015-2016 </option>
+                        </select>
+                        <br>
+                        <span> to </span>
+                        <br>
+                        <select name = "season_year_max" id = "season_year_max">
+                            <option value = "all" selected = "selected"> Any </option>
+                            <option value = "2002"> 2001-2002 </option>
+                            <option value = "2003"> 2002-2003 </option>
+                            <option value = "2004"> 2003-2004 </option>
+                            <option value = "2005"> 2004-2005 </option>
+                            <option value = "2006"> 2005-2006 </option>
+                            <option value = "2007"> 2006-2007 </option>
+                            <option value = "2008"> 2007-2008 </option>
+                            <option value = "2009"> 2008-2009 </option>
+                            <option value = "2010"> 2009-2010 </option>
+                            <option value = "2011"> 2010-2011 </option>
+                            <option value = "2012"> 2011-2012 </option>
+                            <option value = "2013"> 2012-2013 </option>
+                            <option value = "2014"> 2013-2014 </option>
+                            <option value = "2015"> 2014-2015 </option>
+                            <option value = "2016"> 2015-2016 </option>
+                        </select>
+                    </div>
+               
+                    <div id = "quarter_filter_div">
+                        <p class = "filter_header"> Quarters </p>     
+                        <input type = "checkbox" name = "q1_filter" value = "1" checked = "checked">
+                            Q1
+                        </input>
+                    
+                        <br>
+
+                        <input type = "checkbox" name = "q2_filter" value = "2" checked = "checked">
+                            Q2
+                        </input>
+
+                        <br>
+                    
+                        <input type = "checkbox" name = "q3_filter" value = "3" checked = "checked">
+                            Q3
+                        </input>
+                    
+                        <br>
+                    
+                        <input type = "checkbox" name = "q4_filter" value = "4" checked = "checked">
+                            Q4
+                        </input>
+                    
+                        <br>
+                    
+                        <input type = "checkbox" name = "1ot_filter" value = "5" checked = "checked">
+                            OT
+                        </input>
+                    
+                        <br>
+
+                        <input type = "checkbox" name = "2ot_filter" value = "6" checked = "checked">
+                            2OT
+                        </input>
+                    
+                        <br>
+                    
+                        <input type = "checkbox" name = "3ot_filter" value = "7" checked = "checked">
+                            3OT
+                        </input>
+                    
+                        <br>
+                    
+                        <input type = "checkbox" name = "4ot_filter" value = "8" checked = "checked">
+                            4OT
+                        </input>
+                    </div>
+                
+                    <div id = "shot_distance_filter">
+                        <p class = "filter_header"> Shot Distance </p>
+                        <input type = "text" name = "shot_distance_min"> ft </input>
+                        <br>
+                        <span> to </span>
+                        <br>
+                        <input type = "text" name = "shot_distance_max"> ft </input>
+                    </div>
+
+                    <div id = "shot_type_filter">
+                        <p class = "filter_header"> Shot Type </p>
+                        <input type = "radio" name = "shot_type" value = "1">
+                            2PT
+                        </input>
+                    
+                        <br>
+                    
+                        <input type = "radio" name = "shot_type" value = "2">
+                            3PT
+                        </input>
+                    
+                        <br>
+                    
+                        <input type = "radio" name = "shot_type" value = "3" checked = "checked">
+                            Both
+                        </input>
+                    </div>
+                
+                    <div id = "game_type_filter">
+                        <p class = "filter_header"> Game Type </p>
+                        <input type = "radio" name = "game_type" value = "1">
+                            Home
+                        </input>
+                        
+                        <br>
+                    
+                        <input type = "radio" name = "game_type" value = "2">
+                            Away
+                        </input>
+                    
+                        <br>
+                    
+                        <input type = "radio" name = "game_type" value = "3" checked = "checked">
+                            Both
+                        </input>
+                    </div>
+                </div>
+                <br>
+
+                <div id = "hot_hand_div">
+                    <h2> Hot Hand Definition </h2>
+                    <div id = "consecutive_shots_filter">
+                        <p class = "filter_header"> Consecutive Makes </p>
+                        <input type = "text" name = "consecutive_shots"> makes </input>
+                    </div>
+
+                    <div id = "time_span_filter">
+                        <p class = "filter_header"> Time Span </p>
+                        <input type = "text" name = "time_span"> mins </input>
+                    </div>
+                </div>
+              <input type = "submit" value = "Send">
+            </form>
+          </div>
+            
         </div>
+
     </section>
 
     <!-- About Section -->

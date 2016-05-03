@@ -10,12 +10,15 @@ $(document).ready(function() {
 	socket.on('hothandResult', function(res) {
 		playerDict = res.playerDict;
 		console.log(playerDict);
+		makeD3(playerDict);
 	});
 
     var tooltip = d3.select("#scatterplot_div")
         .append("div")
         .attr("class", "alextooltip")
         .style("opacity", 0);
+	
+//	makeD3(playerDict);
 
 //    d3.csv("/data/archive/shooting_numbers.csv", function(d) {
 //		return {
@@ -119,7 +122,7 @@ $(document).ready(function() {
 
 		for (key in rows) {
 			if (rows[key].hot_shots >= 50) {
-				data_points.set(key, rows[i]);
+				data_points.set(key, rows[key]);
 			}
 		}
 
@@ -213,9 +216,9 @@ $(document).ready(function() {
     function handleMouseIn() {
         var player_link = d3.select(this).attr("class");
         var point = data_points.get(player_link);
-		var difference = ((point.hot_fgp - point.regular_fgp) * 100).toFixed(1);
+		var difference = ((point.hot_fg - point.reg_fg) * 100).toFixed(1);
         
-		tooltip.html(point.player_name + "<br>Hot FG%: " + (point.hot_fgp * 100).toFixed(1) + "%<br>Regular FG%: " + (point.regular_fgp * 100).toFixed(1) + "%<br>% Difference: " + difference + "%<br>Hot Shots Taken: " + point.num_hot_shots)
+		tooltip.html(point.player_name + "<br>Hot FG%: " + (point.hot_fg * 100).toFixed(1) + "%<br>Regular FG%: " + (point.reg_fg * 100).toFixed(1) + "%<br>% Difference: " + difference + "%<br>Hot Shots Taken: " + point.hot_shots)
 			.style("left", (d3.mouse(this)[0] + 100)+ "px")
 			.style("top",  d3.mouse(this)[1] + "px")
         

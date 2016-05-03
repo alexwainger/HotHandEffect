@@ -1,10 +1,17 @@
 var socket = io.connect();
 
 window.addEventListener('load', function() {
+	console.log("loaded");
 	var messageForm = document.getElementById('messagesForm');
-	messageForm.addEventListener('submit', sendMessage, false);
+	console.log(messageForm);
+	//messageForm.addEventListener('submit', sendMessage, false);
+	
+	document.getElementById("filter_button").addEventListener("click", function(e) {
+		sendMessage(e);
+	});
 	var shot_distance_error_check = 0;
 	function sendMessage(e) {
+		console.log("send form");
 		e.preventDefault();
 		
 

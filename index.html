@@ -3,30 +3,32 @@
 
 <head>
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="">
 
-    <title>Hot Hands - A CS1951A Final Project</title>
+	<title>Hot Hands - A CS1951A Final Project</title>
 
-    <!-- Bootstrap Core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script> <!-- JQUERY -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.min.js"></script> <!-- D3.js -->
+	<!-- Bootstrap Core CSS -->
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+	<!-- JQUERY -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.min.js"></script>
+	<!-- D3.js -->
 
-    <!-- Custom CSS -->
-    <link href="css/scrolling-nav.css" rel="stylesheet">
-    <link href="css/scatterplot.css" rel="stylesheet">
-    <link href="css/index.css" rel="stylesheet">
+	<!-- Custom CSS -->
+	<link href="css/scrolling-nav.css" rel="stylesheet">
+	<link href="css/scatterplot.css" rel="stylesheet">
+	<link href="css/index.css" rel="stylesheet">
 
-
-    <script src="js/scatterplot.js"></script>
-    <script src="js/index.js"></script>
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="js/scatterplot.js"></script>
+	<script src="js/index.js"></script>
+	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
@@ -36,268 +38,253 @@
 <!-- The #page-top ID is part of the scrolling feature - the data-spy and data-target are part of the built-in Bootstrap scrollspy function -->
 
 <body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
+	<!-- Navigation -->
+	<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+		<div class="container">
+			<div class="navbar-header page-scroll">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand page-scroll" href="#page-top">Overview</a>
+			</div>
 
-    <!-- Navigation -->
-    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-        <div class="container">
-            <div class="navbar-header page-scroll">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand page-scroll" href="#page-top">Overview</a>
-            </div>
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<div class="collapse navbar-collapse navbar-ex1-collapse">
+				<ul class="nav navbar-nav">
+					<!-- Hidden li included to remove active class from about link when scrolled up past about section -->
+					<li class="hidden">
+						<a class="page-scroll" href="#page-top"></a>
+					</li>
+					<li>
+						<a class="page-scroll" href="#scatterplot">Scatterplot</a>
+					</li>
+					<li>
+						<a class="page-scroll" href="#services">Visualization 2</a>
+					</li>
+					<li>
+						<a class="page-scroll" href="#contact">Visualization 3</a>
+					</li>
+				</ul>
+			</div>
+			<!-- /.navbar-collapse -->
+		</div>
+		<!-- /.container -->
+	</nav>
 
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse navbar-ex1-collapse">
-                <ul class="nav navbar-nav">
-                    <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
-                    <li class="hidden">
-                        <a class="page-scroll" href="#page-top"></a>
-                    </li>
-                    <li>
-                        <a class="page-scroll" href="#scatterplot">Scatterplot</a>
-                    </li>
-                    <li>
-                        <a class="page-scroll" href="#services">Visualization 2</a>
-                    </li>
-                    <li>
-                        <a class="page-scroll" href="#contact">Visualization 3</a>
-                    </li>
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
-        </div>
-        <!-- /.container -->
-    </nav>
+	<!-- Intro Section -->
+	<section id="intro" class="intro-section">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12">
+					<h1>Overview</h1>
+					<p><strong>Usage Instructions:</strong> Make sure to include the <code>scrolling-nav.js</code>, <code>jquery.easing.min.js</code>, and <code>scrolling-nav.css</code> files. To make a link smooth scroll to another section on the page, give the link the <code>.page-scroll</code> class and set the link target to a corresponding ID on the page.</p>
+					<p><strong></strong></p>
+					<p>The “hot hand” in basketball is the belief that a player who has made a few shots in a row is more likely to make subsequent shots than he would be following a few misses or a mix of makes and misses. In other words, a player who has made a few shots in a row is considered to be “hot” and thus more likely to make the shots that follow; on the other end of the spectrum, a player who has missed a few shots in a row is considered to be “cold” and thus less likely to make the shots that follow. Our project aims to investigate the legitimacy of the “hot hand” effect in basketball — do players actually shoot more effectively following a made basket, or is the “hot hand” a fallacy?</p>
+					<a class="btn btn-default page-scroll" href="#scatterplot_div">Click Me to Scroll Down!</a>
+				</div>
+			</div>
 
-    <!-- Intro Section -->
-    <section id="intro" class="intro-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <h1>Overview</h1>
-                    <p><strong>Usage Instructions:</strong> Make sure to include the <code>scrolling-nav.js</code>, <code>jquery.easing.min.js</code>, and <code>scrolling-nav.css</code> files. To make a link smooth scroll to another section on the page, give the link the <code>.page-scroll</code> class and set the link target to a corresponding ID on the page.</p>
-                    <p><strong></strong></p>
-                    <p>The “hot hand” in basketball is the belief that a player who has made a few shots in a row is more likely to make subsequent shots than he would be following a few misses or a mix of makes and misses. In other words, a player who has made a few shots in a row is considered to be “hot” and thus more likely to make the shots that follow; on the other end of the spectrum, a player who has missed a few shots in a row is considered to be “cold” and thus less likely to make the shots that follow. Our project aims to investigate the legitimacy of the “hot hand” effect in basketball — do players actually shoot more effectively following a made basket, or is the “hot hand” a fallacy?</p>
-                    <a class="btn btn-default page-scroll" href="#scatterplot_div">Click Me to Scroll Down!</a>
-                </div>
-            </div>
+			<div id="form_div">
+				<form id="messagesForm">
+					<div id="data_filter_div">
+						<h2> Data Filters </h2>
+						<div id="season_filter_div">
+							<p class="filter_header"> Seasons </p>
+							<select name="season_year_min" id="season_year_min">
+								<option value="all" selected="selected"> Any </option>
+								<option value="2002"> 2001-2002 </option>
+								<option value="2003"> 2002-2003 </option>
+								<option value="2004"> 2003-2004 </option>
+								<option value="2005"> 2004-2005 </option>
+								<option value="2006"> 2005-2006 </option>
+								<option value="2007"> 2006-2007 </option>
+								<option value="2008"> 2007-2008 </option>
+								<option value="2009"> 2008-2009 </option>
+								<option value="2010"> 2009-2010 </option>
+								<option value="2011"> 2010-2011 </option>
+								<option value="2012"> 2011-2012 </option>
+								<option value="2013"> 2012-2013 </option>
+								<option value="2014"> 2013-2014 </option>
+								<option value="2015"> 2014-2015 </option>
+								<option value="2016"> 2015-2016 </option>
+							</select>
+							<br>
+							<span> to </span>
+							<br>
+							<select name="season_year_max" id="season_year_max">
+								<option value="all" selected="selected"> Any </option>
+								<option value="2002"> 2001-2002 </option>
+								<option value="2003"> 2002-2003 </option>
+								<option value="2004"> 2003-2004 </option>
+								<option value="2005"> 2004-2005 </option>
+								<option value="2006"> 2005-2006 </option>
+								<option value="2007"> 2006-2007 </option>
+								<option value="2008"> 2007-2008 </option>
+								<option value="2009"> 2008-2009 </option>
+								<option value="2010"> 2009-2010 </option>
+								<option value="2011"> 2010-2011 </option>
+								<option value="2012"> 2011-2012 </option>
+								<option value="2013"> 2012-2013 </option>
+								<option value="2014"> 2013-2014 </option>
+								<option value="2015"> 2014-2015 </option>
+								<option value="2016"> 2015-2016 </option>
+							</select>
+						</div>
 
-          <div id = "form_div">
-            <form id = "messagesForm">
-                <div id = "data_filter_div">
-                    <h2> Data Filters </h2>
-                    <div id = "season_filter_div">
-                        <p class = "filter_header"> Seasons </p>
-                        <select name = "season_year_min" id = "season_year_min">
-                            <option value = "all" selected = "selected"> Any </option>
-                            <option value = "2002"> 2001-2002 </option>
-                            <option value = "2003"> 2002-2003 </option>
-                            <option value = "2004"> 2003-2004 </option>
-                            <option value = "2005"> 2004-2005 </option>
-                            <option value = "2006"> 2005-2006 </option>
-                            <option value = "2007"> 2006-2007 </option>
-                            <option value = "2008"> 2007-2008 </option>
-                            <option value = "2009"> 2008-2009 </option>
-                            <option value = "2010"> 2009-2010 </option>
-                            <option value = "2011"> 2010-2011 </option>
-                            <option value = "2012"> 2011-2012 </option>
-                            <option value = "2013"> 2012-2013 </option>
-                            <option value = "2014"> 2013-2014 </option>
-                            <option value = "2015"> 2014-2015 </option>
-                            <option value = "2016"> 2015-2016 </option>
-                        </select>
-                        <br>
-                        <span> to </span>
-                        <br>
-                        <select name = "season_year_max" id = "season_year_max">
-                            <option value = "all" selected = "selected"> Any </option>
-                            <option value = "2002"> 2001-2002 </option>
-                            <option value = "2003"> 2002-2003 </option>
-                            <option value = "2004"> 2003-2004 </option>
-                            <option value = "2005"> 2004-2005 </option>
-                            <option value = "2006"> 2005-2006 </option>
-                            <option value = "2007"> 2006-2007 </option>
-                            <option value = "2008"> 2007-2008 </option>
-                            <option value = "2009"> 2008-2009 </option>
-                            <option value = "2010"> 2009-2010 </option>
-                            <option value = "2011"> 2010-2011 </option>
-                            <option value = "2012"> 2011-2012 </option>
-                            <option value = "2013"> 2012-2013 </option>
-                            <option value = "2014"> 2013-2014 </option>
-                            <option value = "2015"> 2014-2015 </option>
-                            <option value = "2016"> 2015-2016 </option>
-                        </select>
-                    </div>
-               
-                    <div id = "quarter_filter_div">
-                        <p class = "filter_header"> Quarters </p>     
-                        <input type = "checkbox" name = "q1_filter" value = "1" checked = "checked">
-                            Q1
-                        </input>
-                    
-                        <br>
+						<div id="quarter_filter_div">
+							<p class="filter_header"> Quarters </p>
+							<input type="checkbox" name="q1_filter" value="1" checked="checked"> Q1
+							<!--						</input>-->
 
-                        <input type = "checkbox" name = "q2_filter" value = "2" checked = "checked">
-                            Q2
-                        </input>
+							<br>
 
-                        <br>
-                    
-                        <input type = "checkbox" name = "q3_filter" value = "3" checked = "checked">
-                            Q3
-                        </input>
-                    
-                        <br>
-                    
-                        <input type = "checkbox" name = "q4_filter" value = "4" checked = "checked">
-                            Q4
-                        </input>
-                    
-                        <br>
-                    
-                        <input type = "checkbox" name = "1ot_filter" value = "5" checked = "checked">
-                            OT
-                        </input>
-                    
-                        <br>
+							<input type="checkbox" name="q2_filter" value="2" checked="checked"> Q2
+							<!--                        </input>-->
 
-                        <input type = "checkbox" name = "2ot_filter" value = "6" checked = "checked">
-                            2OT
-                        </input>
-                    
-                        <br>
-                    
-                        <input type = "checkbox" name = "3ot_filter" value = "7" checked = "checked">
-                            3OT
-                        </input>
-                    
-                        <br>
-                    
-                        <input type = "checkbox" name = "4ot_filter" value = "8" checked = "checked">
-                            4OT
-                        </input>
-                    </div>
-                
-                    <div id = "shot_distance_filter">
-                        <p class = "filter_header"> Shot Distance </p>
-                        <input type = "text" name = "shot_distance_min"> ft </input>
-                        <br>
-                        <span> to </span>
-                        <br>
-                        <input type = "text" name = "shot_distance_max"> ft </input>
-                    </div>
+							<br>
 
-                    <div id = "shot_type_filter">
-                        <p class = "filter_header"> Shot Type </p>
-                        <input type = "radio" name = "shot_type" value = "1">
-                            2PT
-                        </input>
-                    
-                        <br>
-                    
-                        <input type = "radio" name = "shot_type" value = "2">
-                            3PT
-                        </input>
-                    
-                        <br>
-                    
-                        <input type = "radio" name = "shot_type" value = "3" checked = "checked">
-                            Both
-                        </input>
-                    </div>
-                
-                    <div id = "game_type_filter">
-                        <p class = "filter_header"> Game Type </p>
-                        <input type = "radio" name = "game_type" value = "1">
-                            Home
-                        </input>
-                        
-                        <br>
-                    
-                        <input type = "radio" name = "game_type" value = "2">
-                            Away
-                        </input>
-                    
-                        <br>
-                    
-                        <input type = "radio" name = "game_type" value = "3" checked = "checked">
-                            Both
-                        </input>
-                    </div>
-                </div>
-                <br>
+							<input type="checkbox" name="q3_filter" value="3" checked="checked"> Q3
+							<!--                        </input>-->
+
+							<br>
+
+							<input type="checkbox" name="q4_filter" value="4" checked="checked"> Q4
+							<!--                        </input>-->
+
+							<br>
+
+							<input type="checkbox" name="1ot_filter" value="5" checked="checked"> OT
+							<!--                        </input>-->
+
+							<br>
+
+							<input type="checkbox" name="2ot_filter" value="6" checked="checked"> 2OT
 
 
+							<br>
 
-                <div id = "hot_hand_div">
-                    <h2> Hot Hand Definition </h2>
-                    <div id = "consecutive_shots_filter">
-                        <p class = "filter_header"> Consecutive Makes </p>
-                        <input type = "text" name = "consecutive_shots"> makes </input>
-                    </div>
+							<input type="checkbox" name="3ot_filter" value="7" checked="checked"> 3OT
+							<!--                        </input>-->
 
-                    <div id = "time_span_filter">
-                        <p class = "filter_header"> Time Span </p>
-                        <input type = "text" name = "time_span"> mins </input>
-                    </div>
-                </div>
-              <input type = "submit" value = "Send">
-            </form>
-          </div>
-        </div>
+							<br>
 
-    </section>
+							<input type="checkbox" name="4ot_filter" value="8" checked="checked"> 4OT
+							<!--                        </input>-->
+						</div>
 
-    <!-- About Section -->
-    <section id="scatterplot" class="scatterplot-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <h1>Scatterplot</h1>
-                </div>
-                <div class="col-lg-12" id = "scatterplot_div"></div>
-            </div>
-        </div>
-    </section>
+						<div id="shot_distance_filter">
+							<p class="filter_header"> Shot Distance </p>
+							<input type="text" name="shot_distance_min"> ft
+							<br>
+							<span> to </span>
+							<br>
+							<input type="text" name="shot_distance_max"> ft
+						</div>
 
-    <!-- Services Section -->
-    <section id="services" class="services-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <h1>Services Section</h1>
-                </div>
-            </div>
-        </div>
-    </section>
+						<div id="shot_type_filter">
+							<p class="filter_header"> Shot Type </p>
+							<input type="radio" name="shot_type" value="1"> 2PT
+							<!--                        </input>-->
 
-    <!-- Contact Section -->
-    <section id="contact" class="contact-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <h1>Contact Section</h1>
-                </div>
-            </div>
-        </div>
-    </section>
+							<br>
 
-    <!-- jQuery -->
-    <script src="js/jquery.js"></script>
+							<input type="radio" name="shot_type" value="2"> 3PT
+							<!--                        </input>-->
 
-    <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
+							<br>
 
-    <!-- Scrolling Nav JavaScript -->
-    <script src="js/jquery.easing.min.js"></script>
-    <script src="js/scrolling-nav.js"></script>
-	
-	<script src="/socket.io/socket.io.js"></script>
-	<script src="js/index.js"></script>
+							<input type="radio" name="shot_type" value="3" checked="checked"> Both
+							<!--                        </input>-->
+						</div>
+
+						<div id="game_type_filter">
+							<p class="filter_header"> Game Type </p>
+							<input type="radio" name="game_type" value="1"> Home
+							<!--                        </input>-->
+
+							<br>
+
+							<input type="radio" name="game_type" value="2"> Away
+							<!--                        </input>-->
+
+							<br>
+
+							<input type="radio" name="game_type" value="3" checked="checked"> Both
+							<!--                        </input>-->
+						</div>
+					</div>
+					<br>
+
+					<div id="hot_hand_div">
+						<h2> Hot Hand Definition </h2>
+						<div id="consecutive_shots_filter">
+							<p class="filter_header"> Consecutive Makes </p>
+							<input type="text" name="consecutive_shots"> makes
+						</div>
+
+						<div id="time_span_filter">
+							<p class="filter_header"> Time Span </p>
+							<input type="text" name="time_span"> mins
+						</div>
+					</div>
+<!--					<input type="submit" value="Send">-->
+				</form>
+				<button id = "filter_button" type = "submit" form = "messagesForm" value ="submit"> Submit </button>
+			</div>
+		</div>
+
+	</section>
+	<br>
+
+	<!-- About Section -->
+	<section id="scatterplot" class="scatterplot-section">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12">
+					<h1>Scatterplot</h1>
+				</div>
+				<div class="col-lg-12" id="scatterplot_div"></div>
+			</div>
+		</div>
+	</section>
+
+	<!-- Services Section -->
+	<section id="services" class="services-section">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12">
+					<h1>Services Section</h1>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- Contact Section -->
+	<section id="contact" class="contact-section">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12">
+					<h1>Contact Section</h1>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- jQuery -->
+	<script src="js/jquery.js"></script>
+
+	<!-- Bootstrap Core JavaScript -->
+	<script src="js/bootstrap.min.js"></script>
+
+	<!-- Scrolling Nav JavaScript -->
+	<script src="js/jquery.easing.min.js"></script>
+	<script src="js/scrolling-nav.js"></script>
+
+	<!--	<script src="/socket.io/socket.io.js"></script>-->
+<!--	<script src="js/index.js"></script>-->
 
 </body>
 

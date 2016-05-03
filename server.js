@@ -104,12 +104,14 @@ io.sockets.on('connection', function (socket) {
 				if (!(curr_link in player_dict)) {
 					if (curr_shot) {
 						var player = {
-							player_name: curr_name
-							, hot_makes: 0
-							, hot_shots: 0
-							, reg_makes: 1
-							, reg_shots: 1
-							, hot_shot_missed: function () {
+							player_name: curr_name,
+							hot_makes: 0,
+							hot_shots: 0,
+							reg_makes: 1,
+							reg_shots: 1,
+							hot_fg: 0.0,
+							reg_fg: 0.0,
+							hot_shot_missed: function() { 
 								this.hot_shots = this.hot_shots + 1;
 								this.reg_shots = this.reg_shots + 1;
 							}
@@ -125,7 +127,12 @@ io.sockets.on('connection', function (socket) {
 							, reg_shot_made: function () {
 								this.reg_shots = this.reg_shots + 1;
 								this.reg_makes = this.reg_makes + 1;
-
+							},
+							calculate_hot: function() {
+								this.hot_fg = parseFloat(this.hot_makes/this.hot_shots);
+							},
+							calculate_reg: function() {
+								this.reg_fg = parseFloat(this.reg_makes/this.reg_shots);
 							}
 						};
 
@@ -154,13 +161,14 @@ io.sockets.on('connection', function (socket) {
 						hot_dict[curr_link] = hot_obj;
 					} else {
 						var player = {
-
-							player_name: curr_name
-							, hot_makes: 0
-							, hot_shots: 0
-							, reg_makes: 0
-							, reg_shots: 1
-							, hot_shot_missed: function () {
+							player_name: curr_name,
+							hot_makes: 0,
+							hot_shots: 0,
+							reg_makes: 0,
+							reg_shots: 1,
+							hot_fg: 0.0,
+							reg_fg: 0.0,
+							hot_shot_missed: function() { 
 								this.hot_shots = this.hot_shots + 1;
 								this.reg_shots = this.reg_shots + 1;
 							}
@@ -176,8 +184,14 @@ io.sockets.on('connection', function (socket) {
 							, reg_shot_made: function () {
 								this.reg_shots = this.reg_shots + 1;
 								this.reg_makes = this.reg_makes + 1;
-
+							},
+							calculate_hot: function() {
+								this.hot_fg = parseFloat(this.hot_makes/this.hot_shots);
+							},
+							calculate_reg: function() {
+								this.reg_fg = parseFloat(this.reg_makes/this.reg_shots);
 							}
+
 						};
 
 						player_dict[curr_link] = player;
@@ -240,6 +254,10 @@ io.sockets.on('connection', function (socket) {
 
 			}
 
+			for(key in player_dict) {
+				player_dict[key].calculate_reg();
+				player_dict[key].calculate_hot();
+			}
 			console.log(player_dict);
 			socket.emit('hothandResult', {
 				playerDict: player_dict

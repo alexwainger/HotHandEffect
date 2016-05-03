@@ -88,8 +88,8 @@ io.sockets.on('connection', function (socket) {
 		}*/
 		function calculate_percentages(data, makes, span) {
 			console.log("Calc");
-			console.log(makes);
-			console.log(span);
+//			console.log(makes);
+//			console.log(span);
 			player_dict = {};
 			hot_dict = {};
 			for (var i = 0; i < data.length; i++) {
@@ -260,10 +260,11 @@ io.sockets.on('connection', function (socket) {
 				player_dict[key].calculate_reg();
 				player_dict[key].calculate_hot();
 			}
-			console.log(player_dict);
+//			console.log(player_dict);
 			socket.emit('hothandResult', {
 				playerDict: player_dict
 			});
+			console.log("sent player Dict");
 		}
 
 		function compare_times(time1, time2, interval) {

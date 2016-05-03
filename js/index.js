@@ -13,6 +13,7 @@ window.addEventListener('load', function() {
 	function sendMessage(e) {
 		console.log("send form");
 		e.preventDefault();
+		
 
 		/* list containing filter information to be sent to server */
 		var post_string = [];
@@ -128,6 +129,10 @@ window.addEventListener('load', function() {
 		/* Hot Hand Definition */
 		var consecutive_makes = messageForm.elements["consecutive_shots"].value;
 		var time_span = messageForm.elements["time_span"].value;
+
+		post_string[7] = consecutive_makes;
+		post_string[8] = time_span;
+
 		if(shot_distance_error_check) {
 			console.log("ERROR");
 		}

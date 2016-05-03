@@ -10,6 +10,7 @@ $(document).ready(function () {
 	socket.on('hothandResult', function (res) {
 		playerDict = res.playerDict;
 		console.log("got response");
+		d3.select("svg").remove();
 		makeD3(playerDict);
 	});
 

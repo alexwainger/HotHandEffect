@@ -108,6 +108,8 @@ io.sockets.on('connection', function(socket) {
 							hot_shots: 0,
 							reg_makes: 1,
 							reg_shots: 1,
+							hot_fg: 0.0,
+							reg_fg: 0.0,
 							hot_shot_missed: function() { 
 								this.hot_shots = this.hot_shots + 1;
 								this.reg_shots = this.reg_shots + 1; 
@@ -124,8 +126,13 @@ io.sockets.on('connection', function(socket) {
 							reg_shot_made: function() {
 								this.reg_shots = this.reg_shots + 1;
 								this.reg_makes = this.reg_makes + 1;
-
-							}	
+							},
+							calculate_hot: function() {
+								this.hot_fg = parseFloat(this.hot_makes/this.hot_shots);
+							},
+							calculate_reg: function() {
+								this.reg_fg = parseFloat(this.reg_makes/this.reg_shots);
+							}
 						};
 
 						player_dict[curr_link] = player;
@@ -161,6 +168,8 @@ io.sockets.on('connection', function(socket) {
 							hot_shots: 0,
 							reg_makes: 0,
 							reg_shots: 1,
+							hot_fg: 0.0,
+							reg_fg: 0.0,
 							hot_shot_missed: function() { 
 								this.hot_shots = this.hot_shots + 1;
 								this.reg_shots = this.reg_shots + 1; 
@@ -177,8 +186,14 @@ io.sockets.on('connection', function(socket) {
 							reg_shot_made: function() {
 								this.reg_shots = this.reg_shots + 1;
 								this.reg_makes = this.reg_makes + 1;
+							},
+							calculate_hot: function() {
+								this.hot_fg = parseFloat(this.hot_makes/this.hot_shots);
+							},
+							calculate_reg: function() {
+								this.reg_fg = parseFloat(this.reg_makes/this.reg_shots);
+							}
 
-							}	
 						};
 
 						player_dict[curr_link] = player;
@@ -248,6 +263,10 @@ io.sockets.on('connection', function(socket) {
 
 			}
 
+			for(key in player_dict) {
+				player_dict[key].calculate_reg();
+				player_dict[key].calculate_hot();
+			}
 			console.log(player_dict);
 		}
 		function compare_times(time1, time2, interval) {

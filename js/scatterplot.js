@@ -1,3 +1,4 @@
+var socket = io.connect();
 $(document).ready(function() {
     var canvas_width = 700;
     var canvas_height = 500;
@@ -5,12 +6,17 @@ $(document).ready(function() {
     var radius = 4;
 	var data_points = d3.map();
 
+	var playerDict = {};
+	socket.on('hothandResult', function(res) {
+		playerDict = res.playerDict;
+	});
+
     var tooltip = d3.select("#scatterplot_div")
         .append("div")
         .attr("class", "alextooltip")
         .style("opacity", 0);
 
-    d3.csv("/data/archive/shooting_numbers.csv", function(d) {
+    d3.json("/data/archive/shooting_numbers.csv", function(d) {
 		return {
 			player_link: d.player_link,
 			player_name: d.player_name,

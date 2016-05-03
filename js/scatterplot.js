@@ -17,27 +17,116 @@ $(document).ready(function() {
         .attr("class", "alextooltip")
         .style("opacity", 0);
 
-    d3.csv("/data/archive/shooting_numbers.csv", function(d) {
-		return {
-			player_link: d.player_link,
-			player_name: d.player_name,
-			regular_fgp: parseFloat(d.regular_fgp),
-			hot_fgp: parseFloat(d.hot_fgp),
-			num_hot_shots: parseInt(d.num_hot_shots)
-		}; 
+//    d3.csv("/data/archive/shooting_numbers.csv", function(d) {
+//		return {
+//			player_link: d.player_link,
+//			player_name: d.player_name,
+//			regular_fgp: parseFloat(d.regular_fgp),
+//			hot_fgp: parseFloat(d.hot_fgp),
+//			num_hot_shots: parseInt(d.num_hot_shots)
+//		}; 
+//	
+//	}, function(rows) {
+//
+//		for (var i = 0; i < rows.length; i++) {
+//			if (rows[i].num_hot_shots >= 50) {
+//				data_points.set(rows[i].player_link, rows[i]);
+//			}
+//		}
+//
+//		values = data_points.values();
+//		
+//		var xValue = function(d) { return d.regular_fgp; };
+//		var yValue = function(d) { return d.hot_fgp; };
+//
+//		var xScale = d3.scale.pow().exponent(.1)
+//			.domain([d3.min(values, xValue) - .01, d3.max(values, xValue) + .01])
+//			.range([margin, canvas_width - margin * 2]);
+//
+//		var yScale = d3.scale.pow().exponent(.1)
+//        	.domain([d3.min(values, yValue) - .01, d3.max(values, yValue) + .01])
+//        	.range([canvas_height - margin, margin]);
+//
+//    	var xAxis = d3.svg.axis()
+//			.scale(xScale)
+//			.orient("bottom")
+//			.ticks(10)
+//			.tickFormat(d3.format(".0%"));
+//
+//    	var yAxis = d3.svg.axis()
+//	        .scale(yScale)
+//    	    .orient("left")
+//        	.ticks(10)
+//			.tickFormat(d3.format(".0%"));
+//		
+//        var svg = d3.select("#scatterplot_div").append("svg")
+//            .attr("id", "alexsvg")
+//            .attr("width", canvas_width)
+//            .attr("height", canvas_height);
+//
+//        svg.append("g")
+//            .attr("class", "x axis scatteraxis")
+//            .attr("transform", "translate(0, " + (canvas_height - margin) + ")")
+//            .call(xAxis)
+//            .append("text")
+//            .attr("class", "label")
+//            .attr("x", canvas_width-margin * 2)
+//            .attr("y", -6)
+//            .attr("text-anchor", "end")
+//            .text("Regular FG%");
+//
+//        svg.append("g")
+//            .attr("class", "y axis scatteraxis")
+//            .attr("transform", "translate(" + margin + ",0)")
+//            .call(yAxis)
+//            .append("text")
+//            .attr("class","label")
+//            .attr("transform", "rotate(-90)")
+//            .attr("y", 12)
+//            .attr("x", -40)
+//            .style("text-anchor", "end")
+//            .text("Hot Hand FG%");
+//		
+//		svg.append("line")
+//			.attr({
+//				class: "averageline",
+//				x1: xScale(d3.min(values, xValue) - .01),
+//				x2: xScale(d3.max(values, xValue) + .01),
+//				y1: yScale(d3.min(values, xValue) - .01),
+//				y2: yScale(d3.max(values, xValue) + .01)})
+//			.style({
+//				stroke: "gray",
+//				"stroke-width": "3px",
+//				"stroke-linecap": "round"
+//			});
+//        
+//        svg.selectAll("circle")
+//            .data(data_points.values())
+//            .enter()
+//            .append("circle")
+//            .attr("cx", function(d) { return xScale(xValue(d)) })
+//            .attr("cy", function(d) { return yScale(yValue(d)) })
+//            .attr("class", function(d) { return d.player_link })
+//            .on("mouseover", handleMouseIn)
+//            .on("mouseout", handleMouseOut)
+//            .attr("r", radius)
+//            .attr("fill", "red");
+// 
+//	});
 	
-	}, function(rows) {
+	
+	function makeD3(rows) {
 
-		for (var i = 0; i < rows.length; i++) {
-			if (rows[i].num_hot_shots >= 50) {
-				data_points.set(rows[i].player_link, rows[i]);
+		for (key in rows) {
+			if (rows[key].hot_shots >= 50) {
+				data_points.set(key, rows[i]);
 			}
 		}
 
 		values = data_points.values();
 		
-		var xValue = function(d) { return d.regular_fgp; };
-		var yValue = function(d) { return d.hot_fgp; };
+		var xValue = function(d) { return d.reg_fg; };
+		var yValue = function(d) { return d.hot_fg; };
 
 		var xScale = d3.scale.pow().exponent(.1)
 			.domain([d3.min(values, xValue) - .01, d3.max(values, xValue) + .01])
@@ -112,7 +201,9 @@ $(document).ready(function() {
             .attr("r", radius)
             .attr("fill", "red");
  
-	});
+	}
+	
+	
     
 
     function handleMouseOut() {

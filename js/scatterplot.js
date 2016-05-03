@@ -1,9 +1,16 @@
+var socket = io.connect();
 $(document).ready(function() {
     var canvas_width = 700;
     var canvas_height = 500;
     var margin = 40;
     var radius = 4;
 	var data_points = d3.map();
+
+	var playerDict = {};
+	socket.on('hothandResult', function(res) {
+		playerDict = res.playerDict;
+		console.log(playerDict);
+	});
 
     var tooltip = d3.select("#scatterplot_div")
         .append("div")

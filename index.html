@@ -136,6 +136,7 @@
 
 						<div id="quarter_filter_div">
 							<p class="filter_header"> Quarters </p>
+							<div class = "inputdiv">
 							<input type="checkbox" name="q1_filter" value="1" checked="checked"> Q1
 							<!--						</input>-->
 
@@ -173,6 +174,7 @@
 
 							<input type="checkbox" name="4ot_filter" value="8" checked="checked"> 4OT
 							<!--                        </input>-->
+							</div>
 						</div>
 
 						<div id="shot_distance_filter">
@@ -186,6 +188,7 @@
 
 						<div id="shot_type_filter">
 							<p class="filter_header"> Shot Type </p>
+							<div class = "inputdiv">
 							<input type="radio" name="shot_type" value="1"> 2PT
 							<!--                        </input>-->
 
@@ -198,10 +201,12 @@
 
 							<input type="radio" name="shot_type" value="3" checked="checked"> Both
 							<!--                        </input>-->
+							</div>
 						</div>
 
 						<div id="game_type_filter">
 							<p class="filter_header"> Game Type </p>
+							<div class = "inputdiv">
 							<input type="radio" name="game_type" value="1"> Home
 							<!--                        </input>-->
 
@@ -212,8 +217,10 @@
 
 							<br>
 
-							<input type="radio" name="game_type" value="3" checked="checked"> Both
-							<!--                        </input>-->
+							<input type="radio" name="game_type" value="3" checked="checked">Both
+							<!--   
+							                     </input>-->
+							</div>
 						</div>
 					</div>
 					<br>
@@ -232,7 +239,7 @@
 					</div>
 <!--					<input type="submit" value="Send">-->
 				</form>
-				<button id = "filter_button" type = "submit" form = "messagesForm" value ="submit"> Submit </button>
+				<button class = "btn btn-default" id = "filter_button" type = "submit" form = "messagesForm" value ="submit"> Submit </button>
 			</div>
 		</div>
 

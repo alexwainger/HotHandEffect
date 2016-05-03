@@ -103,6 +103,7 @@ io.sockets.on('connection', function(socket) {
 				if(!(curr_link in player_dict)) {
 					if(curr_shot){
 						var player = {
+							player_link: curr_link,
 							player_name: curr_name,
 							hot_makes: 0,
 							hot_shots: 0,
@@ -162,7 +163,7 @@ io.sockets.on('connection', function(socket) {
 
 					else {
 						var player = {
-
+							player_link: curr_link,
 							player_name: curr_name,
 							hot_makes: 0,
 							hot_shots: 0,

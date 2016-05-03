@@ -1,4 +1,4 @@
-//var socket = io.connect();
+var socket = io.connect();
 
 window.addEventListener('load', function() {
 	var messageForm = document.getElementById('messagesForm');
@@ -6,6 +6,7 @@ window.addEventListener('load', function() {
 	var shot_distance_error_check = 0;
 	function sendMessage(e) {
 		e.preventDefault();
+		
 
 		/* list containing filter information to be sent to server */
 		var post_string = [];
@@ -121,13 +122,17 @@ window.addEventListener('load', function() {
 		/* Hot Hand Definition */
 		var consecutive_makes = messageForm.elements["consecutive_shots"].value;
 		var time_span = messageForm.elements["time_span"].value;
+
+		post_string[7] = consecutive_makes;
+		post_string[8] = time_span;
+
 		if(shot_distance_error_check) {
 			console.log("ERROR");
 		}
 
 		else {
 			/* notify the server of the newly submitted message */
-		//socket.emit('filter', post_string);
+			socket.emit('filter', post_string);
 		}
 		
 	}

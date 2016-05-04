@@ -4,6 +4,9 @@ $(document).ready(function() {
     var margin = 40;
     var radius = 4;
 	var data_points = d3.map();
+    
+    var colors = d3.scale.category20c();
+    var all_diff_names = d3.map();
 
     var tooltip = d3.select("#scatterplot_div")
         .append("div")
@@ -28,7 +31,14 @@ $(document).ready(function() {
 		}
 
 		values = data_points.values();
-		
+        
+        for (var i = 0; i < 5; i++) {
+            if (!all_diff_names.has(values[i].player_name)) {
+                all_diff_names.set(values[i].player_name, values[i]);
+            };
+        }
+        drawLegend(all_diff_names.values());
+
 		var xValue = function(d) { return d.regular_fgp; };
 		var yValue = function(d) { return d.hot_fgp; };
 
@@ -103,9 +113,80 @@ $(document).ready(function() {
             .on("mouseover", handleMouseIn)
             .on("mouseout", handleMouseOut)
             .attr("r", radius)
-            .attr("fill", "red");
- 
+            .attr("fill", function(d) { return colors(d.player_link); });
+
+        // var li = {
+        //     w: 75, h: 30, s: 3, r: 3
+        // };
+        // svg.append("rect")
+        //     .data(all_diff_names)
+        //     .attr("rx", li.r)
+        //     .attr("ry", li.r)
+        //     .attr("width", li.w)
+        //     .attr("height", li.h)
+        //     .style("fill", function(d) { return colors(d); });
+
+        // svg.append("text")
+        //     .data(all_diff_names)
+        //     .attr("x", li.w / 2)
+        //     .attr("y", li.h / 2)
+        //     .attr("dy", "0.35em")
+        //     .attr("text-anchor", "middle")
+        //     .text(function(d) { return d; });
+        
+
+        d3.selectAll("input").on("change", function change() {
+            if (this.value == "team") {
+                svg.selectAll("circle")
+                    .transition()
+                    .duration(1000)
+                    .attr("fill", function(d) { return colors(d.player_link); });
+            } else if (this.value == "name") {
+                svg.selectAll("circle")
+                    .transition()
+                    .duration(1000)
+                    .attr("fill", function(d) { return colors(d.player_name); })
+            } 
+        });
 	});
+
+    function drawLegend(all_records) {
+        var li = {
+            w: 75, h: 30, s: 3, r: 3
+        };
+
+        var legend = d3.select("#legend").append("svg")
+            .attr("width", li.w)
+            .attr("height", (all_records.length) * (li.h + li.s));
+
+        var g = legend.selectAll("g")
+            .data(all_records)
+            .enter().append("g")
+            .attr("transform", function(d, i) {
+                return "translate(0," + i * (li.h + li.s) + ")";
+            });
+
+        g.append("rect")
+            .attr("rx", li.r)
+            .attr("ry", li.r)
+            .attr("width", li.w)
+            .attr("height", li.h)
+            .style("fill", function(d) { console.log(d) ;return colors(d.player_name); });
+
+        g.append("text")
+            .attr("x", li.w / 2)
+            .attr("y", li.h / 2)
+            .attr("dy", "0.35em")
+            .attr("text-anchor", "middle")
+            .text(function(d) { 
+                fullname = d.player_name.split(" ");
+                console.log(fullname);
+                result = "";
+                for (var i = 0; i < fullname.length; i++) {
+                    result += fullname[i].charAt(0) + ".";
+                }
+                return result; });
+}
     
 
     function handleMouseOut() {

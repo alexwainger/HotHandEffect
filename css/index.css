@@ -58,3 +58,8 @@
 #form_div {
 	border: 1px solid black;
 }
+
+
+#legend{
+	float: right;
+}

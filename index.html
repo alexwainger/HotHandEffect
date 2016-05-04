@@ -229,12 +229,12 @@
 						<h2> Hot Hand Definition </h2>
 						<div id="consecutive_shots_filter">
 							<p class="filter_header"> Consecutive Makes </p>
-							<input type="text" name="consecutive_shots" required> makes
+							<input type="text" name="consecutive_shots" onkeypress='return event.charCode >= 48 && event.charCode <= 57' required> makes
 						</div>
 
 						<div id="time_span_filter">
 							<p class="filter_header"> Time Span </p>
-							<input type="text" name="time_span" required> mins
+							<input type="text" name="time_span" onkeypress='return event.charCode >= 48 && event.charCode <= 57' required> mins
 						</div>
 					</div>
 <!--					<input type="submit" value="Send">-->

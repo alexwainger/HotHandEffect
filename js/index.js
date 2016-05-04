@@ -10,6 +10,7 @@ window.addEventListener('load', function() {
 		sendMessage(e);
 	});
 	var shot_distance_error_check = 0;
+	var season_error_check = 0;
 	function sendMessage(e) {
 		console.log("send form");
 		e.preventDefault();
@@ -25,32 +26,46 @@ window.addEventListener('load', function() {
 		var season_min_val = season_min.options[season_min.selectedIndex].value;
 		var season_max_val = season_min.options[season_max.selectedIndex].value;
 
-		if(season_min_val == "all") {
-			post_string[0] = 2002;
-		}
-
-		else {
-			post_string[0] = season_min_val;
-		}
-
-		if(season_max_val == "all") {
-			post_string[1] = 2016;
-		}
-
-		else {
-			post_string[1] = season_max_val;
-		}
-		var season_error_check = false;
+		
 		console.log("Season Min: " + season_min_val);
 		console.log("Season Max: " + season_max_val);
-		if (season_max_val <= season_min_val) {
-			var season_filter = document.getElementById('season_filter_div')
+		if (season_max_val < season_min_val) {
+			console.log(season_error_check);
+			var season_filter = document.getElementById('season_filter_div');
+			if(season_error_check) {
+				season_filter.removeChild(season_filter.lastChild);
+			}
+
 			var season_error = document.createTextNode("Error: invalid input");
 			var season_error_div = document.createElement("div");
 			season_error_div.style.color = "red";
 			season_error_div.appendChild(season_error);
 			season_filter.appendChild(season_error_div);
-			season_error_check = true
+			season_error_check = 1;
+		}
+
+		else {
+			if(season_min_val == "all") {
+				post_string[0] = 2002;
+			}
+
+			else {
+				post_string[0] = season_min_val;
+			}
+
+			if(season_max_val == "all") {
+				post_string[1] = 2016;
+			}
+
+			else {
+				post_string[1] = season_max_val;
+			}
+
+			if(season_error_check) {
+				season_filter_div.removeChild(season_filter_div.lastChild);
+				season_error_check = 1;
+			}
+
 		}
 		/* Quarters */
 		var quarters = [];
@@ -112,8 +127,8 @@ window.addEventListener('load', function() {
 		else {
 			post_string[3] = shot_distance_min;
 			post_string[4] = shot_distance_max;
-			messageForm.elements["shot_distance_min"].value = "";
-			messageForm.elements["shot_distance_max"].value = "";
+			//messageForm.elements["shot_distance_min"].value = "";
+			//messageForm.elements["shot_distance_max"].value = "";
 			if(shot_distance_error_check) {
 				var distance_div = document.getElementById("shot_distance_filter");
 				distance_div.removeChild(distance_div.lastChild);

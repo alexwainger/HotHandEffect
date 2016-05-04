@@ -1,40 +1,74 @@
 var socket = io.connect();
 
 window.addEventListener('load', function() {
+	console.log("loaded");
 	var messageForm = document.getElementById('messagesForm');
-	messageForm.addEventListener('submit', sendMessage, false);
+	console.log(messageForm);
+	//messageForm.addEventListener('submit', sendMessage, false);
+	
+	document.getElementById("filter_button").addEventListener("click", function(e) {
+		sendMessage(e);
+	});
 	var shot_distance_error_check = 0;
+	var season_error_check = 0;
 	function sendMessage(e) {
+		console.log("send form");
 		e.preventDefault();
+		
+
+		/* list containing filter information to be sent to server */
 		var post_string = [];
 		
+		/* Seasons */
 		var season_min = messageForm.elements["season_year_min"];
 		var season_max = messageForm.elements["season_year_max"];
 
 		var season_min_val = season_min.options[season_min.selectedIndex].value;
 		var season_max_val = season_min.options[season_max.selectedIndex].value;
 
-		if(season_min_val == "all") {
-			post_string[0] = 2002;
-		}
-
-		else {
-			post_string[0] = season_min_val;
-		}
-
-		if(season_max_val == "all") {
-			post_string[1] = 2016;
-		}
-
-		else {
-			post_string[1] = season_max_val;
-		}
-
+		
 		console.log("Season Min: " + season_min_val);
 		console.log("Season Max: " + season_max_val);
+		if (season_max_val < season_min_val) {
+			console.log(season_error_check);
+			var season_filter = document.getElementById('season_filter_div');
+			if(season_error_check) {
+				season_filter.removeChild(season_filter.lastChild);
+			}
 
+			var season_error = document.createTextNode("Error: invalid input");
+			var season_error_div = document.createElement("div");
+			season_error_div.style.color = "red";
+			season_error_div.appendChild(season_error);
+			season_filter.appendChild(season_error_div);
+			season_error_check = 1;
+		}
+
+		else {
+			if(season_min_val == "all") {
+				post_string[0] = 2002;
+			}
+
+			else {
+				post_string[0] = season_min_val;
+			}
+
+			if(season_max_val == "all") {
+				post_string[1] = 2016;
+			}
+
+			else {
+				post_string[1] = season_max_val;
+			}
+
+			if(season_error_check) {
+				season_filter_div.removeChild(season_filter_div.lastChild);
+				season_error_check = 1;
+			}
+
+		}
+		/* Quarters */
 		var quarters = [];
-
 		var q1 = messageForm.elements["q1_filter"].checked;
 		if(q1 == true) {
 			quarters.push(messageForm.elements["q1_filter"].value);
@@ -70,9 +104,11 @@ window.addEventListener('load', function() {
 
 		post_string[2] = quarters;
 
+		/* Shot Distance */
 		var shot_distance_min = messageForm.elements["shot_distance_min"].value;
 		var shot_distance_max = messageForm.elements["shot_distance_max"].value;
 
+		/* Shot Distance Error Check */
 		if(shot_distance_min > shot_distance_max || shot_distance_min < 0 || shot_distance_max <= 0) {
 			if (shot_distance_error_check) {
 				var distance_div = document.getElementById("shot_distance_filter");
@@ -91,8 +127,8 @@ window.addEventListener('load', function() {
 		else {
 			post_string[3] = shot_distance_min;
 			post_string[4] = shot_distance_max;
-			messageForm.elements["shot_distance_min"].value = "";
-			messageForm.elements["shot_distance_max"].value = "";
+			//messageForm.elements["shot_distance_min"].value = "";
+			//messageForm.elements["shot_distance_max"].value = "";
 			if(shot_distance_error_check) {
 				var distance_div = document.getElementById("shot_distance_filter");
 				distance_div.removeChild(distance_div.lastChild);
@@ -103,21 +139,31 @@ window.addEventListener('load', function() {
 		console.log("Shot Distance Min: " + shot_distance_min);
 		console.log("Shot Distance Max: " + shot_distance_max);
 
+		/* Shot Type - 2, 3pt, or both */
 		var shot_type = messageForm.elements["shot_type"].value;
 		post_string[5] = shot_type;
 		
+		/* Game Type - home, away, or both*/
 		var game_type = messageForm.elements["game_type"].value;
 		post_string[6] = game_type;
 
 		console.log(post_string);
-		if(shot_distance_error_check) {
+
+		/* Hot Hand Definition */
+		var consecutive_makes = messageForm.elements["consecutive_shots"].value;
+		var time_span = messageForm.elements["time_span"].value;
+
+		post_string[7] = consecutive_makes;
+		post_string[8] = time_span;
+
+		if(shot_distance_error_check || season_error) {
 			console.log("ERROR");
 		}
+
 		else {
 			/* notify the server of the newly submitted message */
-		//socket.emit('filter', post_string);
+			socket.emit('filter', post_string);
 		}
 		
 	}
 }, false);
-

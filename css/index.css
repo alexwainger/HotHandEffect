@@ -86,6 +86,8 @@ input[type="text"] {
 }
 #form_div {
 	border: 1px solid black;
+	padding-bottom: 10px;
+	margin-top: 10px;
 }
 
 

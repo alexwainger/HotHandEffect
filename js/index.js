@@ -46,10 +46,10 @@ window.addEventListener('load', function() {
 		if (season_max_val <= season_min_val) {
 			var season_filter = document.getElementById('season_filter_div')
 			var season_error = document.createTextNode("Error: invalid input");
-			var error_div = document.createElement("div");
-			error_div.style.color = "red";
-			error_div.appendChild(season_error);
-			season_filter.appendChild(error_div);
+			var season_error_div = document.createElement("div");
+			season_error_div.style.color = "red";
+			season_error_div.appendChild(season_error);
+			season_filter.appendChild(season_error_div);
 			season_error_check = true
 		}
 		/* Quarters */

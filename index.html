@@ -179,11 +179,11 @@
 
 						<div id="shot_distance_filter">
 							<p class="filter_header"> Shot Distance </p>
-							<input type="text" name="shot_distance_min"> ft
+							<input type="text" name="shot_distance_min" onkeypress='return event.charCode >= 48 && event.charCode <= 57'> ft
 							<br>
 							<span> to </span>
 							<br>
-							<input type="text" name="shot_distance_max"> ft
+							<input type="text" name="shot_distance_max" onkeypress='return event.charCode >= 48 && event.charCode <= 57'> ft
 						</div>
 
 						<div id="shot_type_filter">
@@ -229,12 +229,12 @@
 						<h2> Hot Hand Definition </h2>
 						<div id="consecutive_shots_filter">
 							<p class="filter_header"> Consecutive Makes </p>
-							<input type="text" name="consecutive_shots"> makes
+							<input type="text" name="consecutive_shots" required> makes
 						</div>
 
 						<div id="time_span_filter">
 							<p class="filter_header"> Time Span </p>
-							<input type="text" name="time_span"> mins
+							<input type="text" name="time_span" required> mins
 						</div>
 					</div>
 <!--					<input type="submit" value="Send">-->

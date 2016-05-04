@@ -40,10 +40,18 @@ window.addEventListener('load', function() {
 		else {
 			post_string[1] = season_max_val;
 		}
-
+		var season_error_check = false;
 		console.log("Season Min: " + season_min_val);
 		console.log("Season Max: " + season_max_val);
-
+		if (season_max_val <= season_min_val) {
+			var season_filter = document.getElementById('season_filter_div')
+			var season_error = document.createTextNode("Error: invalid input");
+			var error_div = document.createElement("div");
+			error_div.style.color = "red";
+			error_div.appendChild(season_error);
+			season_filter.appendChild(error_div);
+			season_error_check = true
+		}
 		/* Quarters */
 		var quarters = [];
 		var q1 = messageForm.elements["q1_filter"].checked;
@@ -133,7 +141,7 @@ window.addEventListener('load', function() {
 		post_string[7] = consecutive_makes;
 		post_string[8] = time_span;
 
-		if(shot_distance_error_check) {
+		if(shot_distance_error_check || season_error) {
 			console.log("ERROR");
 		}
 

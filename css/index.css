@@ -81,7 +81,9 @@ input[type="text"] {
 .filter_header {
 	font-weight: bold;
 }
-
+#filter_button {
+	margin-top: 7px;
+}
 #form_div {
 	border: 1px solid black;
 	margin-top: 10px;

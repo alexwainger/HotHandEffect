@@ -19,11 +19,13 @@ app.use(express.static(__dirname));
 
 io.sockets.on('connection', function (socket) {
 	console.log("user connected");
-
+	var glob_queryStr;
+	var makes_req;
+	var span_req;
 	socket.on('filter', function (data) {
 		console.log(data);
-		var makes = data[7];
-		var span = data[8];
+		makes_req = data[7];
+		span_req = data[8];
 		//console.log(data[7]);
 		//console.log(data[8]);
 
@@ -64,7 +66,7 @@ io.sockets.on('connection', function (socket) {
 
 
 		var queryStr = "SELECT Time, Quarter, Player_Name, Player_ID, Is_Make, Distance, Game_ID FROM RAW_SHOTS WHERE Year >=$1 AND Year<=$2 AND " + quarterfilter + " AND Distance>=$3 AND Distance<= $4" + is_home + is_two_pointer + ";";
-
+		var glob_queryStr = "SELECT Time, Quarter, Player_Name, Player_ID, Is_Make, Distance, Game_ID FROM RAW_SHOTS WHERE Year >= " + data[0] + " AND Year<= " + data[1] + " AND " + quarterfilter + is_home;
 		console.log(queryStr);
 
 		conn.query(queryStr, [data[0], data[1], data[3], data[4]], function (err, result) {
@@ -73,7 +75,7 @@ io.sockets.on('connection', function (socket) {
 				shot_data = result.rows;
 				//console.log(makes);
 				//console.log(span);
-				calculate_percentages(shot_data, makes, span);
+				calculate_percentages(shot_data);
 			} else if (err) {
 				console.log(err);
 			}
@@ -86,7 +88,7 @@ io.sockets.on('connection', function (socket) {
 		else {
 			console.log("NO");
 		}*/
-		function calculate_percentages(data, makes, span) {
+		function calculate_percentages(data) {
 			console.log("Calc");
 //			console.log(makes);
 //			console.log(span);
@@ -140,7 +142,7 @@ io.sockets.on('connection', function (socket) {
 						player_dict[curr_link] = player;
 
 						var hot_obj = {
-							req_consec_makes: makes
+							req_consec_makes: makes_req
 							, quarter: curr_quarter
 							, game_id: curr_game
 							, time: curr_time
@@ -199,7 +201,7 @@ io.sockets.on('connection', function (socket) {
 						player_dict[curr_link] = player;
 
 						var hot_obj = {
-							req_consec_makes: makes
+							req_consec_makes: makes_req
 							, quarter: curr_quarter
 							, game_id: curr_game
 							, time: curr_time
@@ -226,7 +228,7 @@ io.sockets.on('connection', function (socket) {
 				} else {
 					hot_obj = hot_dict[curr_link];
 					/* if hot */
-					if (hot_obj.is_hot() == 1 && compare_times(curr_time, hot_obj.time, span) && (hot_obj.quarter == curr_quarter) && (hot_obj.game_id == curr_game)) {
+					if (hot_obj.is_hot() == 1 && compare_times(curr_time, hot_obj.time, span_req) && (hot_obj.quarter == curr_quarter) && (hot_obj.game_id == curr_game)) {
 						if (curr_shot) {
 							player_dict[curr_link].hot_shot_made();
 							hot_obj.consec_makes += 1;
@@ -238,7 +240,7 @@ io.sockets.on('connection', function (socket) {
 					} else {
 						if (curr_shot) {
 							player_dict[curr_link].reg_shot_made();
-							if (!compare_times(curr_time, hot_obj.time, span) || (hot_obj.quarter != curr_quarter) || (hot_obj.game_id != curr_game)) {
+							if (!compare_times(curr_time, hot_obj.time, span_req) || (hot_obj.quarter != curr_quarter) || (hot_obj.game_id != curr_game)) {
 								hot_obj.consec_makes = 0;
 
 							}
@@ -266,6 +268,168 @@ io.sockets.on('connection', function (socket) {
 			});
 			console.log("sent player Dict");
 		}
+
+		socket.on('player_stats', function(player_link) {
+			var queryStr = glob_queryStr + " AND Player_ID = $1;";
+			console.log(player_link);
+			console.log(glob_queryStr);
+			conn.query(queryStr, [player_link], function (err, result) {
+				var shot_data = result.rows;
+
+				console.log(shot_data);
+				console.log(calculate_player_stats(shot_data, player_link));
+			});
+
+
+			function calculate_player_stats(data, link) {
+				var distance_dict = {};
+				var player_obj = {
+					player_link: link,
+					player_name: null,
+					hot_makes: 0,
+					hot_shots: 0,
+					reg_makes: 0,
+					reg_shots: 0,
+					hot_fg: 0.0,
+					reg_fg: 0.0,
+					hot_shot_missed: function() { 
+						this.hot_shots = this.hot_shots + 1;
+						this.reg_shots = this.reg_shots + 1;
+					}
+					, hot_shot_made: function () {
+						this.hot_shots = this.hot_shots + 1;
+						this.hot_makes = this.hot_makes + 1;
+						this.reg_shots = this.reg_shots + 1;
+						this.reg_makes = this.reg_makes + 1;
+					}
+					, reg_shot_missed: function () {
+						this.reg_shots = this.reg_shots + 1;
+					}
+					, reg_shot_made: function () {
+						this.reg_shots = this.reg_shots + 1;
+						this.reg_makes = this.reg_makes + 1;
+					},
+					calculate_hot: function() {
+						this.hot_fg = parseFloat(this.hot_makes/this.hot_shots);
+					},
+					calculate_reg: function() {
+						this.reg_fg = parseFloat(this.reg_makes/this.reg_shots);
+					}
+				}
+
+				var hot_obj = {
+					req_consec_makes: makes_req
+					, quarter: ""
+					, game_id: ""
+					, time: ""
+					, consec_makes: 0
+					, set_time: function (time) {
+						this.time = time;
+					}
+					, set_quarter: function (quarter) {
+						this.quarter = quarter;
+					}
+					, set_game_id: function (gameid) {
+						this.game_id = gameid;
+					}
+					, is_hot: function () {
+						//console.log(this.consec_makes);
+						//console.log(this.req_consec_makes);
+						return this.consec_makes >= this.req_consec_makes;
+					}
+
+				}
+				for (var i = 0; i < data.length; i++) {
+					var distance = data[i].Distance;
+					if(player_obj.name == null) {
+						player_obj.name = data[i].Player_Name;
+					}
+
+					if (!(distance in distance_dict)) {
+						var distance_obj = {
+							hot_makes: 0,
+							hot_shots: 0,
+							reg_makes: 0,
+							reg_shots: 0,
+							hot_fg: 0.0,
+							reg_fg: 0.0,
+							hot_freq: 0.0,
+							reg_freq: 0.0,
+							hot_shot_missed: function() { 
+								this.hot_shots = this.hot_shots + 1;
+								this.reg_shots = this.reg_shots + 1;
+							}
+							, hot_shot_made: function () {
+								this.hot_shots = this.hot_shots + 1;
+								this.hot_makes = this.hot_makes + 1;
+								this.reg_shots = this.reg_shots + 1;
+								this.reg_makes = this.reg_makes + 1;
+							}
+							, reg_shot_missed: function () {
+								this.reg_shots = this.reg_shots + 1;
+							}
+							, reg_shot_made: function () {
+								this.reg_shots = this.reg_shots + 1;
+								this.reg_makes = this.reg_makes + 1;
+							},
+							calculate_hot: function() {
+								this.hot_fg = parseFloat(this.hot_makes/this.hot_shots);
+							},
+							calculate_reg: function() {
+								this.reg_fg = parseFloat(this.reg_makes/this.reg_shots);
+							}
+						};
+
+						distance_dict[distance] = distance_obj;
+					}
+
+					var curr_quarter = data[i].Quarter;
+					var curr_game = data[i].Game_ID;
+					var curr_time = data[i].Time;
+					var curr_shot = data[i].Is_Make;
+
+					if (hot_obj.is_hot() == 1 && compare_times(curr_time, hot_obj.time, span_req) && (hot_obj.quarter == curr_quarter) && (hot_obj.game_id == curr_game)) {
+						if (curr_shot) {
+							distance_dict[distance].hot_shot_made();
+							player_obj.hot_shot_made();
+							hot_obj.consec_makes += 1;
+
+						} else {
+							distance_dict[distance].hot_shot_missed();
+							player_obj.hot_shot_missed();
+							hot_obj.consec_makes = 0;
+						}
+					} else {
+						if (curr_shot) {
+							distance_dict[distance].reg_shot_made();
+							player_obj.reg_shot_made();
+							if (!compare_times(curr_time, hot_obj.time, span_req) || (hot_obj.quarter != curr_quarter) || (hot_obj.game_id != curr_game)) {
+								hot_obj.consec_makes = 0;
+							}
+							hot_obj.consec_makes += 1;
+						} else {
+							distance_dict[distance].reg_shot_missed();
+							player_obj.reg_shot_missed();
+							hot_obj.consec_makes = 0;
+						}
+					}
+
+					hot_obj.set_quarter(curr_quarter);
+					hot_obj.set_game_id(curr_game);
+					hot_obj.set_time(curr_time);
+				}
+
+				for(key in distance_dict) {
+					distance_dict[key].calculate_hot();
+					distance_dict[key].calculate_reg();
+					distance_dict[key].hot_freq = parseFloat((distance_dict[key].hot_shots)/player_obj.hot_shots);
+					distance_dict[key].reg_freq = parseFloat((distance_dict[key].reg_shots)/player_obj.reg_shots);
+				}
+
+				return distance_dict;
+			}
+			
+		});
 
 		function compare_times(time1, time2, interval) {
 			var min1 = parseFloat(time1.split(":")[0]);

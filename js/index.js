@@ -10,6 +10,7 @@ window.addEventListener('load', function() {
 		sendMessage(e);
 	});
 	var shot_distance_error_check = 0;
+	var season_error_check = 0;
 	function sendMessage(e) {
 		console.log("send form");
 		e.preventDefault();
@@ -64,6 +65,7 @@ window.addEventListener('load', function() {
 			error_msg.css("display", "block")
 			error_msg.text("Warning! Please enter valid Season range")
 			return;
+
 		}
 		/* Quarters */
 		var quarters = [];
@@ -116,8 +118,22 @@ window.addEventListener('load', function() {
 			return
 		}
 
+<<<<<<< HEAD
 		post_string[3] = shot_distance_min;
 		post_string[4] = shot_distance_max;
+=======
+		else {
+			post_string[3] = shot_distance_min;
+			post_string[4] = shot_distance_max;
+			//messageForm.elements["shot_distance_min"].value = "";
+			//messageForm.elements["shot_distance_max"].value = "";
+			if(shot_distance_error_check) {
+				var distance_div = document.getElementById("shot_distance_filter");
+				distance_div.removeChild(distance_div.lastChild);
+				shot_distance_error_check = 0;
+			}
+		}
+>>>>>>> 626549e4f97e0204a817cdf6364393a26ae77a71
 
 		console.log("Shot Distance Min: " + shot_distance_min);
 		console.log("Shot Distance Max: " + shot_distance_max);

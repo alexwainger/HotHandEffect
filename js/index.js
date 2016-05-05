@@ -116,13 +116,7 @@ window.addEventListener('load', function() {
 			error_msg.css("display", "block");
 			error_msg.text("Warning! Please enter valid shot distance")
 			return
-		}
-
-<<<<<<< HEAD
-		post_string[3] = shot_distance_min;
-		post_string[4] = shot_distance_max;
-=======
-		else {
+		} else {
 			post_string[3] = shot_distance_min;
 			post_string[4] = shot_distance_max;
 			//messageForm.elements["shot_distance_min"].value = "";
@@ -133,7 +127,6 @@ window.addEventListener('load', function() {
 				shot_distance_error_check = 0;
 			}
 		}
->>>>>>> 626549e4f97e0204a817cdf6364393a26ae77a71
 
 		console.log("Shot Distance Min: " + shot_distance_min);
 		console.log("Shot Distance Max: " + shot_distance_max);

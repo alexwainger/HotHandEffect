@@ -180,7 +180,6 @@ $(document).ready(function () {
 		drawLegend(all_diff_names.values());
 	}
 
-<<<<<<< HEAD
   function drawLegend(all_records) {
       var li = {
           w: 75, h: 30, s: 3, r: 3
@@ -235,20 +234,5 @@ $(document).ready(function () {
      tooltip.transition()
           .duration(200)
           .style("opacity", .9);
-  };
-=======
-    function handleMouseIn() {
-        var player_link = d3.select(this).attr("class");
-        var point = data_points.get(player_link);
-		var difference = ((point.hot_fg - point.reg_fg) * 100).toFixed(1);
-        
-		tooltip.html(point.player_name + "<br>Hot FG%: " + (point.hot_fg * 100).toFixed(1) + "%<br>Regular FG%: " + (point.reg_fg * 100).toFixed(1) + "%<br>% Difference: " + difference + "%<br>Hot Shots Taken: " + point.num_hot_shots)
-			.style("left", (d3.mouse(this)[0] + 100)+ "px")
-			.style("top",  d3.mouse(this)[1] + "px")
-       tooltip.transition()
-            .duration(200)
-            .style("opacity", .9);
-    };
->>>>>>> 626549e4f97e0204a817cdf6364393a26ae77a71
-		
+  };	
 });

@@ -14,6 +14,14 @@ window.addEventListener('load', function() {
 		console.log("send form");
 		e.preventDefault();
 		
+    var checked = $("input[type=checkbox]:checked").length;
+    // at least one quater needs to be selected
+    var error_msg = $("#submit_warning");
+    if (!checked) {
+    	error_msg.css("display", "block")
+    	error_msg.text("Warning! Please select at least one quarter")
+    	return;
+    }
 
 		/* list containing filter information to be sent to server */
 		var post_string = [];
@@ -26,7 +34,8 @@ window.addEventListener('load', function() {
 		var season_max_val = season_min.options[season_max.selectedIndex].value;
 
 		if(season_min_val == "all") {
-			post_string[0] = 2002;
+			post_string[0] = 2001;
+			season_min_val = 2001;
 		}
 
 		else {
@@ -35,6 +44,7 @@ window.addEventListener('load', function() {
 
 		if(season_max_val == "all") {
 			post_string[1] = 2016;
+			season_max_val = 2016
 		}
 
 		else {
@@ -43,14 +53,17 @@ window.addEventListener('load', function() {
 		var season_error_check = false;
 		console.log("Season Min: " + season_min_val);
 		console.log("Season Max: " + season_max_val);
-		if (season_max_val <= season_min_val) {
-			var season_filter = document.getElementById('season_filter_div')
-			var season_error = document.createTextNode("Error: invalid input");
-			var season_error_div = document.createElement("div");
-			season_error_div.style.color = "red";
-			season_error_div.appendChild(season_error);
-			season_filter.appendChild(season_error_div);
-			season_error_check = true
+		if (season_max_val < season_min_val) {
+			// var season_filter = document.getElementById('season_filter_div')
+			// var season_error = document.createTextNode("Error: invalid input");
+			// var season_error_div = document.createElement("div");
+			// season_error_div.style.color = "red";
+			// season_error_div.appendChild(season_error);
+			// season_filter.appendChild(season_error_div);
+			// season_error_check = true
+			error_msg.css("display", "block")
+			error_msg.text("Warning! Please enter valid Season range")
+			return;
 		}
 		/* Quarters */
 		var quarters = [];
@@ -94,32 +107,17 @@ window.addEventListener('load', function() {
 		var shot_distance_max = messageForm.elements["shot_distance_max"].value;
 
 		/* Shot Distance Error Check */
-		if(shot_distance_min > shot_distance_max || shot_distance_min < 0 || shot_distance_max <= 0) {
-			if (shot_distance_error_check) {
-				var distance_div = document.getElementById("shot_distance_filter");
-				distance_div.removeChild(distance_div.lastChild);
-			}
-
-			var distance_div = document.getElementById("shot_distance_filter");
-			var shot_distance_error = document.createTextNode("Error: invalid input");
-			var error_div = document.createElement("div");
-			error_div.style.color = "red";
-			error_div.appendChild(shot_distance_error);
-			distance_div.appendChild(error_div);
-			shot_distance_error_check = 1;
+		if(!$.isNumeric(shot_distance_min) || !$.isNumeric(shot_distance_max) ||
+			!shot_distance_min || !shot_distance_max || 
+			shot_distance_min > shot_distance_max || shot_distance_min < 0 
+			|| shot_distance_max <= 0) {
+			error_msg.css("display", "block");
+			error_msg.text("Warning! Please enter valid shot distance")
+			return
 		}
 
-		else {
-			post_string[3] = shot_distance_min;
-			post_string[4] = shot_distance_max;
-			messageForm.elements["shot_distance_min"].value = "";
-			messageForm.elements["shot_distance_max"].value = "";
-			if(shot_distance_error_check) {
-				var distance_div = document.getElementById("shot_distance_filter");
-				distance_div.removeChild(distance_div.lastChild);
-				shot_distance_error_check = 0;
-			}
-		}
+		post_string[3] = shot_distance_min;
+		post_string[4] = shot_distance_max;
 
 		console.log("Shot Distance Min: " + shot_distance_min);
 		console.log("Shot Distance Max: " + shot_distance_max);
@@ -137,18 +135,24 @@ window.addEventListener('load', function() {
 		/* Hot Hand Definition */
 		var consecutive_makes = messageForm.elements["consecutive_shots"].value;
 		var time_span = messageForm.elements["time_span"].value;
-
+		if (consecutive_makes ==="" || time_span==="" || 
+			!$.isNumeric(consecutive_makes) || !$.isNumeric(time_span)) {
+			error_msg.css("display", "block");
+			error_msg.text("Warning! Please enter valid values for hot hand definition.");
+			return;
+		}
 		post_string[7] = consecutive_makes;
 		post_string[8] = time_span;
 
-		if(shot_distance_error_check || season_error) {
-			console.log("ERROR");
-		}
+		// if(shot_distance_error_check || season_error) {
+		// 	console.log("ERROR");
+		// }
 
-		else {
+		// else {
 			/* notify the server of the newly submitted message */
-			socket.emit('filter', post_string);
-		}
+	 	error_msg.css("display", "none")
+		socket.emit('filter', post_string);
+		// }
 		
 	}
 }, false);

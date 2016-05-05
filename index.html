@@ -26,7 +26,7 @@
 	<script src = "/socket.io/socket.io.js"></script>
 	<script src = "js/scatterplot.js"></script>
 	<script src = "js/index.js"></script>
-	<script src="js/histogram"></script>
+	<script src="js/histogram.js"></script>
 	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 	<!--[if lt IE 9]>
@@ -88,13 +88,17 @@
 				</div>
 			</div>
 
-			<div id="form_div">
+			<div id="form_div" class="container">
 				<form id="messagesForm">
-					<div id="data_filter_div">
+					<div id = "data_filter_div" class = "row-fluid">
+						<div class = "col-sm-12">
 						<h2> Data Filters </h2>
-						<div id="season_filter_div">
+						</div>
+						<div class="col-sm-12">
+						<div id="season_filter_div" class = "col-sm-2">
 							<p class="filter_header"> Seasons </p>
-							<select name="season_year_min" id="season_year_min">
+							<div class="col-sm-12">
+							<select name="season_year_min" id="season_year_min" class="form-control">
 								<option value="all" selected="selected"> Any </option>
 								<option value="2002"> 2001-2002 </option>
 								<option value="2003"> 2002-2003 </option>
@@ -111,11 +115,12 @@
 								<option value="2014"> 2013-2014 </option>
 								<option value="2015"> 2014-2015 </option>
 								<option value="2016"> 2015-2016 </option>
-							</select>
-							<br>
-							<span> to </span>
-							<br>
-							<select name="season_year_max" id="season_year_max">
+							</select> </div>
+							<div class="col-sm-12">
+							to
+							</div>
+							<div class="col-sm-12">
+							<select name="season_year_max" id="season_year_max" class="form-control">
 								<option value="all" selected="selected"> Any </option>
 								<option value="2002"> 2001-2002 </option>
 								<option value="2003"> 2002-2003 </option>
@@ -132,62 +137,46 @@
 								<option value="2014"> 2013-2014 </option>
 								<option value="2015"> 2014-2015 </option>
 								<option value="2016"> 2015-2016 </option>
-							</select>
+							</select> </div>
 						</div>
 
-						<div id="quarter_filter_div">
-							<p class="filter_header"> Quarters </p>
-							<div class = "inputdiv">
-							<input type="checkbox" name="q1_filter" value="1" checked="checked"> Q1
-							<!--						</input>-->
+						<div id="quarter_filter_div" class = "col-sm-2">
+							<div class="filter_header col-sm-12"> Quarters </div>
+							<!-- <div class = "quarter_checkboxes col-sm-12"> -->
+							<div class="col-sm-12">
+							<label class="checkbox-inline"><input type="checkbox" name="q1_filter" value="1" checked="checked">Q1</label>
+							<label class="checkbox-inline"><input type="checkbox" name="1ot_filter" value="5" checked="checked">1OT</label>
+							</div>
 
-							<br>
+							<div class="col-sm-12">
+							<label class="checkbox-inline"><input type="checkbox" name="q2_filter" value="2" checked="checked"> Q2</label>
+							<label class="checkbox-inline"><input type="checkbox" name="2ot_filter" value="6" checked="checked">2OT</label>
+							</div>
 
-							<input type="checkbox" name="q2_filter" value="2" checked="checked"> Q2
-							<!--                        </input>-->
+							<div class="col-sm-12">
+							<label class="checkbox-inline"><input type="checkbox" name="q3_filter" value="3" checked="checked"> Q3</label>
+							<label class="checkbox-inline"><input type="checkbox" name="3ot_filter" value="7" checked="checked">3OT</label>
+							</div>
 
-							<br>
+							<div class="col-sm-12">
+							<label class="checkbox-inline"><input type="checkbox" name="q4_filter" value="4" checked="checked"> Q4</label>
+							<label class="checkbox-inline"><input type="checkbox" name="4ot_filter" value="8" checked="checked">4OT </label>
+							</div>
+							<!-- </div>	 -->
+						</div>
 
-							<input type="checkbox" name="q3_filter" value="3" checked="checked"> Q3
-							<!--                        </input>-->
-
-							<br>
-
-							<input type="checkbox" name="q4_filter" value="4" checked="checked"> Q4
-							<!--                        </input>-->
-
-							<br>
-
-							<input type="checkbox" name="1ot_filter" value="5" checked="checked"> OT
-							<!--                        </input>-->
-
-							<br>
-
-							<input type="checkbox" name="2ot_filter" value="6" checked="checked"> 2OT
-
-
-							<br>
-
-							<input type="checkbox" name="3ot_filter" value="7" checked="checked"> 3OT
-							<!--                        </input>-->
-
-							<br>
-
-							<input type="checkbox" name="4ot_filter" value="8" checked="checked"> 4OT
-							<!--                        </input>-->
+						<div id="shot_distance_filter" class = "col-sm-4">
+							<p class="filter_header"> Shot Distance (feet) </p>
+							<div class="form-group col-sm-5">
+								<input type="text" class="form-control" name="shot_distance_min" value="1"><label>ft</label> 
+							</div>
+							<div class="col-sm-2"> to </div>
+							<div class="form-group col-sm-5">
+								<input type="text" class="form-control" name="shot_distance_max" value="3"> <label>ft</label> 
 							</div>
 						</div>
 
-						<div id="shot_distance_filter">
-							<p class="filter_header"> Shot Distance </p>
-							<input type="text" name="shot_distance_min" onkeypress='return event.charCode >= 48 && event.charCode <= 57'> ft
-							<br>
-							<span> to </span>
-							<br>
-							<input type="text" name="shot_distance_max" onkeypress='return event.charCode >= 48 && event.charCode <= 57'> ft
-						</div>
-
-						<div id="shot_type_filter">
+						<div id="shot_type_filter" class = "col-sm-2">
 							<p class="filter_header"> Shot Type </p>
 							<div class = "inputdiv">
 							<input type="radio" name="shot_type" value="1"> 2PT
@@ -205,7 +194,7 @@
 							</div>
 						</div>
 
-						<div id="game_type_filter">
+						<div id="game_type_filter" class = "col-sm-2">
 							<p class="filter_header"> Game Type </p>
 							<div class = "inputdiv">
 							<input type="radio" name="game_type" value="1"> Home
@@ -224,23 +213,31 @@
 							</div>
 						</div>
 					</div>
+					</div>
 					<br>
 
-					<div id="hot_hand_div">
-						<h2> Hot Hand Definition </h2>
-						<div id="consecutive_shots_filter">
-							<p class="filter_header"> Consecutive Makes </p>
-							<input type="text" name="consecutive_shots" onkeypress='return event.charCode >= 48 && event.charCode <= 57' required> makes
+					<div id="hot_hand_div" class = "row">
+						<div class="col-sm-12"><h2> Hot Hand Definition </h2></div>
+						<div class="col-sm-12">
+						<div id="consecutive_shots_filter" class="col-sm-6">
+							<div class="filter_header col-sm-12"> Consecutive Makes </div>
+							<label><input type="text" class="form-control" name="consecutive_shots" value="3"> makes</label>
 						</div>
 
-						<div id="time_span_filter">
-							<p class="filter_header"> Time Span </p>
-							<input type="text" name="time_span" onkeypress='return event.charCode >= 48 && event.charCode <= 57' required> mins
+						<div id="time_span_filter" class="col-sm-6">
+							<div class="filter_header"> Time Span </div>
+							<label><input type="text" name="time_span" class="form-control" value="20"> mins</label>
+						</div>
 						</div>
 					</div>
 <!--					<input type="submit" value="Send">-->
 				</form>
-				<button class = "btn btn-default" id = "filter_button" type = "submit" form = "messagesForm" value ="submit"> Submit </button>
+				<div class="col-sm-offset-2 col-sm-8 alert alert-danger" id="submit_warning">
+			    <strong>Warning!</strong> You need to select at least one quarter
+			  </div>
+				<div class = "col-sm-12"><button class = "btn btn-default" id = "filter_button" type = "submit" form = "messagesForm" value ="submit"> Submit </button>
+				</div>
+
 			</div>
 		</div>
 

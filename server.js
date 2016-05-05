@@ -166,15 +166,12 @@ io.sockets.on('connection', function (socket) {
 		var quarters = data[2];
 		var quarterfilter = "";
 		if (quarters.length > 0) {
-			quarterfilter = "Quarter=" + quarters[0];
+			quarterfilter = "Quarter in (" + quarters[0];
 		}
 		for (var i = 1; i < quarters.length; i++) {
-			quarterfilter += " OR Quarter=" + quarters[i];
+			quarterfilter += ", " + quarters[i];
 		}
-		if (quarterfilter.length > 1) {
-			quarterfilter = '(' + quarterfilter;
-			quarterfilter += ')';
-		}
+		quarterfilter += ") ";
 
 		// get home/away/both filter
 		var is_home = ""
@@ -195,10 +192,12 @@ io.sockets.on('connection', function (socket) {
 		var queryStr = "SELECT Time, Quarter, Player_Name, Player_ID, Is_Make, Distance, Game_ID FROM RAW_SHOTS WHERE Year >=$1 AND Year<=$2 AND " + quarterfilter + " AND Distance>=$3 AND Distance<= $4" + is_home + is_two_pointer + ";";
 		var glob_queryStr = "SELECT Time, Quarter, Player_Name, Player_ID, Is_Make, Distance, Game_ID FROM RAW_SHOTS WHERE Year >= " + data[0] + " AND Year<= " + data[1] + " AND " + quarterfilter + is_home;
 
+		console.log(queryStr);
+		start_time = parseFloat(Date.now());
 		conn.query(queryStr, [data[0], data[1], data[3], data[4]], function (err, result) {
+			console.log("That query took " + ((parseFloat(Date.now()) - start_time)/1000) + " seconds");
 			if (result.rows.length > 0) {
-				shot_data = result.rows;
-				calculate_percentages(shot_data);
+				calculate_percentages(result.rows);
 			} else if (err) {
 				console.log(err);
 			}
@@ -244,7 +243,7 @@ io.sockets.on('connection', function (socket) {
 				player_dict[key].calculate_reg();
 				player_dict[key].calculate_hot();
 			}
-			console.log(player_dict);
+			//console.log(player_dict);
 			socket.emit('hothandResult', {
 				playerDict: player_dict
 			});

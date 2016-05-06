@@ -22,7 +22,7 @@ io.sockets.on('connection', function (socket) {
 	var glob_queryStr;
 	var makes_req;
 	var span_req;
-	var player_dict;
+	var players;
 	socket.on('filter', function (data) {
 		console.log(data);
 		makes_req = data[7];
@@ -54,8 +54,7 @@ io.sockets.on('connection', function (socket) {
 			is_home = " AND Is_Home_Game=0";
 		}
 
-
-		var queryStr = "SELECT Time, Quarter, Player_Name, Player_ID, Is_Make, Distance, Game_ID, Year FROM RAW_SHOTS WHERE Year >=$1 AND Year<=$2 AND " + quarterfilter + " AND Distance>=$3 AND Distance<= $4" + is_home + is_two_pointer + ";";
+		var queryStr = "SELECT Time, Quarter, Player_Name, Player_ID, Is_Make, Distance, Game_ID FROM RAW_SHOTS WHERE Year >=$1 AND Year<=$2 AND " + quarterfilter + " AND Distance>=$3 AND Distance<= $4" + is_home + is_two_pointer + ";";
 		var glob_queryStr = "SELECT Time, Quarter, Is_Make, Distance, Game_ID, Year FROM RAW_SHOTS WHERE Year >= " + data[0] + " AND Year<= " + data[1] + " AND " + quarterfilter + is_home;
 
 		console.log(queryStr);
@@ -63,7 +62,11 @@ io.sockets.on('connection', function (socket) {
 		conn.query(queryStr, [data[0], data[1], data[3], data[4]], function (err, result) {
 			console.log("That query took " + ((parseFloat(Date.now()) - start_time)/1000) + " seconds");
 			if (result.rows.length > 0) {
-				calculate_percentages(result.rows);
+				players = calculate_percentages(result.rows);
+				socket.emit('hothandResult', {
+					playerDict: players
+				});
+				console.log("sent player Dict");
 			} else if (err) {
 				console.log(err);
 			}
@@ -80,12 +83,11 @@ io.sockets.on('connection', function (socket) {
 				var curr_shot = data[i].Is_Make;
 				var curr_game = data[i].Game_ID;
 				var curr_distance = data[i].Distance;
-				var curr_year = data[i].Year;
 
-				var id = (curr_link + curr_year);
+				var id = curr_link;
 				/* If this is the first time we're seeing this player, add him to the dictionaries */
 				if (!(id in player_dict)) {
-					player_dict[id] = new player_object(curr_link, curr_name, curr_year);
+					player_dict[id] = new player_object(curr_link, curr_name);
 					hot_dict[id] = new hot_object(curr_game, curr_quarter, curr_time, makes_req, span_req);
 				}
 
@@ -112,16 +114,12 @@ io.sockets.on('connection', function (socket) {
 				player_dict[key].calculate_reg();
 				player_dict[key].calculate_hot();
 			}
-			socket.emit('hothandResult', {
-				playerDict: player_dict
-			});
-			console.log("sent player Dict");
+
+			return player_dict;
 		};
 	});
 	socket.on('player_stats', function(player_link) {
 		var queryStr = glob_queryStr + " AND Player_ID = $1;";
-		console.log(player_link);
-		console.log(glob_queryStr);
 		conn.query(queryStr, [player_link], function (err, result) {
 			var shot_data = result.rows;
 			console.log(shot_data);
@@ -175,16 +173,33 @@ io.sockets.on('connection', function (socket) {
 	socket.on('colors', function(new_color_option) {
 		to_emit = [];
 		if (new_color_option == "average_shot_distance") {
-			for (key in player_dict) {
-				player_link = player_dict[key].player_link;
-				avg_shot_dist = player_dict[key].calculate_avg_shot_distance();
+			for (key in players) {
+				player_link = players[key].player_link;
+				avg_shot_dist = players[key].calculate_avg_shot_distance();
 				to_emit.push({player_link: player_link, avg_shot_distance: avg_shot_dist});
 			}
 		} else {
-			console.log('deal with this');
+			queryString = "SELECT Player_Id, Height, Weight, Position FROM Players WHERE Player_Id IN (";
+			for (key in player_dict) {
+				if (player_dict[key].hot_shots >= 50) {
+					queryString += '"' + key + '",';
+				}
+			}
+
+			queryString = queryString.slice(0, -1);
+			queryString += ");";
+			start_time = parseFloat(Date.now());
+			conn.query(queryString, function (err, result) {
+				console.log("That query took " + ((parseFloat(Date.now()) - start_time)/1000) + " seconds");
+				if (result.rows.length > 0) {
+					console.log(result.rows[0]);
+				} else if (err) {
+					console.log(err);
+				}
+			});
 		}
 
-		console.log(to_emit);
+		console.log(to_emit[0]);
 		socket.emit('colorResult', {
 			colorResults: to_emit
 		});
@@ -229,10 +244,9 @@ function hot_object(curr_game, curr_quarter, curr_time, makes_req, interval) {
 	};
 };
 
-function player_object(curr_link, curr_name, year) {
+function player_object(curr_link, curr_name) {
 	this.player_link = curr_link;
 	this.player_name = curr_name;
-	this.year = year;
 	this.hot_makes = 0;
 	this.hot_shots = 0;
 	this.reg_makes = 0;

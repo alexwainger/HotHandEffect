@@ -57,7 +57,6 @@ io.sockets.on('connection', function (socket) {
 		var queryStr = "SELECT Time, Quarter, Player_Name, Player_ID, Is_Make, Distance, Game_ID FROM RAW_SHOTS WHERE Year >=$1 AND Year<=$2 AND " + quarterfilter + " AND Distance>=$3 AND Distance<= $4" + is_home + is_two_pointer + ";";
 		var glob_queryStr = "SELECT Time, Quarter, Is_Make, Distance, Game_ID, Year FROM RAW_SHOTS WHERE Year >= " + data[0] + " AND Year<= " + data[1] + " AND " + quarterfilter + is_home;
 
-		console.log(queryStr);
 		start_time = parseFloat(Date.now());
 		conn.query(queryStr, [data[0], data[1], data[3], data[4]], function (err, result) {
 			console.log("That query took " + ((parseFloat(Date.now()) - start_time)/1000) + " seconds");
@@ -171,37 +170,32 @@ io.sockets.on('connection', function (socket) {
 	});
 
 	socket.on('colors', function(new_color_option) {
-		to_emit = [];
-		if (new_color_option == "average_shot_distance") {
-			for (key in players) {
-				player_link = players[key].player_link;
-				avg_shot_dist = players[key].calculate_avg_shot_distance();
-				to_emit.push({player_link: player_link, avg_shot_distance: avg_shot_dist});
+		queryString = "SELECT Player_Id, Height, Weight, Position FROM Players WHERE Player_Id IN (";
+		for (key in players) {
+			if (players[key].hot_shots >= 50) {
+				queryString += '"' + key + '",';
+				players[key].calculate_avg_shot_distance();
 			}
-		} else {
-			queryString = "SELECT Player_Id, Height, Weight, Position FROM Players WHERE Player_Id IN (";
-			for (key in player_dict) {
-				if (player_dict[key].hot_shots >= 50) {
-					queryString += '"' + key + '",';
-				}
-			}
-
-			queryString = queryString.slice(0, -1);
-			queryString += ");";
-			start_time = parseFloat(Date.now());
-			conn.query(queryString, function (err, result) {
-				console.log("That query took " + ((parseFloat(Date.now()) - start_time)/1000) + " seconds");
-				if (result.rows.length > 0) {
-					console.log(result.rows[0]);
-				} else if (err) {
-					console.log(err);
-				}
-			});
 		}
 
-		console.log(to_emit[0]);
-		socket.emit('colorResult', {
-			colorResults: to_emit
+		queryString = queryString.slice(0, -1);
+		queryString += ");";
+		
+		start_time = parseFloat(Date.now());
+		conn.query(queryString, function (err, result) {
+			console.log("That query took " + ((parseFloat(Date.now()) - start_time)/1000) + " seconds");
+			to_emit = [];
+			if (result.rows.length > 0) {
+				for (var i = 0; i < result.rows.length; i++) {
+					result.rows[i].avg_shot_distance = players[result.rows[i].Player_ID].avg_shot_distance;
+					to_emit.push(result.rows[i]);
+				}
+			} else if (err) {
+				console.log(err);
+			}
+			socket.emit('colorResult', {
+				colorResults: to_emit
+			});
 		});
 	});
 });
@@ -254,6 +248,7 @@ function player_object(curr_link, curr_name) {
 	this.hot_fg = 0.0;
 	this.reg_fg = 0.0;
 	this.shot_distance = 0.0;
+	this.avg_shot_distance = -1.0;
 	this.hot_shot_missed = function(distance) {
 		this.hot_shots += 1;
 		this.reg_shots += 1; 
@@ -291,7 +286,7 @@ function player_object(curr_link, curr_name) {
 		}
 	};
 	this.calculate_avg_shot_distance = function() {
-		return this.shot_distance / this.reg_shots;
+		this.avg_shot_distance = this.shot_distance / this.reg_shots;
 	};
 };
 

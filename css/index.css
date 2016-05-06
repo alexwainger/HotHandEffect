@@ -101,6 +101,12 @@ input[type="text"] {
 	display: none;
 }
 
-
+.help-button {
+	width: 30px;
+	height: 30px;
+	position: absolute;
+	margin-left: 200px;
+	top: 20px;
+}
 
 

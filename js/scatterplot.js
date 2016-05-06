@@ -124,7 +124,7 @@ $(document).ready(function () {
           .append("circle")
           .attr("cx", function(d) { return xScale(xValue(d)) })
           .attr("cy", function(d) { return yScale(yValue(d)) })
-          .attr("class", function(d) { return (d.player_link + d.year)})
+          .attr("class", function(d) { return d.player_link})
           .on("mouseover", handleMouseIn)
           .on("mouseout", handleMouseOut)
           .attr("r", radius)

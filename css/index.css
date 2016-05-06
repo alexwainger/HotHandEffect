@@ -108,5 +108,7 @@ input[type="text"] {
 	margin-left: 200px;
 	top: 20px;
 }
-
-
+.filter_div {
+	padding: 4px;
+	border-radius: 10px;
+}

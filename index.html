@@ -93,14 +93,14 @@
 					<div id="data_filter_div" class="row-fluid">
 						<div class="col-sm-12">
 							<h2> Data Filters </h2>
-							<img src="images/help-button.png" class="help-button" data-toggle="tooltip" title="Please fill in all the data filter fields. If you select any seasons, data from all seasons will be displayed. In addition, you need to select at least one quarter. The shot distance inputs should be numeric and the from distance should be smaller than the to distance.">
+							<img src="images/info_btn.ico" class="help-button" data-toggle="tooltip" title="Please fill in all the data filter fields. If you select any seasons, data from all seasons will be displayed. In addition, you need to select at least one quarter. The shot distance inputs should be numeric and the from distance should be smaller than the to distance.">
 						</div>
 						<div class="col-sm-12">
 							<div id="season_filter_div" class="col-sm-2">
 								<p class="filter_header"> Seasons </p>
 								<div class="col-sm-12">
 									<select name="season_year_min" id="season_year_min" class="form-control">
-										<option value="all" selected="selected"> Any </option>
+										<option value="all"> Any </option>
 										<option value="2002"> 2001-2002 </option>
 										<option value="2003"> 2002-2003 </option>
 										<option value="2004"> 2003-2004 </option>
@@ -115,7 +115,7 @@
 										<option value="2013"> 2012-2013 </option>
 										<option value="2014"> 2013-2014 </option>
 										<option value="2015"> 2014-2015 </option>
-										<option value="2016"> 2015-2016 </option>
+										<option value="2016" selected="selected"> 2015-2016 </option>
 									</select>
 								</div>
 								<div class="col-sm-12">
@@ -123,7 +123,7 @@
 								</div>
 								<div class="col-sm-12">
 									<select name="season_year_max" id="season_year_max" class="form-control">
-										<option value="all" selected="selected"> Any </option>
+										<option value="all"> Any </option>
 										<option value="2002"> 2001-2002 </option>
 										<option value="2003"> 2002-2003 </option>
 										<option value="2004"> 2003-2004 </option>
@@ -138,7 +138,7 @@
 										<option value="2013"> 2012-2013 </option>
 										<option value="2014"> 2013-2014 </option>
 										<option value="2015"> 2014-2015 </option>
-										<option value="2016"> 2015-2016 </option>
+										<option value="2016" selected="selected"> 2015-2016 </option>
 									</select>
 								</div>
 							</div>
@@ -148,30 +148,30 @@
 								<!-- <div class = "quarter_checkboxes col-sm-12"> -->
 								<div class="col-sm-12">
 									<label class="checkbox-inline">
-										<input type="checkbox" name="q1_filter" value="1" checked="checked">Q1</label>
+										<input class = "quarter_check" type="checkbox" name="q1_filter" value="1" checked="checked">Q1</label>
 									<label class="checkbox-inline">
-										<input type="checkbox" name="1ot_filter" value="5" checked="checked">1OT</label>
+										<input class = "quarter_check" type="checkbox" name="1ot_filter" value="5" checked="checked">1OT</label>
 								</div>
 
 								<div class="col-sm-12">
 									<label class="checkbox-inline">
-										<input type="checkbox" name="q2_filter" value="2" checked="checked"> Q2</label>
+										<input class = "quarter_check" type="checkbox" name="q2_filter" value="2" checked="checked"> Q2</label>
 									<label class="checkbox-inline">
-										<input type="checkbox" name="2ot_filter" value="6" checked="checked">2OT</label>
+										<input class = "quarter_check" type="checkbox" name="2ot_filter" value="6" checked="checked">2OT</label>
 								</div>
 
 								<div class="col-sm-12">
 									<label class="checkbox-inline">
-										<input type="checkbox" name="q3_filter" value="3" checked="checked"> Q3</label>
+										<input class = "quarter_check" type="checkbox" name="q3_filter" value="3" checked="checked"> Q3</label>
 									<label class="checkbox-inline">
-										<input type="checkbox" name="3ot_filter" value="7" checked="checked">3OT</label>
+										<input class = "quarter_check" type="checkbox" name="3ot_filter" value="7" checked="checked">3OT</label>
 								</div>
 
 								<div class="col-sm-12">
 									<label class="checkbox-inline">
-										<input type="checkbox" name="q4_filter" value="4" checked="checked"> Q4</label>
+										<input class = "quarter_check" type="checkbox" name="q4_filter" value="4" checked="checked"> Q4</label>
 									<label class="checkbox-inline">
-										<input type="checkbox" name="4ot_filter" value="8" checked="checked">4OT </label>
+										<input class = "quarter_check" type="checkbox" name="4ot_filter" value="8" checked="checked">4OT </label>
 								</div>
 								<!-- </div>	 -->
 							</div>
@@ -232,20 +232,32 @@
 					<div id="hot_hand_div" class="row">
 						<div class="col-sm-12">
 							<h2> Hot Hand Definition </h2>
-							<img src="images/help-button.png" class="help-button" data-toggle="tooltip" title="Make your hot hand definition by specifying the number of consecutive shots made in a certain time span as hot. All the user inputs should be numeric and larger than zero.">
+							<img src="images/info_btn.ico" class="help-button" data-toggle="tooltip" title="Make your hot hand definition by specifying the number of consecutive shots made in a certain time span as hot. All the user inputs should be numeric and larger than zero.">
 						</div>
 						<div class="col-sm-12">
-							<div id="consecutive_shots_filter" class="col-sm-6">
+							<div id="consecutive_shots_filter" class="col-sm-4">
 								<div class="filter_header col-sm-12"> Consecutive Makes </div>
 								<label>
-									<input type="text" class="form-control" name="consecutive_shots" value="3"> makes</label>
+									<input type="text" class="form-control" name="consecutive_shots" value="1"> makes</label>
 							</div>
 
-							<div id="time_span_filter" class="col-sm-6">
+							<div id="time_span_filter" class="col-sm-4">
 								<div class="filter_header"> Time Span </div>
 								<label>
 									<input type="text" name="time_span" class="form-control" value="20"> mins</label>
 							</div>
+							
+							<div class="col-sm-4" id ="min_max_hotshots"> 
+							<div class="filter_header"> Number of Shots</div>
+							<div class="col-sm-3 col-sm-offset-2"><label>
+								<input type = "text" name="min_num_shots" class="form-control" value="1">
+								min</label>
+							</label></div>
+							<div class="col-sm-3 col-sm-offset-2"><label>
+								<input type = "text" name="max_num_shots" class="form-control" value="10">
+								max</label></div>
+							</div>
+
 						</div>
 					</div>
 					<!--					<input type="submit" value="Send">-->

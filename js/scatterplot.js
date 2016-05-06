@@ -11,6 +11,7 @@ $(document).ready(function () {
   var all_diff_names = d3.map();
 	var playerDict = {};
 	var svg = null;
+	
 	socket.on('hothandResult', function (res) {
 		console.log(res);
 		playerDict = res.playerDict;

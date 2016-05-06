@@ -5,10 +5,10 @@ var express = require('express'),
 
 var conn = anyDB.createConnection('sqlite3://data/database.sqlite3');
 var app = express();
-var server = http.createServer(app);
 
 // add socket.io
 var io = require('socket.io').listen(server);
+var server = http.createServer(app);
 
 app.use(express.static(__dirname));
 //app.use('/data/shooting_numbers.csv', express.static(__dirname + '../data/shooting_numbers.csv'));

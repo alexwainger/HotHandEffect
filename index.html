@@ -96,7 +96,7 @@
 							<img src="images/info_btn.ico" class="help-button" data-toggle="tooltip" title="Please fill in all the data filter fields. If you select any seasons, data from all seasons will be displayed. In addition, you need to select at least one quarter. The shot distance inputs should be numeric and the from distance should be smaller than the to distance.">
 						</div>
 						<div class="col-sm-12">
-							<div id="season_filter_div" class="col-sm-2">
+							<div id="season_filter_div" class="col-sm-2 filter_div">
 								<p class="filter_header"> Seasons </p>
 								<div class="col-sm-12">
 									<select name="season_year_min" id="season_year_min" class="form-control">
@@ -143,7 +143,7 @@
 								</div>
 							</div>
 
-							<div id="quarter_filter_div" class="col-sm-2">
+							<div id="quarter_filter_div" class="col-sm-2 filter_div">
 								<div class="filter_header col-sm-12"> Quarters </div>
 								<!-- <div class = "quarter_checkboxes col-sm-12"> -->
 								<div class="col-sm-12">
@@ -176,7 +176,7 @@
 								<!-- </div>	 -->
 							</div>
 
-							<div id="shot_distance_filter" class="col-sm-4">
+							<div id="shot_distance_filter" class="col-sm-4 filter_div">
 								<p class="filter_header"> Shot Distance (feet) </p>
 								<div class="form-group col-sm-5">
 									<input type="text" class="form-control" name="shot_distance_min" value="1">
@@ -189,7 +189,7 @@
 								</div>
 							</div>
 
-							<div id="shot_type_filter" class="col-sm-2">
+							<div id="shot_type_filter" class="col-sm-2 filter_div">
 								<p class="filter_header"> Shot Type </p>
 								<div class="inputdiv">
 									<input type="radio" name="shot_type" value="1"> 2PT
@@ -207,7 +207,7 @@
 								</div>
 							</div>
 
-							<div id="game_type_filter" class="col-sm-2">
+							<div id="game_type_filter" class="col-sm-2 filter_div">
 								<p class="filter_header"> Game Type </p>
 								<div class="inputdiv">
 									<input type="radio" name="game_type" value="1"> Home
@@ -235,19 +235,19 @@
 							<img src="images/info_btn.ico" class="help-button" data-toggle="tooltip" title="Make your hot hand definition by specifying the number of consecutive shots made in a certain time span as hot. All the user inputs should be numeric and larger than zero.">
 						</div>
 						<div class="col-sm-12">
-							<div id="consecutive_shots_filter" class="col-sm-4">
+							<div id="consecutive_shots_filter" class="filter_div col-sm-4">
 								<div class="filter_header col-sm-12"> Consecutive Makes </div>
 								<label>
 									<input type="text" class="form-control" name="consecutive_shots" value="1"> makes</label>
 							</div>
 
-							<div id="time_span_filter" class="col-sm-4">
+							<div id="time_span_filter" class="filter_div col-sm-4">
 								<div class="filter_header"> Time Span </div>
 								<label>
 									<input type="text" name="time_span" class="form-control" value="20"> mins</label>
 							</div>
 							
-							<div class="col-sm-4" id ="min_max_hotshots"> 
+							<div class="col-sm-4 filter_div" id ="min_max_hotshots"> 
 							<div class="filter_header"> Number of Shots</div>
 							<div class="col-sm-3 col-sm-offset-2"><label>
 								<input type = "text" name="min_num_shots" class="form-control" value="1">

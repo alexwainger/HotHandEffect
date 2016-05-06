@@ -23,6 +23,7 @@ window.addEventListener('load', function () {
 		// at least one quater needs to be selected
 		var error_msg = $("#submit_warning");
 		if (!checked) {
+			$(document.getElementById("quarter_filter_div")).css('border', 'solid red');
 			error_msg.css("display", "block")
 			error_msg.text("Warning! Please select at least one quarter")
 			return;
@@ -55,10 +56,10 @@ window.addEventListener('load', function () {
 		console.log("Season Min: " + season_min_val);
 		console.log("Season Max: " + season_max_val);
 		if (season_max_val < season_min_val) {
+			$(document.getElementById("season_filter_div")).css('border', 'solid red');
 			error_msg.css("display", "block")
 			error_msg.text("Warning! Please enter valid Season range")
 			return;
-
 		}
 
 		/* Quarters */
@@ -115,6 +116,7 @@ window.addEventListener('load', function () {
 			shot_distance_min > shot_distance_max || shot_distance_min < 0 || shot_distance_max <= 0) {
 			error_msg.css("display", "block");
 			error_msg.text("Warning! Please enter valid shot distance")
+			$(document.getElementById("shot_distance_filter")).css('border', 'solid red');
 			return
 		} else {
 			post_string[3] = shot_distance_min;
@@ -144,10 +146,17 @@ window.addEventListener('load', function () {
 		/* Hot Hand Definition */
 		var consecutive_makes = messageForm.elements["consecutive_shots"].value;
 		var time_span = messageForm.elements["time_span"].value;
-		if (consecutive_makes === "" || time_span === "" ||
-			!$.isNumeric(consecutive_makes) || !$.isNumeric(time_span)) {
+		if (consecutive_makes === "" || !$.isNumeric(consecutive_makes) ) {
+			$(document.getElementById("consecutive_shots_filter")).css('border', 'solid red');
 			error_msg.css("display", "block");
-			error_msg.text("Warning! Please enter valid values for hot hand definition.");
+			error_msg.text("Warning! Please enter valid values for consecutive makes.");
+			return;
+		}
+
+		if (!$.isNumeric(time_span) || time_span === "" ) {
+			$(document.getElementById("time_span_filter")).css('border', 'solid red');
+			error_msg.css("display", "block");
+			error_msg.text("Warning! Please enter valid values for time span.");
 			return;
 		}
 		post_string[7] = consecutive_makes;
@@ -157,17 +166,15 @@ window.addEventListener('load', function () {
 		var shot_num_max = messageForm.elements["max_num_shots"].value;
 		var shot_num_min = messageForm.elements["min_num_shots"].value;
 		if (shot_num_min === "" || shot_num_max === "") {
+			$(document.getElementById("min_max_hotshots")).css('border', 'solid red');
 			error_msg.css("display", "block");
 			error_msg.text("Warning! Please enter valid values for number of shots.");
 			return;
 		}
-		// if(shot_distance_error_check || season_error) {
-		// 	console.log("ERROR");
-		// }
-
 		// else {
 		/* notify the server of the newly submitted message */
 		error_msg.css("display", "none")
+		$('.filter_div').css("border-style", "hidden")
 		socket.emit('filter', post_string);
 		// }
 

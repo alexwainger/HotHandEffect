@@ -5,9 +5,9 @@ var express = require('express'),
 
 var conn = anyDB.createConnection('sqlite3://data/database.sqlite3');
 var app = express();
-var server = http.createServer(app);
 
 // add socket.io
+var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 
 app.use(express.static(__dirname));

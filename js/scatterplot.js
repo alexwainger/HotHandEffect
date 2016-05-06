@@ -55,7 +55,6 @@ $(document).ready(function () {
 		var xValue = function(d) { return d.reg_fg; };
 		var yValue = function(d) { return d.hot_fg; };
 
-
 		var xScale = d3.scale.pow().exponent(.1)
 			.domain([d3.min(values, xValue) - .01, d3.max(values, xValue) + .01])
 			.range([margin, canvas_width - margin * 2]);
@@ -124,7 +123,7 @@ $(document).ready(function () {
           .append("circle")
           .attr("cx", function(d) { return xScale(xValue(d)) })
           .attr("cy", function(d) { return yScale(yValue(d)) })
-          .attr("class", function(d) { return d.player_link })
+          .attr("class", function(d) { return (d.player_link + d.year)})
           .on("mouseover", handleMouseIn)
           .on("mouseout", handleMouseOut)
           .attr("r", radius)
@@ -225,6 +224,7 @@ $(document).ready(function () {
 
   function handleMouseIn() {
 	  var player_link = d3.select(this).attr("class");
+	  console.log(data_points);
 	  var point = data_points.get(player_link);
 	  var difference = ((point.hot_fg - point.reg_fg) * 100).toFixed(1);
 	  console.log(point);

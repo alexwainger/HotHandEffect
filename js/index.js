@@ -162,6 +162,13 @@ window.addEventListener('load', function() {
 	 	error_msg.css("display", "none")
 		socket.emit('filter', post_string);
 		// }
-		
+
+
 	}
 }, false);
+
+
+var handle_colors = function() {
+	new_option = document.getElementById("coloring_options").value;
+	socket.emit("colors", new_option);
+}

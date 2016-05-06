@@ -257,6 +257,15 @@
 						<label><input type="radio" name="mode" value="name"> Name</label>
 					</form>
 					<div id="legend"><p>Legend</p></div>
+					<form>
+						<select name="coloring_options" id="coloring_options" onchange="handle_colors()" class="form-control">
+							<option value="none" selected="selected"> None </option>
+							<option value="position"> Position </option>
+							<option value="height"> Height </option>
+							<option value="weight"> Weight</option>
+							<option value="average_shot_distance"> Average Shot Distance </option>	
+						</select>
+					</form>	
 				</div>
 			</div>
 		</div>

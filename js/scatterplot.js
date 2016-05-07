@@ -13,15 +13,12 @@ $(document).ready(function () {
 	var svg = null;
 
 	socket.on('hothandResult', function (res) {
-//				console.log(res);
+		//				console.log(res);
 		playerDict = res.playerDict;
 		console.log("got response");
 		d3.select("svg").remove();
 		data = parseData(playerDict);
-//		console.log(data);
-		!svg ? makeD3(data) : updateData(data);
-//		!svg ? makeD3(playerDict) : updateData(playerDict);
-		//		makeD3(data);
+		makeD3(data);
 	});
 
 	var tooltip = d3.select("#scatterplot_div")
@@ -30,29 +27,18 @@ $(document).ready(function () {
 		.style("opacity", 0);
 
 	function parseData(rows) {
-//		console.log(rows);
+		//		console.log(rows);
 		data_points = d3.map();
 		for (var key in rows) {
-//			if (rows[key].hot_shots >= 50) {
-				data_points.set(key, rows[key]);
-//			}
+			data_points.set(key, rows[key]);
 		}
 		values = data_points.values();
 		return values;
 	}
 
 	function makeD3(values) {
-
-		// for (key in rows) {
-		// 	if (rows[key].hot_shots >= 50) {
-		// 		data_points.set(key, rows[key]);
-		// 	}
-		// }
-
-		// values = data_points.values();
-
 		for (var i = 0; i < values.length; i++) {
-//			if(values[i].hot_shots < 100) {console.log(values[i]);}
+			//			if(values[i].hot_shots < 100) {console.log(values[i]);}
 			if (!all_diff_names.has(values[i].player_name)) {
 				all_diff_names.set(values[i].player_name, values[i]);
 			}
@@ -181,38 +167,37 @@ $(document).ready(function () {
 		console.log("stash: " + JSON.stringify(d));
 	}
 
-	function updateData(values) {
-		console.log("update data")
-		all_circle.transition()
-			.remove();
-		all_circle.data(values)
-			.transition()
-			.duration(1000)
-			.attr("data-name", function (d) {
-				//console.log(d.player_link);
-				return d.player_link
-			})
-			.attr("r", radius)
-			.attr("fill", function (d) {
-				return colors(d.player_name)
-			});
-		// svg.selectAll("circle")
-		// 	 .data(values)
-		// 	 .enter()
-		// 	 .append("circle");
-		// svg.selectAll("circle")
-		// 	 .transition()
-		// 	 .duration(1000)
-		// 	 .attr("fill", function(d) { return colors(d.player_name); });
-
-		for (var i = 0; i < values.length; i++) {
-//			if(values[i].hot_shots < 100) {console.log(values[i]);}
-			if (!all_diff_names.has(values[i].player_name)) {
-				all_diff_names.set(values[i].player_name, values[i]);
-			}
-		}
-		drawLegend(all_diff_names.values());
-	}
+	//	function updateData(values) {
+	//		console.log("update data")
+	//		all_circle.transition()
+	//			.remove();
+	//		all_circle.data(values)
+	//			.transition()
+	//			.duration(1000)
+	//			.attr("data-name", function (d) {
+	//				return d.player_link
+	//			})
+	//			.attr("r", radius)
+	//			.attr("fill", function (d) {
+	//				return colors(d.player_name)
+	//			});
+	//		// svg.selectAll("circle")
+	//		// 	 .data(values)
+	//		// 	 .enter()
+	//		// 	 .append("circle");
+	//		// svg.selectAll("circle")
+	//		// 	 .transition()
+	//		// 	 .duration(1000)
+	//		// 	 .attr("fill", function(d) { return colors(d.player_name); });
+	//
+	//		for (var i = 0; i < values.length; i++) {
+	////			if(values[i].hot_shots < 100) {console.log(values[i]);}
+	//			if (!all_diff_names.has(values[i].player_name)) {
+	//				all_diff_names.set(values[i].player_name, values[i]);
+	//			}
+	//		}
+	//		drawLegend(all_diff_names.values());
+	//	}
 
 	function drawLegend(all_records) {
 		var li = {
@@ -239,7 +224,7 @@ $(document).ready(function () {
 			.attr("width", li.w)
 			.attr("height", li.h)
 			.style("fill", function (d) {
-//				console.log(d);
+				//				console.log(d);
 				return colors(d.player_name);
 			});
 

@@ -112,8 +112,7 @@ $(document).ready(function () {
 				"stroke-linecap": "round",
 				"stroke-dasharray": ("5, 10")
 			});
-<<<<<<< HEAD
-        
+
       	all_circle = svg.selectAll("circle")
 			.data(values)
 			.enter()

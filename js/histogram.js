@@ -24,7 +24,7 @@ $(document).ready(function () {
 
 	function makeD3(rows) {
 
-		for (key in rows) {
+		for (var key in rows) {
 			if (rows[key].hot_shots >= 50) {
 				data_points.set(key, rows[key]);
 			}

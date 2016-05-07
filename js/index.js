@@ -180,6 +180,7 @@ window.addEventListener('load', function () {
 		
 		post_string[9] = min_hothand;
 		post_string[10] = min_regular;
+
 		// else {
 		/* notify the server of the newly submitted message */
 		error_msg.css("display", "none")

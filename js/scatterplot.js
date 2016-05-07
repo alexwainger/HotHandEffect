@@ -7,14 +7,13 @@ $(document).ready(function () {
 	var radius = 5;
 	var data_points = d3.map();
 
-  	var all_diff_names = d3.map();
 	var playerDict = {};
 	var svg = null;
 	var legend_svg = null;
 
 	socket.on('hothandResult', function (res) {
 		playerDict = res.playerDict;
-		d3.select("svg").remove();
+		d3.select("#alexsvg");
 		data = parseData(playerDict);
 		makeD3(data);
 	});
@@ -34,12 +33,6 @@ $(document).ready(function () {
 	};
 
 	function makeD3(values) {
-		for (var i = 0; i < values.length; i++) {
-			if (!all_diff_names.has(values[i].player_name)) {
-				all_diff_names.set(values[i].player_name, values[i]);
-			}
-		}
-
 		var xValue = function (d) {
 			return d.reg_fg;
 		};

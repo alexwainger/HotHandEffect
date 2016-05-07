@@ -1,7 +1,7 @@
-var express = require('express'),
-	bodyParser = require('body-parser'),
-	anyDB = require('any-db'),
-	http = require('http');
+var express = require('express')
+	, bodyParser = require('body-parser')
+	, anyDB = require('any-db')
+	, http = require('http');
 
 var conn = anyDB.createConnection('sqlite3://data/database.sqlite3');
 var app = express();
@@ -22,12 +22,15 @@ io.sockets.on('connection', function (socket) {
 	var glob_queryStr;
 	var makes_req;
 	var span_req;
-	var player_dict;
+	var players;
 	socket.on('filter', function (data) {
 		console.log(data);
 		makes_req = data[7];
 		span_req = data[8];
-	
+		min_hotshots = data[9];
+		min_regshots = data[10];
+		console.log("min hot " + min_hotshots);
+
 		// get quarters filter
 		var quarters = data[2];
 		var quarterfilter = "";
@@ -54,21 +57,27 @@ io.sockets.on('connection', function (socket) {
 			is_home = " AND Is_Home_Game=0";
 		}
 
-
-		var queryStr = "SELECT Time, Quarter, Player_Name, Player_ID, Is_Make, Distance, Game_ID, Year FROM RAW_SHOTS WHERE Year >=$1 AND Year<=$2 AND " + quarterfilter + " AND Distance>=$3 AND Distance<= $4" + is_home + is_two_pointer + ";";
+		var queryStr = "SELECT Time, Quarter, Player_Name, Player_ID, Is_Make, Distance, Game_ID FROM RAW_SHOTS WHERE Year >=$1 AND Year<=$2 AND " + quarterfilter + " AND Distance>=$3 AND Distance<= $4" + is_home + is_two_pointer + ";";
 		var glob_queryStr = "SELECT Time, Quarter, Is_Make, Distance, Game_ID, Year FROM RAW_SHOTS WHERE Year >= " + data[0] + " AND Year<= " + data[1] + " AND " + quarterfilter + is_home;
 
-		console.log(queryStr);
 		start_time = parseFloat(Date.now());
 		conn.query(queryStr, [data[0], data[1], data[3], data[4]], function (err, result) {
-			console.log("That query took " + ((parseFloat(Date.now()) - start_time)/1000) + " seconds");
+			console.log("That query took " + ((parseFloat(Date.now()) - start_time) / 1000) + " seconds");
+			if(!result) {
+				console.log("no results retrieved.");
+				return;
+			}
 			if (result.rows.length > 0) {
-				calculate_percentages(result.rows);
+				players = calculate_percentages(result.rows);
+				socket.emit('hothandResult', {
+					playerDict: players
+				});
+				console.log("sent player Dict");
 			} else if (err) {
 				console.log(err);
 			}
 		});
-		
+
 		function calculate_percentages(data) {
 			player_dict = {};
 			hot_dict = {};
@@ -80,12 +89,11 @@ io.sockets.on('connection', function (socket) {
 				var curr_shot = data[i].Is_Make;
 				var curr_game = data[i].Game_ID;
 				var curr_distance = data[i].Distance;
-				var curr_year = data[i].Year;
 
-				var id = (curr_link + curr_year);
+				var id = curr_link;
 				/* If this is the first time we're seeing this player, add him to the dictionaries */
 				if (!(id in player_dict)) {
-					player_dict[id] = new player_object(curr_link, curr_name, curr_year);
+					player_dict[id] = new player_object(curr_link, curr_name);
 					hot_dict[id] = new hot_object(curr_game, curr_quarter, curr_time, makes_req, span_req);
 				}
 
@@ -108,20 +116,21 @@ io.sockets.on('connection', function (socket) {
 				}
 			}
 
-			for(key in player_dict) {
-				player_dict[key].calculate_reg();
-				player_dict[key].calculate_hot();
+			for (key in player_dict) {
+				if (player_dict[key].hot_shots < min_hotshots || player_dict[key].reg_shots < min_regshots) {
+					delete player_dict[key];
+				} else {
+//					console.log(player_dict[key]);
+					player_dict[key].calculate_reg();
+					player_dict[key].calculate_hot();
+				}
 			}
-			socket.emit('hothandResult', {
-				playerDict: player_dict
-			});
-			console.log("sent player Dict");
+//			console.log(player_dict);
+			return player_dict;
 		};
 	});
-	socket.on('player_stats', function(player_link) {
+	socket.on('player_stats', function (player_link) {
 		var queryStr = glob_queryStr + " AND Player_ID = $1;";
-		console.log(player_link);
-		console.log(glob_queryStr);
 		conn.query(queryStr, [player_link], function (err, result) {
 			var shot_data = result.rows;
 			console.log(shot_data);
@@ -131,7 +140,7 @@ io.sockets.on('connection', function (socket) {
 		function calculate_player_stats(data, link) {
 			var distance_dict = {};
 			var player_obj = new player_object(link, "", 0);
-			var hot_obj = new hot_object("-1", 0,"0:00", makes_req, span_req);
+			var hot_obj = new hot_object("-1", 0, "0:00", makes_req, span_req);
 
 			for (var i = 0; i < data.length; i++) {
 				var distance = data[i].Distance;
@@ -165,28 +174,40 @@ io.sockets.on('connection', function (socket) {
 				}
 			}
 
-			for(key in distance_dict) {
+			for (key in distance_dict) {
 				distance_dict[key].calculate_all(player_obj.hot_shots, player_obj.reg_shots);
 			}
 			return distance_dict;
 		};
 	});
 
-	socket.on('colors', function(new_color_option) {
-		to_emit = [];
-		if (new_color_option == "average_shot_distance") {
-			for (key in player_dict) {
-				player_link = player_dict[key].player_link;
-				avg_shot_dist = player_dict[key].calculate_avg_shot_distance();
-				to_emit.push({player_link: player_link, avg_shot_distance: avg_shot_dist});
+	socket.on('colors', function (new_color_option) {
+		queryString = "SELECT Player_Id, Height, Weight, Position FROM Players WHERE Player_Id IN (";
+		for (key in players) {
+			if (players[key].hot_shots >= 50) {
+				queryString += '"' + key + '",';
+				players[key].calculate_avg_shot_distance();
 			}
-		} else {
-			console.log('deal with this');
 		}
 
-		console.log(to_emit);
-		socket.emit('colorResult', {
-			colorResults: to_emit
+		queryString = queryString.slice(0, -1);
+		queryString += ");";
+
+		start_time = parseFloat(Date.now());
+		conn.query(queryString, function (err, result) {
+			console.log("That query took " + ((parseFloat(Date.now()) - start_time) / 1000) + " seconds");
+			to_emit = [];
+			if (result.rows.length > 0) {
+				for (var i = 0; i < result.rows.length; i++) {
+					result.rows[i].avg_shot_distance = players[result.rows[i].Player_ID].avg_shot_distance;
+					to_emit.push(result.rows[i]);
+				}
+			} else if (err) {
+				console.log(err);
+			}
+			socket.emit('colorResult', {
+				colorResults: to_emit
+			});
 		});
 	});
 });
@@ -198,7 +219,7 @@ function hot_object(curr_game, curr_quarter, curr_time, makes_req, interval) {
 	this.game_id = curr_game;
 	this.time = curr_time
 	this.consec_makes = 0;
-	this.is_player_hot = function(gameid, quarter, time, curr_shot) {
+	this.is_player_hot = function (gameid, quarter, time, curr_shot) {
 		is_within_time_range = this.compare_times(gameid, quarter, time);
 		is_hot = is_within_time_range && (this.consec_makes >= this.req_consec_makes);
 		this.game_id = gameid;
@@ -216,7 +237,7 @@ function hot_object(curr_game, curr_quarter, curr_time, makes_req, interval) {
 
 		return is_hot;
 	};
-	this.compare_times = function(new_gameid, new_quarter, new_time) {
+	this.compare_times = function (new_gameid, new_quarter, new_time) {
 		var new_min = parseFloat(new_time.split(":")[0]);
 		var old_min = parseFloat(this.time.split(":")[0]);
 		var new_sec = parseFloat(new_time.split(":")[1] / 60.0);
@@ -229,10 +250,9 @@ function hot_object(curr_game, curr_quarter, curr_time, makes_req, interval) {
 	};
 };
 
-function player_object(curr_link, curr_name, year) {
+function player_object(curr_link, curr_name) {
 	this.player_link = curr_link;
 	this.player_name = curr_name;
-	this.year = year;
 	this.hot_makes = 0;
 	this.hot_shots = 0;
 	this.reg_makes = 0;
@@ -240,9 +260,10 @@ function player_object(curr_link, curr_name, year) {
 	this.hot_fg = 0.0;
 	this.reg_fg = 0.0;
 	this.shot_distance = 0.0;
-	this.hot_shot_missed = function(distance) {
+	this.avg_shot_distance = -1.0;
+	this.hot_shot_missed = function (distance) {
 		this.hot_shots += 1;
-		this.reg_shots += 1; 
+		this.reg_shots += 1;
 		this.shot_distance += distance;
 	};
 	this.hot_shot_made = function (distance) {
@@ -261,36 +282,35 @@ function player_object(curr_link, curr_name, year) {
 		this.reg_makes += 1;
 		this.shot_distance += distance;
 	};
-	this.calculate_hot = function() {
+	this.calculate_hot = function () {
 		if (this.hot_shots == 0) {
 			this.hot_fg = 0.0;
-		}
-		else {
-			this.hot_fg = parseFloat(this.hot_makes/this.hot_shots);
+		} else {
+			this.hot_fg = parseFloat(this.hot_makes / this.hot_shots);
 		}
 	};
-	this.calculate_reg = function() {
+	this.calculate_reg = function () {
 		if (this.reg_shots == 0) {
 			this.reg_fg = 0.0;
 		} else {
-			this.reg_fg = parseFloat(this.reg_makes/this.reg_shots);
+			this.reg_fg = parseFloat(this.reg_makes / this.reg_shots);
 		}
 	};
-	this.calculate_avg_shot_distance = function() {
-		return this.shot_distance / this.reg_shots;
+	this.calculate_avg_shot_distance = function () {
+		this.avg_shot_distance = this.shot_distance / this.reg_shots;
 	};
 };
 
 function distance_object() {
 	this.hot_makes = 0;
-	this.hot_shots = 0;			
+	this.hot_shots = 0;
 	this.reg_makes = 0;
 	this.reg_shots = 0;
 	this.hot_fg = 0.0;
 	this.reg_fg = 0.0;
 	this.hot_freq = 0.0;
 	this.reg_freq = 0.0;
-	this.hot_shot_missed = function() { 
+	this.hot_shot_missed = function () {
 		this.hot_shots = this.hot_shots + 1;
 		this.reg_shots = this.reg_shots + 1;
 	};
@@ -300,25 +320,24 @@ function distance_object() {
 		this.reg_shots = this.reg_shots + 1;
 		this.reg_makes = this.reg_makes + 1;
 	};
-	this.reg_shot_missed = function () {						
-		this.reg_shots = this.reg_shots + 1;						
+	this.reg_shot_missed = function () {
+		this.reg_shots = this.reg_shots + 1;
 	};
 	this.reg_shot_made = function () {
 		this.reg_shots = this.reg_shots + 1;
 		this.reg_makes = this.reg_makes + 1;
 	};
-	this.calculate_all = function(total_hot_shots, total_reg_shots) {
+	this.calculate_all = function (total_hot_shots, total_reg_shots) {
 		if (this.hot_shots == 0) {
 			this.hot_fg = 0.0;
-		}
-		else {
-			this.hot_fg = parseFloat(this.hot_makes/this.hot_shots);
+		} else {
+			this.hot_fg = parseFloat(this.hot_makes / this.hot_shots);
 		}
 
 		if (this.reg_shots == 0) {
 			this.reg_fg = 0.0;
 		} else {
-			this.reg_fg = parseFloat(this.reg_makes/this.reg_shots);
+			this.reg_fg = parseFloat(this.reg_makes / this.reg_shots);
 		}
 
 		if (total_hot_shots == 0) {

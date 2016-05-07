@@ -163,12 +163,18 @@ window.addEventListener('load', function () {
 		post_string[8] = time_span;
 
 
-		var shot_num_max = messageForm.elements["max_num_shots"].value;
-		var shot_num_min = messageForm.elements["min_num_shots"].value;
-		if (shot_num_min === "" || shot_num_max === "") {
-			$(document.getElementById("min_max_hotshots")).css('border', 'solid red');
+		var min_regular = messageForm.elements["min_regular"].value;
+		var min_hothand = messageForm.elements["min_hothand"].value;
+		if (min_hothand === "") {
+			$(document.getElementById("min_hothand")).css('border', 'solid red');
 			error_msg.css("display", "block");
-			error_msg.text("Warning! Please enter valid values for number of shots.");
+			error_msg.text("Warning! Please enter valid values for minimum number of hot hand made.");
+			return;
+		}
+		if (min_regular === "") {
+			$(document.getElementById("min_regular")).css('border', 'solid red');
+			error_msg.css("display", "block");
+			error_msg.text("Warning! Please enter valid values for minimum number of regular shots made.");
 			return;
 		}
 		// else {

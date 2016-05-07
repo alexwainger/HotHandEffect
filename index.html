@@ -235,27 +235,28 @@
 							<img src="images/info_btn.ico" class="help-button" data-toggle="tooltip" title="Make your hot hand definition by specifying the number of consecutive shots made in a certain time span as hot. All the user inputs should be numeric and larger than zero.">
 						</div>
 						<div class="col-sm-12">
-							<div id="consecutive_shots_filter" class="filter_div col-sm-4">
+							<div id="consecutive_shots_filter" class="filter_div col-sm-3">
 								<div class="filter_header col-sm-12"> Consecutive Makes </div>
 								<label>
 									<input type="text" class="form-control" name="consecutive_shots" value="1"> makes</label>
 							</div>
 
-							<div id="time_span_filter" class="filter_div col-sm-4">
+							<div id="time_span_filter" class="filter_div col-sm-3">
 								<div class="filter_header"> Time Span </div>
 								<label>
 									<input type="text" name="time_span" class="form-control" value="20"> mins</label>
 							</div>
 							
-							<div class="col-sm-4 filter_div" id ="min_max_hotshots"> 
-							<div class="filter_header"> Number of Shots</div>
-							<div class="col-sm-3 col-sm-offset-2"><label>
-								<input type = "text" name="min_num_shots" class="form-control" value="1">
-								min</label>
-							</label></div>
-							<div class="col-sm-3 col-sm-offset-2"><label>
-								<input type = "text" name="max_num_shots" class="form-control" value="10">
-								max</label></div>
+							<div class="col-sm-3 filter_div" id ="min_hothand"> 
+							<div class="filter_header"> Minimum Hot Hand</div>
+								<label><input type = "text" name="min_hothand" class="form-control" value="1">
+								</label>
+							</div>
+
+							<div class="col-sm-3 filter_div" id ="min_regular"> 
+							<div class="filter_header"> Minimum Hot Hand</div>
+								<label><input type = "text" name="min_regular" class="form-control" value="1">
+								</label>
 							</div>
 
 						</div>

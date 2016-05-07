@@ -155,7 +155,7 @@ $(document).ready(function () {
             .attr("ry", li.r)
             .attr("width", li.w)
             .attr("height", li.h)
-            .style("fill", function(d) { console.log(d) ;return colors(d.player_name); });
+            .style("fill", function(d) { return colors(d.player_name); });
 
         g.append("text")
             .attr("x", li.w / 2)
@@ -163,9 +163,9 @@ $(document).ready(function () {
             .attr("dy", "0.35em")
             .attr("text-anchor", "middle")
             .text(function(d) { 
-                fullname = d.player_name.split(" ");
-                console.log(fullname);
-                result = "";
+            	// use only initials
+                var fullname = d.player_name.split(" ");
+                var result = "";
                 for (var i = 0; i < fullname.length; i++) {
                     result += fullname[i].charAt(0) + ".";
                 }

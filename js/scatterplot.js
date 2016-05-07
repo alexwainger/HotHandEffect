@@ -279,5 +279,4 @@ $(document).ready(function () {
 			.duration(200)
 			.style("opacity", .9);
 	};
->>>>>>> 02a87a29a8320aef54799e6893d29e61480773dc
 });

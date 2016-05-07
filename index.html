@@ -19,13 +19,13 @@
 	<!-- D3.js -->
 
 	<!-- Custom CSS -->
-	<link href="css/scrolling-nav.css" rel="stylesheet">
-	<link href="css/scatterplot.css" rel="stylesheet">
-	<link href="css/index.css" rel="stylesheet">
-	<link href="css/histogram.css" rel="stylesheet">
-	<script src="/socket.io/socket.io.js"></script>
-	<script src="js/scatterplot.js"></script>
-	<script src="js/index.js"></script>
+	<link href = "css/scrolling-nav.css" rel = "stylesheet">
+	<link href = "css/scatterplot.css" rel = "stylesheet">
+	<link href = "css/index.css" rel = "stylesheet">
+	<link href = "css/histogram.css" rel = "stylesheet">
+	<script src = "/socket.io/socket.io.js"></script>
+	<script src = "js/scatterplot.js"></script>
+	<script src = "js/index.js"></script>
 	<script src="js/histogram.js"></script>
 	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -232,30 +232,33 @@
 					<div id="hot_hand_div" class="row">
 						<div class="col-sm-12">
 							<h2> Hot Hand Definition </h2>
-							<img src="images/info_btn.ico" class="help-button" data-toggle="tooltip" title="Make your hot hand definition by specifying the number of consecutive shots made in a certain time span as hot. All the user inputs should be numeric and larger than zero.">
+							<img src="images/info_btn.ico" class="help-button" data-toggle="tooltip" title="Make your hot hand definition by specifying the number of consecutive shots made in a certain time span as hot. Feel free to filter out players who have too few shots by entering the minimum hot and regular shot numbers to show. All the user inputs should be numeric and larger than zero.">
 						</div>
 						<div class="col-sm-12">
-							<div id="consecutive_shots_filter" class="filter_div col-sm-4">
+							<div id="consecutive_shots_filter" class="filter_div col-sm-3">
 								<div class="filter_header col-sm-12"> Consecutive Makes </div>
 								<label>
 									<input type="text" class="form-control" name="consecutive_shots" value="1"> makes</label>
 							</div>
 
-							<div id="time_span_filter" class="filter_div col-sm-4">
+							<div id="time_span_filter" class="filter_div col-sm-3">
 								<div class="filter_header"> Time Span </div>
 								<label>
 									<input type="text" name="time_span" class="form-control" value="20"> mins</label>
 							</div>
 							
-							<div class="col-sm-4 filter_div" id ="min_max_hotshots"> 
-							<div class="filter_header"> Number of Shots</div>
-							<div class="col-sm-3 col-sm-offset-2"><label>
-								<input type = "text" name="min_num_shots" class="form-control" value="1">
-								min</label>
-							</label></div>
-							<div class="col-sm-3 col-sm-offset-2"><label>
-								<input type = "text" name="max_num_shots" class="form-control" value="10">
-								max</label></div>
+							<div class="col-sm-3 filter_div" id ="min_hothand"> 
+							<div class="filter_header"> Minimum Hot Hand Shots</div>
+								<label><input type = "text" name="min_hothand" class="form-control" value="50">
+
+								</label>
+							</div>
+
+							<div class="col-sm-3 filter_div" id ="min_regular"> 
+							<div class="filter_header"> Minimum Regular Shots</div>
+								<label><input type = "text" name="min_regular" class="form-control" value="50">
+
+								</label>
 							</div>
 
 						</div>

@@ -1,7 +1,7 @@
-var express = require('express'),
-	bodyParser = require('body-parser'),
-	anyDB = require('any-db'),
-	http = require('http');
+var express = require('express')
+	, bodyParser = require('body-parser')
+	, anyDB = require('any-db')
+	, http = require('http');
 
 var conn = anyDB.createConnection('sqlite3://data/database.sqlite3');
 var app = express();
@@ -27,7 +27,10 @@ io.sockets.on('connection', function (socket) {
 		console.log(data);
 		makes_req = data[7];
 		span_req = data[8];
-	
+		min_hotshots = data[9];
+		min_regshots = data[10];
+		console.log("min hot " + min_hotshots);
+
 		// get quarters filter
 		var quarters = data[2];
 		var quarterfilter = "";
@@ -59,7 +62,11 @@ io.sockets.on('connection', function (socket) {
 
 		start_time = parseFloat(Date.now());
 		conn.query(queryStr, [data[0], data[1], data[3], data[4]], function (err, result) {
-			console.log("That query took " + ((parseFloat(Date.now()) - start_time)/1000) + " seconds");
+			console.log("That query took " + ((parseFloat(Date.now()) - start_time) / 1000) + " seconds");
+			if(!result) {
+				console.log("no results retrieved.");
+				return;
+			}
 			if (result.rows.length > 0) {
 				players = calculate_percentages(result.rows);
 				socket.emit('hothandResult', {
@@ -70,7 +77,7 @@ io.sockets.on('connection', function (socket) {
 				console.log(err);
 			}
 		});
-		
+
 		function calculate_percentages(data) {
 			player_dict = {};
 			hot_dict = {};
@@ -109,15 +116,19 @@ io.sockets.on('connection', function (socket) {
 				}
 			}
 
-			for(key in player_dict) {
-				player_dict[key].calculate_reg();
-				player_dict[key].calculate_hot();
+			for (key in player_dict) {
+				if (player_dict[key].hot_shots < min_hotshots || player_dict[key].reg_shots < min_regshots) {
+					delete player_dict[key];
+				} else {
+//					console.log(player_dict[key]);
+					player_dict[key].calculate_reg();
+					player_dict[key].calculate_hot();
+				}
 			}
-
 			return player_dict;
 		};
 	});
-	socket.on('player_stats', function(player_link) {
+	socket.on('player_stats', function (player_link) {
 		var queryStr = glob_queryStr + " AND Player_ID = $1;";
 		conn.query(queryStr, [player_link], function (err, result) {
 			var shot_data = result.rows;
@@ -128,7 +139,7 @@ io.sockets.on('connection', function (socket) {
 		function calculate_player_stats(data, link) {
 			var distance_dict = {};
 			var player_obj = new player_object(link, "", 0);
-			var hot_obj = new hot_object("-1", 0,"0:00", makes_req, span_req);
+			var hot_obj = new hot_object("-1", 0, "0:00", makes_req, span_req);
 
 			for (var i = 0; i < data.length; i++) {
 				var distance = data[i].Distance;
@@ -162,7 +173,7 @@ io.sockets.on('connection', function (socket) {
 				}
 			}
 
-			for(key in distance_dict) {
+			for (key in distance_dict) {
 				distance_dict[key].calculate_all(player_obj.hot_shots, player_obj.reg_shots);
 			}
 			return distance_dict;
@@ -206,7 +217,7 @@ function hot_object(curr_game, curr_quarter, curr_time, makes_req, interval) {
 	this.game_id = curr_game;
 	this.time = curr_time
 	this.consec_makes = 0;
-	this.is_player_hot = function(gameid, quarter, time, curr_shot) {
+	this.is_player_hot = function (gameid, quarter, time, curr_shot) {
 		is_within_time_range = this.compare_times(gameid, quarter, time);
 		is_hot = is_within_time_range && (this.consec_makes >= this.req_consec_makes);
 		this.game_id = gameid;
@@ -224,7 +235,7 @@ function hot_object(curr_game, curr_quarter, curr_time, makes_req, interval) {
 
 		return is_hot;
 	};
-	this.compare_times = function(new_gameid, new_quarter, new_time) {
+	this.compare_times = function (new_gameid, new_quarter, new_time) {
 		var new_min = parseFloat(new_time.split(":")[0]);
 		var old_min = parseFloat(this.time.split(":")[0]);
 		var new_sec = parseFloat(new_time.split(":")[1] / 60.0);
@@ -248,9 +259,10 @@ function player_object(curr_link, curr_name) {
 	this.reg_fg = 0.0;
 	this.shot_distance = 0.0;
 	this.avg_shot_distance = -1.0;
+
 	this.hot_shot_missed = function(distance) {
 		this.hot_shots += 1;
-		this.reg_shots += 1; 
+		this.reg_shots += 1;
 		this.shot_distance += distance;
 	};
 	this.hot_shot_made = function (distance) {
@@ -269,21 +281,21 @@ function player_object(curr_link, curr_name) {
 		this.reg_makes += 1;
 		this.shot_distance += distance;
 	};
-	this.calculate_hot = function() {
+	this.calculate_hot = function () {
 		if (this.hot_shots == 0) {
 			this.hot_fg = 0.0;
-		}
-		else {
-			this.hot_fg = parseFloat(this.hot_makes/this.hot_shots);
+		} else {
+			this.hot_fg = parseFloat(this.hot_makes / this.hot_shots);
 		}
 	};
-	this.calculate_reg = function() {
+	this.calculate_reg = function () {
 		if (this.reg_shots == 0) {
 			this.reg_fg = 0.0;
 		} else {
-			this.reg_fg = parseFloat(this.reg_makes/this.reg_shots);
+			this.reg_fg = parseFloat(this.reg_makes / this.reg_shots);
 		}
 	};
+
 	this.calculate_avg_shot_distance = function() {
 		this.avg_shot_distance = parseFloat(this.shot_distance / this.reg_shots);
 	};
@@ -291,14 +303,14 @@ function player_object(curr_link, curr_name) {
 
 function distance_object() {
 	this.hot_makes = 0;
-	this.hot_shots = 0;			
+	this.hot_shots = 0;
 	this.reg_makes = 0;
 	this.reg_shots = 0;
 	this.hot_fg = 0.0;
 	this.reg_fg = 0.0;
 	this.hot_freq = 0.0;
 	this.reg_freq = 0.0;
-	this.hot_shot_missed = function() { 
+	this.hot_shot_missed = function () {
 		this.hot_shots = this.hot_shots + 1;
 		this.reg_shots = this.reg_shots + 1;
 	};
@@ -308,25 +320,24 @@ function distance_object() {
 		this.reg_shots = this.reg_shots + 1;
 		this.reg_makes = this.reg_makes + 1;
 	};
-	this.reg_shot_missed = function () {						
-		this.reg_shots = this.reg_shots + 1;						
+	this.reg_shot_missed = function () {
+		this.reg_shots = this.reg_shots + 1;
 	};
 	this.reg_shot_made = function () {
 		this.reg_shots = this.reg_shots + 1;
 		this.reg_makes = this.reg_makes + 1;
 	};
-	this.calculate_all = function(total_hot_shots, total_reg_shots) {
+	this.calculate_all = function (total_hot_shots, total_reg_shots) {
 		if (this.hot_shots == 0) {
 			this.hot_fg = 0.0;
-		}
-		else {
-			this.hot_fg = parseFloat(this.hot_makes/this.hot_shots);
+		} else {
+			this.hot_fg = parseFloat(this.hot_makes / this.hot_shots);
 		}
 
 		if (this.reg_shots == 0) {
 			this.reg_fg = 0.0;
 		} else {
-			this.reg_fg = parseFloat(this.reg_makes/this.reg_shots);
+			this.reg_fg = parseFloat(this.reg_makes / this.reg_shots);
 		}
 
 		if (total_hot_shots == 0) {

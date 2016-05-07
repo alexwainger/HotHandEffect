@@ -13,11 +13,10 @@ $(document).ready(function () {
 	var legend_svg = null;
 
 	socket.on('hothandResult', function (res) {
-		console.log(res);
 		playerDict = res.playerDict;
 		d3.select("svg").remove();
-		data = parseData(playerDict)
-		!svg ? makeD3(data) : updateData(data);
+		data = parseData(playerDict);
+		makeD3(data);
 	});
 
 	var tooltip = d3.select("#scatterplot_div")
@@ -26,24 +25,27 @@ $(document).ready(function () {
 		.style("opacity", 0);
 
 	function parseData(rows) {
+		data_points = d3.map();
 		for (var key in rows) {
-			if (rows[key].hot_shots >= 50) {
-				data_points.set(key, rows[key]);
-			}
+			data_points.set(key, rows[key]);
 		}
 		values = data_points.values();
 		return values;
 	};
-	function makeD3(values) {
 
+	function makeD3(values) {
 		for (var i = 0; i < values.length; i++) {
 			if (!all_diff_names.has(values[i].player_name)) {
 				all_diff_names.set(values[i].player_name, values[i]);
 			}
 		}
 
-		var xValue = function(d) { return d.reg_fg; };
-		var yValue = function(d) { return d.hot_fg; };
+		var xValue = function (d) {
+			return d.reg_fg;
+		};
+		var yValue = function (d) {
+			return d.hot_fg;
+		};
 
 		var minPercentage = Math.min(d3.min(values, xValue), d3.min(values, yValue));
 		var maxPercentage = Math.max(d3.max(values, xValue), d3.max(values, yValue));
@@ -68,7 +70,7 @@ $(document).ready(function () {
 			.ticks(10)
 			.tickFormat(d3.format(".0%"));
 
-	 	svg = d3.select("#scatterplot_div").append("svg")
+		svg = d3.select("#scatterplot_div").append("svg")
 			.attr("id", "alexsvg")
 			.attr("width", canvas_width)
 			.attr("height", canvas_height);
@@ -110,6 +112,7 @@ $(document).ready(function () {
 				"stroke-linecap": "round",
 				"stroke-dasharray": ("5, 10")
 			});
+<<<<<<< HEAD
         
       	all_circle = svg.selectAll("circle")
 			.data(values)
@@ -117,7 +120,7 @@ $(document).ready(function () {
 			.append("circle")
 			.attr("cx", function(d) { return xScale(xValue(d)) })
 			.attr("cy", function(d) { return yScale(yValue(d)) })
-			.attr("class", function(d) { return d.player_link})
+			.attr("data-name", function(d) { return d.player_link})
 			.on("mouseover", handleMouseIn)
 			.on("mouseout", handleMouseOut)
 			.attr("r", radius)
@@ -250,37 +253,12 @@ $(document).ready(function () {
 		console.log("stash: "+JSON.stringify(d));
 	};
 
-	function updateData(values) {
-		all_circle.transition()
-			.remove();
-		all_circle.data(values)
-			.transition()
-			.duration(1000)
-			.attr("fill", "black");
-		// svg.selectAll("circle")
-		// 	 .data(values)
-		// 	 .enter()
-		// 	 .append("circle");
-		// svg.selectAll("circle")
-		// 	 .transition()
-		// 	 .duration(1000)
-		// 	 .attr("fill", function(d) { return colors(d.player_name); });
-
-		for (var i = 0; i < values.length; i++) {
-	    	if (!all_diff_names.has(values[i].player_name)) {
-				all_diff_names.set(values[i].player_name, values[i]);
-			}
-		}
-		//drawLegend(all_diff_names.values());
-	};
-
-
   	function handleMouseOut() {
 		tooltip.transition().duration(500).style("opacity", 0);
   	};
 
   	function handleMouseIn() {
-		var player_link = d3.select(this).attr("class");
+		var player_link = d3.select(this).attr("data-name");
 		console.log(data_points);
 		var point = data_points.get(player_link);
 		var difference = ((point.hot_fg - point.reg_fg) * 100).toFixed(1);
@@ -289,7 +267,6 @@ $(document).ready(function () {
 		tooltip.html(point.player_name + "<br>Hot FG%: " + (point.hot_fg * 100).toFixed(1) + "%<br>Regular FG%: " + (point.reg_fg * 100).toFixed(1) + "%<br>% Difference: " + difference + "%<br>Hot Shots Taken: " + point.hot_shots)
 			.style("left", (d3.mouse(this)[0] + 100)+ "px")
 			.style("top",  d3.mouse(this)[1] + "px");
-		
 		tooltip.transition()
 			.duration(200)
 			.style("opacity", .9);

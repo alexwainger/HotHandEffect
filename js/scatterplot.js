@@ -113,13 +113,13 @@ $(document).ready(function () {
 			.attr("fill", "black");
 
 // Add this back when you figure out window.onload		
-//		handle_scatterplot_colors();
+		handle_scatterplot_colors();
 		d3.select("#coloring_options").on("change", handle_scatterplot_colors);
 	};
 
 	function handle_scatterplot_colors() {
 		color_option = this.value;
-		if (color_option == 'None') {
+		if (color_option == 'None' || color_option == null) {
 			svg.selectAll("circle")
 				.transition()
 				.duration(1000)

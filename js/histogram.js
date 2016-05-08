@@ -21,8 +21,7 @@ $(document).ready(function () {
 	socket.on('hothandResult', function (res) {
 		socket.emit("colors");
 		playerDict = res.playerDict;
-		d3.select(histogramsvg).remove();
-		// d3.select("svg").remove();
+		d3.select("#histogramsvg").remove();
 	});
 	socket.on("colorResult", function (res) {
 		// colorList = res.colorResults;
@@ -127,12 +126,12 @@ $(document).ready(function () {
 	  	y.domain([0, d3.max(bin_elements_count)]);
 
 	  	svg.append("g")
-	      	.attr("class", "x axis")
+	      	.attr("class", "x axis histoaxis")
 	      	.attr("transform", "translate(0," + canvas_height + ")")
 	      	.call(xAxis);
 
 	  	svg.append("g")
-	      	.attr("class", "y axis")
+	      	.attr("class", "y axis histoaxis")
 	      	.call(yAxis)
 	    	.append("text")
 	      	.attr("transform", "rotate(-90)")

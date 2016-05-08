@@ -5,3 +5,10 @@
 #histogram h1 {
 	text-align: center
 }
+
+.histoaxis path,
+.histoaxis line {
+	fill: none;
+	stroke: black;
+	shape-rendering: crispEdges;
+}

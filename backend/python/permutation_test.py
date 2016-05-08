@@ -86,15 +86,11 @@ class player_object:
 ##########################################################
 
 
-def calculate_percentages(queryString, makes, time_between_shots):
+def calculate_percentages(rows, makes, time_between_shots):
 	regular = []
 	hothand = []
 	player_dict = {};
 	hot_dict = {};
-
-	connection = sqlite3.connect("data/database.sqlite3");
-	cursor = connection.cursor();
-	rows = cursor.execute(queryString);
 
 	for row in rows:
 		curr_time = row[0];
@@ -122,7 +118,7 @@ def calculate_percentages(queryString, makes, time_between_shots):
 				player_obj.reg_shot_missed();
 
 	for key in player_dict.keys():
-		if player_dict[key].hot_shots > 50:
+		if player_dict[key].hot_shots > 100:
 			player_dict[key].calculate_reg();
 			player_dict[key].calculate_hot();
 			hothand.append(player_dict[key].hot_fg);
@@ -130,24 +126,28 @@ def calculate_percentages(queryString, makes, time_between_shots):
 
 	return regular, hothand
 
-def permutation_test():
-	queryString = "SELECT Time, Quarter, Player_ID, Is_Make, Game_ID FROM RAW_SHOTS WHERE Year >= 2014 AND Year<=2016;";
-	regular, hothand = calculate_percentages(queryString, 1, 6);
+def permutation_test():	
+	connection = sqlite3.connect("data/database.sqlite3");
+	cursor = connection.cursor();
 	
-	'''
-	iters = 100000;
-	diff = np.mean(hothand) - np.mean(regular);
-	n = len(regular);
-	total = np.concatenate([regular, hothand]);
-	k = 0;
-	for i in range(iters):
-		np.random.shuffle(total);
-		if diff <= (np.mean(total[:n]) - np.mean(total[n:])):
-			k += 1;
+	queryString = "SELECT Time, Quarter, Player_ID, Is_Make, Game_ID FROM RAW_SHOTS;";# WHERE Year >= 2002 AND Year<=2016;";
+	rows = cursor.execute(queryString).fetchall();
 
-	print float(k)/iters;
-'''
-	print regular;
+	for makes in range(1,5):
+		for span in range(1, 9):
+			regular, hothand = calculate_percentages(rows, makes, span);
+
+			iters = 100000;
+			diff = np.abs(np.mean(hothand) - np.mean(regular));
+			n = len(regular);
+			total = np.concatenate([regular, hothand]);
+			k = 0;
+			for i in range(iters):
+				np.random.shuffle(total);
+				if diff < np.abs(np.mean(total[:n]) - np.mean(total[n:])):
+					k += 1;
+
+			print "For makes: " + str(makes) + ", and span: " + str(span) + " ---> " + str(float(k)/iters) + "  (" + str(n) + " data points, " + str(np.mean(hothand) - np.mean(regular)) + " difference)";
+
 if __name__ == '__main__':
 	permutation_test();
-

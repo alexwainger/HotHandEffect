@@ -21,7 +21,8 @@ $(document).ready(function () {
 	socket.on('hothandResult', function (res) {
 		socket.emit("colors");
 		playerDict = res.playerDict;
-		d3.select("svg").remove();
+		d3.select(histogramsvg).remove();
+		// d3.select("svg").remove();
 	});
 	socket.on("colorResult", function (res) {
 		// colorList = res.colorResults;

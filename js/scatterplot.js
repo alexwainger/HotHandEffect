@@ -13,7 +13,7 @@ $(document).ready(function () {
 
 	socket.on('hothandResult', function (res) {
 		playerDict = res.playerDict;
-		d3.select("#alexsvg");
+		d3.select("#alexsvg").remove();
 		data = parseData(playerDict);
 		makeD3(data);
 	});
@@ -242,7 +242,7 @@ $(document).ready(function () {
 	};
 
 	function stash(d) {
-		console.log("stash: "+JSON.stringify(d));
+		//console.log("stash: "+JSON.stringify(d));
 	};
 
   	function handleMouseOut() {

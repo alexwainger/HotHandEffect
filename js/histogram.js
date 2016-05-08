@@ -9,20 +9,26 @@ $(document).ready(function () {
 	var margin = 40;
 	var radius = 4;
 	var data_points = d3.map();
+	var values;
+	var x_domain = ["-10%~-8%", "-8%~-6%", "-6%~-4%", "-4%~-2%", "-2%~0%", "0%~2%", "2%~4%", "4%~6%", "6%~8%", "8%~10%"];
     
-    var colors = d3.scale.category20c();
-    var all_diff_names = d3.map();
+    var colors = d3.scale.category20();
+    var all_diff_positions = d3.map();
 
 	var playerDict = {};
+	// var colorList; // Array
+	var colorDict = d3.map();
 	socket.on('hothandResult', function (res) {
+		socket.emit("colors");
 		playerDict = res.playerDict;
-		console.log("got response");
 		d3.select("svg").remove();
-		makeD3(playerDict);
+	});
+	socket.on("colorResult", function (res) {
+		// colorList = res.colorResults;
+		makeD3(playerDict, res.colorResults);
 	});
 
-
-	function makeD3(rows) {
+	function makeD3(rows, colorList) {
 
 		for (var key in rows) {
 			if (rows[key].hot_shots >= 50) {
@@ -31,22 +37,16 @@ $(document).ready(function () {
 		}
 
 		values = data_points.values();
-		values = values.slice(0, 50);
 
-        for (var i = 0; i < values.length; i++) {
-        	// var fullname = values[i].player_name.split(" ");
-         //    var result = "";
-         //    for (var i = 0; i < fullname.length; i++) {
-         //        result += fullname[i].charAt(0) + ".";
-         //    }
-            if (!all_diff_names.has(values[i].player_name)) {
-                all_diff_names.set(values[i].player_name, values[i]);
-            }
-        }
+		for (var i = 0; i < colorList.length; i++) {
+			colorDict.set(colorList[i].Player_ID, colorList[i]);
+			if (!all_diff_positions.has(colorList[i].Position)) {
+				all_diff_positions.set(colorList[i].Position, colorList[i]);
+			}
+		}
         
         // drawLegend(all_diff_names.values());
 
-		
 		var x = d3.scale.ordinal()
 		    .rangeRoundBands([0, canvas_width], .1);
 
@@ -55,7 +55,8 @@ $(document).ready(function () {
 
 		var xAxis = d3.svg.axis()
 		    .scale(x)
-		    .orient("bottom");
+		    .orient("bottom")
+		    .tickValues(x_domain);
 
 		var yAxis = d3.svg.axis()
 		    .scale(y)
@@ -69,7 +70,7 @@ $(document).ready(function () {
 		    .attr("transform", "translate(" + 50 + "," + 10 + ")");
 
 
-	  	colors.domain(all_diff_names.keys());
+	  	colors.domain(all_diff_positions.keys());
 
 	  	// parse data
 		var num_bin = 10;
@@ -78,16 +79,14 @@ $(document).ready(function () {
 	  	values.forEach(function(d) {
 	    	var y0 = 0;
 	    	d.diff = d.hot_fg-d.reg_fg;
-	    	d.bin = Math.min(Math.max(Math.round(d.diff * 100)+num_bin/2, 0), num_bin-1);
-	    	bin_elements_count[d.bin] += 1;
-	    	// d.category = colors.domain().map(function(player_name) {
-	    	// 	var player = all_diff_names.get(player_name);
-	    	// 	var diff = player.hot_fg - player.reg_fg;
-	    	// 	var bin = Math.min(Math.max(Math.round(diff * 100)+num_bin/2, 0), num_bin-1);
-	    	// 	if (bin == d.bin) {
-	    	// 		return {player_name:player_name, y0:y0, y1: y0 += 1};
-	    	// 	};
-	    	// });
+	    	var bin_int = Math.min(Math.max(Math.round(d.diff * 100), -10), 8);
+	    	if (bin_int%2 != 0) {
+	    		if (bin_int>=0) bin_int += 1;
+	    		else bin_int -=1;
+	    	}
+	    	d.bin = bin_int+"%~"+(bin_int+2)+"%";
+	    	bin_elements_count[(bin_int+10)/2] += 1;
+
 	    	if (bin_values.has(d.bin)) {
 	    		var players = bin_values.get(d.bin);
 	    		players.push(d);
@@ -98,13 +97,20 @@ $(document).ready(function () {
 	    		bin_values.set(d.bin, temp);	
 	    	}
 	  	});
+	  	console.log(bin_values.keys());
 
 	  	for (var i = 0; i < bin_values.size(); i++) {
 	  		var y0 = 0;
-	  		var temp = bin_values.get(i);
+	  		var temp = bin_values.get(x_domain[i]);
+	  		if (i == bin_values.size()-1) {
+	  			console.log("8 TO 10");
+	  			console.log(temp);
+	  		}
 	  		if (!temp) continue;
 	  		temp.sort(function(a, b) {
-	  			return b.player_name.localeCompare(a.player_name);
+	  			var record1 = colorDict.get(a.player_link);
+	  			var record2 = colorDict.get(b.player_link);
+	  			return record2.Position.localeCompare(record1.Position);
 	  		});
 	  		for (var j = 0; j < temp.length; j++) {
 	  			temp[j].y0 = y0;
@@ -112,13 +118,10 @@ $(document).ready(function () {
 	  		}
 	  	}
 
-
-	  	console.log(bin_values);
-
-	  	var x_domain = new Array(num_bin);
-	  	for (var i = 0; i < num_bin; i++) {
-	  		x_domain[i] = i;
-	  	}
+	  	// var x_domain = new Array(num_bin);
+	  	// for (var i = 0; i < num_bin; i++) {
+	  	// 	x_domain[i] = i;
+	  	// }
 	  	x.domain(x_domain); //bin_value.domain()
 	  	y.domain([0, d3.max(bin_elements_count)]);
 
@@ -142,44 +145,40 @@ $(document).ready(function () {
 		    .enter().append("g")
 		    .attr("class", "g")
 		    .attr("transform", function(d) {
-		    	console.log("d = "+d);
 		    	return "translate(" + x(d[0].bin) + ",0)"; });
 
-		// var bin = hist.selectAll(".bin")
-		// 	.data(function(d) {return d;})
-		// 	.enter().append("g")
-		// 	.attr("class", "g")
-		// 	.attr("transform", function(d) {
-		// 		console.log(d);
-		// 		return "translate(" + x(d.bin) + ",0)";
-		// 	});
-
 		bin.selectAll("rect")
-		    .data(function(d) {return d;})
+		    .data(function(d) { return d; })
 		    .enter().append("rect")
-		    .attr("width", function(d) {console.log("width"); return x.rangeBand();})
-		    .attr("y", function(d) { return y(d.y1); })
-		    .attr("height", function(d) { console.log("hello"); return y(d.y0) - y(d.y1); })
-		    .style("fill", function(d) { return colors(d.player_name); });
+		    .attr("width", function(d) { return x.rangeBand();})
+		    .attr("y", function(d) {
+		    	if (d.y1 === undefined) console.log(d);
+		    	return y(d.y1); })
+		    .attr("height", function(d) { 
+		    	return y(d.y0) - y(d.y1); })
+		    .style("fill", function(d) { 
+		    	var color_record = colorDict.get(d.player_link);
+		    	return colors(color_record.Position); 
+		    });
 
-		// var legend = svg.selectAll(".legend")
-		//     .data(color.domain().slice().reverse())
-		//     .enter().append("g")
-		//     .attr("class", "legend")
-		//     .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+		var legend = svg.selectAll(".legend")
+		    .data(colors.domain().slice().reverse())
+		    .enter().append("g")
+		    .attr("class", "legend")
+		    .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
-		// legend.append("rect")
-		//     .attr("x", width - 18)
-		//     .attr("width", 18)
-		//     .attr("height", 18)
-		//     .style("fill", color);
+		legend.append("rect")
+		    .attr("x", 100+30)
+		    .attr("width", 18)
+		    .attr("height", 18)
+		    .style("fill", colors);
 
-		// legend.append("text")
-		//     .attr("x", width - 24)
-		//     .attr("y", 9)
-		//     .attr("dy", ".35em")
-		//     .style("text-anchor", "end")
-		//     .text(function(d) { return d; });
+		legend.append("text")
+		    .attr("x", 100+24)
+		    .attr("y", 9)
+		    .attr("dy", ".35em")
+		    .style("text-anchor", "end")
+		    .text(function(d) { return d; });
 
     }
 });

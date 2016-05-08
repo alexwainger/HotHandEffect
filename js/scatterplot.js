@@ -9,7 +9,6 @@ $(document).ready(function () {
 
 	var playerDict = {};
 	var svg = null;
-	var legend_svg = null;
 
 	socket.on('hothandResult', function (res) {
 		playerDict = res.playerDict;
@@ -17,11 +16,6 @@ $(document).ready(function () {
 		data = parseData(playerDict);
 		makeD3(data);
 	});
-
-	var tooltip = d3.select("#scatterplot_div")
-		.append("div")
-		.attr("class", "alextooltip")
-		.style("opacity", 0);
 
 	function parseData(rows) {
 		data_points = d3.map();
@@ -118,22 +112,22 @@ $(document).ready(function () {
 			.attr("r", radius)
 			.attr("fill", "black");
 
+// Add this back when you figure out window.onload		
+//		handle_scatterplot_colors();
 		d3.select("#coloring_options").on("change", handle_scatterplot_colors);
 	};
 
 	function handle_scatterplot_colors() {
 		color_option = this.value;
 		if (color_option == 'None') {
-			console.log('we here');
 			svg.selectAll("circle")
 				.transition()
 				.duration(1000)
-				.attr("fill", "black");
-
+				.attr("fill", "black");	
 			removeLegend();
 		} else {
-			socket.emit('colors');
-			socket.on('colorResult', function(res) {
+			socket.emit('scatterplot_colors');
+			socket.on('scatterplot_colorResult', function(res) {
 				player_to_attribute = d3.map();
 				res.colorResults.forEach(function(player) {
 					player_to_attribute.set(player["Player_ID"], player[color_option]);
@@ -142,7 +136,6 @@ $(document).ready(function () {
 				var color_scale;
 				if (color_option == 'Position') {
 					color_scale = function(position) {
-						console.log('in the function');
 						switch (position) {
 							case "Point Guard":
 								return "#ffffd9";
@@ -178,15 +171,10 @@ $(document).ready(function () {
 	};
   	
 	function drawLegend(color_option, color_scale, vals) {
+		removeLegend();
 		var li = {
-			w: 100, h: 40, s: 3, r: 3, num_bins: 5
+			w: 120, h: 40, s: 3, r: 3, num_bins: 5
 		};
-
-		if (!legend_svg) {
-			legend_svg = d3.select("#legend").append("svg")        
-		  		.attr("width", li.w)
-				.attr("height", (li.num_bins) * (li.h + li.s));
-		}
 
 		data = [];
 		if (color_option == 'Position') {
@@ -197,53 +185,67 @@ $(document).ready(function () {
 					text: positions[i]});
 			}
 		} else {
-			quantiles = color_scale.quantiles();
-			data = [{
-				value: d3.min(vals),
-				text: d3.min(vals).toFixed(1) + " - " + quantiles[0].toFixed(1)}];
+			var quantiles = color_scale.quantiles().slice();
+			quantiles.unshift(d3.min(vals));
+			quantiles.push(d3.max(vals));
 			for (var i = 0; i < quantiles.length - 1; i++) {
+				var text;
+				if (color_option == 'Height') {
+					h1 = Math.trunc(quantiles[i] / 12) + "'" + (quantiles[i] % 12).toFixed(1) + "''";
+					h2 = Math.trunc(quantiles[i+1] / 12) + "'" + (quantiles[i+1] % 12).toFixed(1) + "''";
+					text = h1 + " - " + h2;
+				} else if (color_option == 'Weight') {
+					text = quantiles[i].toFixed(1) + " - " + quantiles[i+1].toFixed(1) + " lbs.";
+				} else if (color_option == 'avg_shot_distance') {
+					text = quantiles[i].toFixed(1) + " - " + quantiles[i+1].toFixed(1) + " ft.";
+				}
+			
 				data.push({
 					value: quantiles[i],
-					text: quantiles[i].toFixed(1) + " - " + quantiles[i+1].toFixed(1)});
+					text: text});
 			}
-			data.push({
-				value: d3.max(vals),
-				text: quantiles[quantiles.length - 1].toFixed(1) + " - " + d3.max(vals).toFixed(1)});
 		}
 
+		d3.select("#legend").append("p").text("Legend");
+		var legend_svg = d3.select("#legend").append("svg")
+			.attr("width", li.w)
+			.attr("height", (li.num_bins) * (li.h + li.s));
+	
 		var g = legend_svg.selectAll("g")
 			.data(data)
 			.enter().append("g")
-			.attr("transform", function(d, i) {
-				return "translate(0," + i * (li.h + li.s) + ")";
-          });
-
-      	g.append("rect")
-          	.attr("rx", li.r)
-          	.attr("ry", li.r)
+			.attr("transform", function(d, i) {return "translate(0," + i * (li.h + li.s) + ")";});
+	
+		g.append("rect")
+			.attr("rx", li.r)
+			.attr("ry", li.r)
           	.attr("width", li.w)
           	.attr("height", li.h)
           	.style("fill", function(d) {return color_scale(d.value)});
 
       	g.append("text")
         	.attr("x", li.w / 2)
-          	.attr("y", li.h / 2)
+         	.attr("y", li.h / 2)
           	.attr("dy", "0.35em")
           	.attr("text-anchor", "middle")
           	.text(function(d) {return d.text;})
 			.style("fill", function(d, i) { return (i > 2 ? "white" : "black")});
 
 	};
-	
+
+	function removeLegend() {
+		d3.select("#legend").selectAll("*").remove();
+	};
+
 	function individualPlayer(player_id) {
-		//socket.emit()
 		var player_link = d3.select(this).attr("class");
 		socket.emit('player_stats', player_link);	
 	};
 
-	function stash(d) {
-		//console.log("stash: "+JSON.stringify(d));
-	};
+	var tooltip = d3.select("#scatterplot_div")
+		.append("div")
+		.attr("class", "alextooltip")
+		.style("opacity", 0);
 
   	function handleMouseOut() {
 		tooltip.transition().duration(500).style("opacity", 0);
@@ -251,11 +253,10 @@ $(document).ready(function () {
 
   	function handleMouseIn() {
 		var player_link = d3.select(this).attr("data-name");
-		console.log(data_points);
 		var point = data_points.get(player_link);
 		var difference = ((point.hot_fg - point.reg_fg) * 100).toFixed(1);
 		console.log(point);
-	  
+
 		tooltip.html(point.player_name + "<br>Hot FG%: " + (point.hot_fg * 100).toFixed(1) + "%<br>Regular FG%: " + (point.reg_fg * 100).toFixed(1) + "%<br>% Difference: " + difference + "%<br>Hot Shots Taken: " + point.hot_shots)
 			.style("left", (d3.mouse(this)[0] + 100)+ "px")
 			.style("top",  d3.mouse(this)[1] + "px");

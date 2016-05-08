@@ -19,11 +19,11 @@ $(document).ready(function () {
 	// var colorList; // Array
 	var colorDict = d3.map();
 	socket.on('hothandResult', function (res) {
-		socket.emit("colors");
+		socket.emit("histogram_colors");
 		playerDict = res.playerDict;
 		d3.select("#histogramsvg").remove();
 	});
-	socket.on("colorResult", function (res) {
+	socket.on("histogram_colorResult", function (res) {
 		// colorList = res.colorResults;
 		makeD3(playerDict, res.colorResults);
 	});
@@ -44,9 +44,6 @@ $(document).ready(function () {
 				all_diff_positions.set(colorList[i].Position, colorList[i]);
 			}
 		}
-        
-        // drawLegend(all_diff_names.values());
-
 		var x = d3.scale.ordinal()
 		    .rangeRoundBands([0, canvas_width], .1);
 

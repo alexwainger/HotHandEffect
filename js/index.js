@@ -1,7 +1,6 @@
 var socket = io.connect();
 
 window.addEventListener('load', function () {
-	console.log("loaded");
 	var messageForm = document.getElementById('messagesForm');
 	sendMessage();
 
@@ -13,7 +12,6 @@ window.addEventListener('load', function () {
 	var season_error_check = 0;
 
 	function clickToSubmit(e) {
-		console.log("send form");
 		e.preventDefault();
 		sendMessage();
 	}
@@ -53,8 +51,6 @@ window.addEventListener('load', function () {
 			post_string[1] = season_max_val;
 		}
 		var season_error_check = false;
-		console.log("Season Min: " + season_min_val);
-		console.log("Season Max: " + season_max_val);
 		if (season_max_val < season_min_val) {
 			$(document.getElementById("season_filter_div")).css('border', 'solid red');
 			error_msg.css("display", "block")
@@ -70,7 +66,6 @@ window.addEventListener('load', function () {
 				quarters.push(quarter_inputs[i].value)
 			}
 		}
-		console.log(quarters)
 		// var q1 = messageForm.elements["q1_filter"].checked;
 		// if (q1 == true) {
 		// 	quarters.push(messageForm.elements["q1_filter"].value);
@@ -130,9 +125,6 @@ window.addEventListener('load', function () {
 			}
 		}
 
-		console.log("Shot Distance Min: " + shot_distance_min);
-		console.log("Shot Distance Max: " + shot_distance_max);
-
 		/* Shot Type - 2, 3pt, or both */
 		var shot_type = messageForm.elements["shot_type"].value;
 		post_string[5] = shot_type;
@@ -140,8 +132,6 @@ window.addEventListener('load', function () {
 		/* Game Type - home, away, or both*/
 		var game_type = messageForm.elements["game_type"].value;
 		post_string[6] = game_type;
-
-		console.log(post_string);
 
 		/* Hot Hand Definition */
 		var consecutive_makes = messageForm.elements["consecutive_shots"].value;

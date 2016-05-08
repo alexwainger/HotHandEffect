@@ -180,7 +180,15 @@ io.sockets.on('connection', function (socket) {
 		};
 	});
 
-	socket.on('colors', function() {
+	socket.on('scatterplot_colors', function() {
+		handle_colorRequest("scatterplot");
+	});
+
+	socket.on('histogram_colors', function() {
+		handle_colorRequest("histogram");
+	});
+
+	var handle_colorRequest = function(viz) {
 		queryString = "SELECT Player_Id, Height, Weight, Position FROM Players WHERE Player_Id IN (";
 		for (key in players) {
 			if (players[key].hot_shots >= 50) {
@@ -203,11 +211,11 @@ io.sockets.on('connection', function (socket) {
 				console.log(err);
 			}
 
-			socket.emit('colorResult', {
+			socket.emit(viz + '_colorResult', {
 				colorResults: to_emit
 			});
 		});
-	});
+	};
 });
 
 function hot_object(curr_game, curr_quarter, curr_time, makes_req, interval) {

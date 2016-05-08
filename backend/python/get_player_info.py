@@ -7,7 +7,7 @@ import sqlite3
 
 def main():
 	try:
-		connection = sqlite3.connect("../database.sqlite3");
+		connection = sqlite3.connect("data/database.sqlite3");
 		c = connection.cursor();
 
 		players_seen = set();

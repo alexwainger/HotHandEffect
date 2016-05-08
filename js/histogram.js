@@ -63,7 +63,7 @@ $(document).ready(function () {
 		    .orient("left")
 		    .tickFormat(d3.format(".2s"));
 
-		var svg = d3.select("#histogram_div").append("svg")
+		var svg = d3.select("#histogram_div").append("svg").attr("id", "histogramsvg")
 		    .attr("width", canvas_width + 40) // +left margin +right margin
 		    .attr("height", canvas_height + 70) // +top margin + bottom margin
 		  	.append("g")

@@ -192,8 +192,3 @@ window.addEventListener('load', function () {
 	}
 }, false);
 
-
-var handle_colors = function () {
-	new_option = document.getElementById("coloring_options").value;
-	socket.emit("colors", new_option);
-}

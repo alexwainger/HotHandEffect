@@ -73,10 +73,16 @@ io.sockets.on('connection', function (socket) {
 					playerDict: players
 				});
 				console.log("sent player Dict");
+
+				socket.emit('permutation-test_results', {
+					res: run_permutation_test(players)
+				});
+
 			} else if (err) {
 				console.log(err);
 			}
 		});
+
 
 		function calculate_percentages(data) {
 			player_dict = {};
@@ -120,12 +126,63 @@ io.sockets.on('connection', function (socket) {
 				if (player_dict[key].hot_shots < min_hotshots || player_dict[key].reg_shots < min_regshots) {
 					delete player_dict[key];
 				} else {
-//					console.log(player_dict[key]);
 					player_dict[key].calculate_reg();
 					player_dict[key].calculate_hot();
 				}
 			}
 			return player_dict;
+		};
+
+		function run_permutation_test(players) {
+			hotPercentages = [];
+			regPercentages = [];
+			for (key in players) {
+				hotPercentages.push(players[key].hot_fg);
+				regPercentages.push(players[key].reg_fg);
+			}
+
+			n = hotPrecentages.length;
+			hot_avg = average(hotPercentages);
+			reg_avg = average(regPercentages);
+			original_diff = Math.(hot_avg - reg_avg)
+
+			all_elements = hotPercentages.concat(regPercentages);
+			k = 0;
+			trial_diffs = [];
+
+			for (var iters = 0; iters < 100000; iters++) {
+				// Shuffle array
+				for (var i = all_elements.length - 1; i > 0; i--) {
+	        		var j = Math.floor(Math.random() * (i + 1));
+					var temp = all_elements[i];
+					all_elements[i] = all_elements[j];
+					all_elements[j] = temp;
+				}
+
+				avg1 = average(all_elements.slice(0, n));
+				avg2 = average(all_elements.slice(-n));
+				trial_diff = Math.abs(avg1 - avg2);
+				if (original_diff < trial_diff) {
+					k += 1;
+				}
+
+				trial_diff.push(trial_diff);
+			}
+
+			k = k / 100000;
+
+			return {
+				original_diff: original_diff,
+				trial_diffs: trial_diffs,
+				k: k};
+		};
+
+		function average(arr) {
+			avg = 0.0;
+			for (var i = 0; i < arr.length; i++) {
+				avg += arr[i];
+			}
+			return avg / arr.length;
 		};
 	});
 	socket.on('player_stats', function (player_link) {

@@ -74,9 +74,11 @@ io.sockets.on('connection', function (socket) {
 				});
 				console.log("sent player Dict");
 
-				socket.emit('permutation-test_results', {
-					res: run_permutation_test(players)
+				socket.emit('permutation_test_results', {
+					permutation_test_results: run_permutation_test(players)
 				});
+
+				console.log('emitted perm results');
 
 			} else if (err) {
 				console.log(err);
@@ -141,16 +143,17 @@ io.sockets.on('connection', function (socket) {
 				regPercentages.push(players[key].reg_fg);
 			}
 
-			n = hotPrecentages.length;
+			n = hotPercentages.length;
 			hot_avg = average(hotPercentages);
 			reg_avg = average(regPercentages);
-			original_diff = Math.(hot_avg - reg_avg)
+			original_diff = hot_avg - reg_avg
 
 			all_elements = hotPercentages.concat(regPercentages);
 			k = 0;
 			trial_diffs = [];
 
-			for (var iters = 0; iters < 100000; iters++) {
+			iters = 100000;
+			for (var it = 0; it < iters; it++) {
 				// Shuffle array
 				for (var i = all_elements.length - 1; i > 0; i--) {
 	        		var j = Math.floor(Math.random() * (i + 1));
@@ -161,15 +164,15 @@ io.sockets.on('connection', function (socket) {
 
 				avg1 = average(all_elements.slice(0, n));
 				avg2 = average(all_elements.slice(-n));
-				trial_diff = Math.abs(avg1 - avg2);
-				if (original_diff < trial_diff) {
+				trial_diff = avg1 - avg2;
+				if (Math.abs(original_diff) < Math.abs(trial_diff)) {
 					k += 1;
 				}
 
-				trial_diff.push(trial_diff);
+				trial_diffs.push(trial_diff);
 			}
 
-			k = k / 100000;
+			k = k / iters;
 
 			return {
 				original_diff: original_diff,

@@ -84,7 +84,7 @@ $(document).ready(function() {
 
 				var stops = [];
 				var l_offset = left / d.length;
-				var r_offset = right / d.length;
+				var r_offset = 1-(right / d.length);
 				color1 = "red";
 				color2 = "steelblue";
 
@@ -117,13 +117,15 @@ $(document).ready(function() {
 				return create_gradient(id, stops)
 			});
 
-		bar.append("text")
+		text = bar.append("text")
 			.attr("dy", ".75em")
 			.attr("y", -15)
 			.attr("x", x(d3.min(trial_diffs) + data[0].dx) / 2)
 			.attr("text-anchor", "middle")
 			.text(function(d) { return formatCount(d.y); });
 
+		text.style("font-size", function() {return Math.min(15, ((x(d3.min(trial_diffs) + data[0].dx)) / this.getComputedTextLength() * 10)) + "px";});
+		
 		permutation_svg.append("g")
 			.attr("class", "x axis")
 			.attr("transform", "translate(0," + height + ")")

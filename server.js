@@ -65,7 +65,7 @@ io.sockets.on('connection', function (socket) {
 		start_time = parseFloat(Date.now());
 		conn.query(queryStr, [data[0], data[1], data[3], data[4]], function (err, result) {
 			console.log("That query took " + ((parseFloat(Date.now()) - start_time) / 1000) + " seconds");
-			if(!result) {
+			if (!result) {
 				console.log("no results retrieved.");
 				return;
 			}
@@ -158,7 +158,7 @@ io.sockets.on('connection', function (socket) {
 			for (var it = 0; it < iters; it++) {
 				// Shuffle array
 				for (var i = all_elements.length - 1; i > 0; i--) {
-	        		var j = Math.floor(Math.random() * (i + 1));
+					var j = Math.floor(Math.random() * (i + 1));
 					var temp = all_elements[i];
 					all_elements[i] = all_elements[j];
 					all_elements[j] = temp;
@@ -177,9 +177,10 @@ io.sockets.on('connection', function (socket) {
 			k = k / iters;
 
 			return {
-				original_diff: original_diff,
-				trial_diffs: trial_diffs,
-				k: k};
+				original_diff: original_diff
+				, trial_diffs: trial_diffs
+				, k: k
+			};
 		};
 
 		function average(arr) {
@@ -242,15 +243,32 @@ io.sockets.on('connection', function (socket) {
 		};
 	});
 
-	socket.on('scatterplot_colors', function() {
+	socket.on('scatterplot_colors', function () {
 		handle_colorRequest("scatterplot");
 	});
 
-	socket.on('histogram_colors', function() {
+	socket.on('histogram_colors', function () {
 		handle_colorRequest("histogram");
 	});
 
-	var handle_colorRequest = function(viz) {
+	socket.on('player_info', function (player_link) {
+		queryString = "SELECT Player_Id, Height, Weight, Position FROM Players WHERE Player_Id=$1;";
+
+		conn.query(queryString, [player_link], function (err, result) {
+//			console.log("player info " + result.rows);
+			if (result.rows.length > 0) {
+				players[result.rows[0].Player_ID].calculate_avg_shot_distance();
+				result.rows[0].avg_shot_distance = players[result.rows[0].Player_ID].avg_shot_distance;
+				
+				socket.emit('player_info_result', result.rows[0]);
+			} else if (err) {
+				console.log(err);
+			}
+
+		});
+	});
+
+	var handle_colorRequest = function (viz) {
 		queryString = "SELECT Player_Id, Height, Weight, Position FROM Players WHERE Player_Id IN (";
 		for (key in players) {
 			if (players[key].hot_shots >= 50) {
@@ -261,7 +279,7 @@ io.sockets.on('connection', function (socket) {
 
 		queryString = queryString.slice(0, -1);
 		queryString += ");";
-		
+
 		conn.query(queryString, function (err, result) {
 			to_emit = [];
 			if (result.rows.length > 0) {
@@ -330,7 +348,7 @@ function player_object(curr_link, curr_name) {
 	this.shot_distance = 0.0;
 	this.avg_shot_distance = -1.0;
 
-	this.hot_shot_missed = function(distance) {
+	this.hot_shot_missed = function (distance) {
 		this.hot_shots += 1;
 		this.reg_shots += 1;
 		this.shot_distance += distance;
@@ -366,7 +384,7 @@ function player_object(curr_link, curr_name) {
 		}
 	};
 
-	this.calculate_avg_shot_distance = function() {
+	this.calculate_avg_shot_distance = function () {
 		this.avg_shot_distance = parseFloat(this.shot_distance / this.reg_shots);
 	};
 };

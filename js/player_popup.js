@@ -6,15 +6,24 @@ $(document).ready(function() {
 		hot_fgp = [];
 		reg_freqs = [];
 		reg_fgp = [];
+		for (var i = 0; i <= 30; i++) {
+			if (distance_objs.hasOwnProperty(i)) {
+				hot_freqs.push({distance: i, freq: distance_objs[i].hot_freq});
+			} else {
+				hot_freqs.push({distance: i, freq: 0});
+			}
+		}
+		console.log(distance_objs);
+		console.log(hot_freqs);
+		/*
 		for (distance in distance_objs) {
 			curr_obj = distance_objs[distance];
-			hot_freqs.push({distance: distance, freq: curr_obj.hot_freq});
 			hot_fgp.push({distance: distance, fgp: curr_obj.hot_fg});
 			reg_freqs.push({distance: distance, freq: curr_obj.reg_freq});
 			reg_fgp.push({distance: distance, fgp: curr_obj.reg_fg});
 		}
-
-		d3.select("#frequency_svg").remove();
+*/
+		d3.select("#hot_frequency_svg").remove();
 		
 		var margin = {top: 20, right: 20, bottom: 40, left: 70};
 		var width = 400 - margin.left - margin.right;
@@ -28,7 +37,7 @@ $(document).ready(function() {
 			.domain(xDomain)
 		    .range([0, width]).nice();
 
-		var yDomain = [0, Math.max(d3.max(hot_freqs, yValue), d3.max(reg_freqs, yValue))];
+		var yDomain = [0, d3.max(hot_freqs, yValue) + .03];
 		var yScale = d3.scale.linear()
 			.domain(yDomain)
 			.range([height, 0]).nice();
@@ -45,10 +54,13 @@ $(document).ready(function() {
 
 		var line = d3.svg.line()
 			.interpolate("monotone")
-			.x(function(d) { return xScale(xValue(d)); })
+			.x(function(d) { console.log(yScale(yValue(d)));
+				console.log(d);
+				return xScale(xValue(d)); })
 			.y(function(d) { return yScale(yValue(d)); });
 
-		var svg = d3.select("#player_popup_div").append("svg")
+		var svg = d3.select("#hot_frequency").append("svg")
+			.attr("id", "hot_frequency_svg")
 			.attr("width", width + margin.left + margin.right)
 			.attr("height", height + margin.top + margin.bottom)
 			.append("g")
@@ -78,15 +90,7 @@ $(document).ready(function() {
 			.style("stroke", "red")
 			.style("stroke-width", "2px")
 			.style("fill", "none");
-/*
-		svg.append("path")
-			.datum(reg_freqs)
-			.attr("class", "line reg_frequencies")
-			.attr("d", line)
-			.style("stroke", "steelblue")
-			.style("stroke-width", "2px")
-			.style("fill", "none");
-*/
+		
 		var focus = svg.append('g').style('display', 'none');
 		
 		focus.append('line')

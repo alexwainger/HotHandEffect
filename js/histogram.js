@@ -12,12 +12,11 @@ $(document).ready(function () {
 	var values;
 	var x_domain = ["-10%~-8%", "-8%~-6%", "-6%~-4%", "-4%~-2%", "-2%~0%", "0%~2%", "2%~4%", "4%~6%", "6%~8%", "8%~10%"];
     
-    var colors = d3.scale.category20();
-    var all_diff_positions = d3.map();
+
+    var all_diff_positions = ["Point Guard", "Shooting Guard", "Small Forward", "Power Forward", "Center"];
 
 	var playerDict = {};
 	// var colorList; // Array
-	var colorDict = d3.map();
 	socket.on('hothandResult', function (res) {
 		socket.emit("histogram_colors");
 		playerDict = res.playerDict;
@@ -26,9 +25,52 @@ $(document).ready(function () {
 	socket.on("histogram_colorResult", function (res) {
 		// colorList = res.colorResults;
 		makeD3(playerDict, res.colorResults);
+		d3.select("#hist_coloring_options").on("change", function(change) {
+			d3.select("#histogramsvg").remove();
+			makeD3(playerDict, res.colorResults);
+		});
 	});
+	
 
 	function makeD3(rows, colorList) {
+		var colorDict = d3.map();
+		var color_option = $("#hist_coloring_options input:radio:checked").val();
+		//var color_option = "Height";
+
+		for (var i = 0; i < colorList.length; i++) {
+			var item = colorList[i];
+			console.log("itme in colorList = "+item);
+			colorDict.set(colorList[i].Player_ID, item[color_option]);
+		}
+	    var colors;
+		if (color_option == 'Position') {
+			colors = function(position) {
+				switch (position) {
+					case "Point Guard":
+						return "#ffffd9";
+						break;
+					case "Shooting Guard":
+						return "#c7e9b4";
+						break;
+					case "Small Forward":
+						return "#41b6c4";
+						break;
+					case "Power Forward":
+						return "#225ea8";
+						break;
+					case "Center":
+						return "#081d58";
+						break;
+				}
+			};
+		} else if (color_option == 'None') {
+			colors = function(input) { return "#808080"; }
+		} else {
+			var attribute_vals = colorDict.values();
+			colors = d3.scale.quantile()
+				.domain([d3.min(attribute_vals), d3.max(attribute_vals)])
+				.range(["#ffffd9","#c7e9b4","#41b6c4","#225ea8","#081d58"]);
+		}
 
 		for (var key in rows) {
 			if (rows[key].hot_shots >= 50) {
@@ -38,12 +80,6 @@ $(document).ready(function () {
 
 		values = data_points.values();
 
-		for (var i = 0; i < colorList.length; i++) {
-			colorDict.set(colorList[i].Player_ID, colorList[i]);
-			if (!all_diff_positions.has(colorList[i].Position)) {
-				all_diff_positions.set(colorList[i].Position, colorList[i]);
-			}
-		}
 		var x = d3.scale.ordinal()
 		    .rangeRoundBands([0, canvas_width], .1);
 
@@ -65,9 +101,6 @@ $(document).ready(function () {
 		    .attr("height", canvas_height + 70) // +top margin + bottom margin
 		  	.append("g")
 		    .attr("transform", "translate(" + 50 + "," + 10 + ")");
-
-
-	  	colors.domain(all_diff_positions.keys());
 
 	  	// parse data
 		var num_bin = 10;
@@ -105,9 +138,9 @@ $(document).ready(function () {
 	  		}
 	  		if (!temp) continue;
 	  		temp.sort(function(a, b) {
-	  			var record1 = colorDict.get(a.player_link);
-	  			var record2 = colorDict.get(b.player_link);
-	  			return record2.Position.localeCompare(record1.Position);
+	  			var record1 = String(colorDict.get(a.player_link));
+	  			var record2 = String(colorDict.get(b.player_link));
+	  			return record1.localeCompare(record2);
 	  		});
 	  		for (var j = 0; j < temp.length; j++) {
 	  			temp[j].y0 = y0;
@@ -115,10 +148,6 @@ $(document).ready(function () {
 	  		}
 	  	}
 
-	  	// var x_domain = new Array(num_bin);
-	  	// for (var i = 0; i < num_bin; i++) {
-	  	// 	x_domain[i] = i;
-	  	// }
 	  	x.domain(x_domain); //bin_value.domain()
 	  	y.domain([0, d3.max(bin_elements_count)]);
 
@@ -155,27 +184,59 @@ $(document).ready(function () {
 		    	return y(d.y0) - y(d.y1); })
 		    .style("fill", function(d) { 
 		    	var color_record = colorDict.get(d.player_link);
-		    	return colors(color_record.Position); 
+		    	return colors(color_record); 
 		    });
+		
+		// Draw Legends
+		if (color_option != "None") {
+			data = [];
+			if (color_option == 'Position') {
+				for (var i = 0; i < all_diff_positions.length; i++) {
+					data.push({
+						value: all_diff_positions[i],
+						text: all_diff_positions[i]});
+				}
+			} else {
+				var quantiles = colors.quantiles().slice();
+				quantiles.unshift(d3.min(colorDict.values()));
+				quantiles.push(d3.max(colorDict.values()));
+				for (var i = 0; i < quantiles.length - 1; i++) {
+					var text;
+					if (color_option == 'Height') {
+						var h1 = Math.trunc(quantiles[i] / 12) + "'" + (quantiles[i] % 12).toFixed(1) + "''";
+						var h2 = Math.trunc(quantiles[i+1] / 12) + "'" + (quantiles[i+1] % 12).toFixed(1) + "''";
+						text = h1 + " - " + h2;
+					} else if (color_option == 'Weight') {
+						text = quantiles[i].toFixed(1) + " - " + quantiles[i+1].toFixed(1) + " lbs.";
+					} else if (color_option == 'avg_shot_distance') {
+						text = quantiles[i].toFixed(1) + " - " + quantiles[i+1].toFixed(1) + " ft.";
+					}
+				
+					data.push({
+						value: quantiles[i],
+						text: text});
+				}
+			}
 
-		var legend = svg.selectAll(".legend")
-		    .data(colors.domain().slice().reverse())
-		    .enter().append("g")
-		    .attr("class", "legend")
-		    .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+			var legend = svg.selectAll(".legend")
+			    .data(data)
+			    .enter().append("g")
+			    .attr("class", "legend")
+			    .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
-		legend.append("rect")
-		    .attr("x", 100+30)
-		    .attr("width", 18)
-		    .attr("height", 18)
-		    .style("fill", colors);
+			legend.append("rect")
+			    .attr("x", 100+30)
+			    .attr("width", 18)
+			    .attr("height", 18)
+			    .style("fill", function(d){ return colors(d.value) });
 
-		legend.append("text")
-		    .attr("x", 100+24)
-		    .attr("y", 9)
-		    .attr("dy", ".35em")
-		    .style("text-anchor", "end")
-		    .text(function(d) { return d; });
+			legend.append("text")
+			    .attr("x", 100+24)
+			    .attr("y", 9)
+			    .attr("dy", ".35em")
+			    .style("text-anchor", "end")
+			    .text(function(d) { return d.text; });
+		}	
 
     }
 });

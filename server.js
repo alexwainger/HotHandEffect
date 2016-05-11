@@ -6,6 +6,8 @@ var express = require('express')
 var conn = anyDB.createConnection('sqlite3://data/database.sqlite3');
 var app = express();
 
+app.set('port', (process.env.PORT || 5000));
+
 // add socket.io
 var server = http.createServer(app);
 var io = require('socket.io').listen(server);
@@ -423,4 +425,7 @@ function distance_object() {
 };
 
 //Visit localhost:8080
-server.listen(process.env.PORT || 8080);
+//server.listen(process.env.PORT || 8080);
+app.listen(app.get('port'), function() {
+  console.log('Node app is running on port', app.get('port'));
+});

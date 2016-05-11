@@ -100,7 +100,7 @@ $(document).ready(function () {
 				"stroke-dasharray": ("5, 10")
 			});
 
-      	all_circle = svg.selectAll("circle")
+    all_circle = svg.selectAll("circle")
 			.data(values)
 			.enter()
 			.append("circle")
@@ -109,6 +109,7 @@ $(document).ready(function () {
 			.attr("data-name", function(d) { return d.player_link})
 			.on("mouseover", handleMouseIn)
 			.on("mouseout", handleMouseOut)
+			.on("click", handleOnClick)
 			.attr("r", radius)
 			.attr("fill", "black");
 
@@ -117,7 +118,7 @@ $(document).ready(function () {
 	};
 
 	function handle_scatterplot_colors() {
-		color_option = document.getElementById("coloring_options").value;
+		color_option = $('#coloring_options input:radio:checked').val();
 		if (color_option == 'None' || color_option == null) {
 			svg.selectAll("circle")
 				.transition()
@@ -241,26 +242,34 @@ $(document).ready(function () {
 		socket.emit('player_stats', player_link);	
 	};
 
-	var tooltip = d3.select("#scatterplot_div")
-		.append("div")
-		.attr("class", "alextooltip")
-		.style("opacity", 0);
+	var tooltip =  d3.select("#alextooltip").style("opacity", 0);
 
-  	function handleMouseOut() {
+	function handleMouseOut() {
 		tooltip.transition().duration(500).style("opacity", 0);
+			d3.select(this).style("stroke-width", 0)    // set the stroke width
   	};
 
-  	function handleMouseIn() {
+	function handleMouseIn() {
 		var player_link = d3.select(this).attr("data-name");
 		var point = data_points.get(player_link);
 		var difference = ((point.hot_fg - point.reg_fg) * 100).toFixed(1);
-		console.log(point);
-
+		//console.log(tooltip);
+		d3.select(this).style("stroke-width", 2)    // set the stroke width
+    					.style("stroke", "red");
 		tooltip.html(point.player_name + "<br>Hot FG%: " + (point.hot_fg * 100).toFixed(1) + "%<br>Regular FG%: " + (point.reg_fg * 100).toFixed(1) + "%<br>% Difference: " + difference + "%<br>Hot Shots Taken: " + point.hot_shots)
-			.style("left", (d3.mouse(this)[0] + 100)+ "px")
-			.style("top",  d3.mouse(this)[1] + "px");
+			//.style("left", (d3.mouse(this)[0] + 100)+ "px")
+			//.style("top",  d3.mouse(this)[1] + "px");
 		tooltip.transition()
 			.duration(200)
 			.style("opacity", .9);
 	};
+
+	function handleOnClick() {
+		var player_link = d3.select(this).attr("data-name");
+		var point = data_points.get(player_link);
+		// console.log(point);
+		$('#player-name').text(point.player_name);
+		$('#player-team').text(" some team")
+		$('#player_info').modal('show');
+	}
 });

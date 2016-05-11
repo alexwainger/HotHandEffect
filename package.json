@@ -1,24 +1,24 @@
 {
-	"name": "hothand"
-	, "version": "1.0.0"
-	, "description": "An app to statistically show if hot hand exists in basketball"
-	, "main": "server.js"
-	, "scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
-		, "start": "node server.js"
-	}
-	, "author": ""
-	, "license": "ISC"
-	, "dependencies": {
-		"any-db": "^2.1.0"
-		, "any-db-sqlite3": "^2.1.4"
-		, "body-parser": "^1.15.1"
-		, "express": "^4.13.4"
-		, "http": "0.0.0"
-		, "socket.io": "^1.4.6"
-		, "sqlite3": "^3.1.3"
-	}
-	, "engines": {
-		"node": "4.4.3"
-	}
+  "name": "hothand",
+  "version": "1.0.0",
+  "description": "An app to statistically show if hot hand exists in basketball",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "any-db": "^2.1.0",
+    "any-db-sqlite3": "^2.1.4",
+    "body-parser": "^1.15.1",
+    "express": "^4.13.4",
+    "http": "0.0.0",
+    "socket.io": "^1.4.6",
+    "sqlite3": "^3.1.3"
+  },
+  "engines": {
+    "node": "4.4.3"
+  }
 }

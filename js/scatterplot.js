@@ -297,8 +297,8 @@ $(document).ready(function () {
 			$('#player-height').text(Math.trunc(res.Height / 12) + "'" + (res.Height % 12) + "''");
 			$('#player-weight').text(res.Weight + ' lb.');
 			$('#player-dist').text(res.avg_shot_distance.toFixed(1) + ' ft.');
+			$('#player_info').modal('show');
 		});
 
-		$('#player_info').modal('show');
 	}
 });

@@ -84,8 +84,6 @@
 			<div class="row">
 				<div class="col-lg-12">
 					<h1>Overview</h1>
-					<p><strong>Usage Instructions:</strong> Make sure to include the <code>scrolling-nav.js</code>, <code>jquery.easing.min.js</code>, and <code>scrolling-nav.css</code> files. To make a link smooth scroll to another section on the page, give the link the <code>.page-scroll</code> class and set the link target to a corresponding ID on the page.</p>
-					<p><strong></strong></p>
 					<p>The “hot hand” in basketball is the belief that a player who has made a few shots in a row is more likely to make subsequent shots than he would be following a few misses or a mix of makes and misses. In other words, a player who has made a few shots in a row is considered to be “hot” and thus more likely to make the shots that follow; on the other end of the spectrum, a player who has missed a few shots in a row is considered to be “cold” and thus less likely to make the shots that follow. Our project aims to investigate the legitimacy of the “hot hand” effect in basketball — do players actually shoot more effectively following a made basket, or is the “hot hand” a fallacy?</p>
 					<a class="btn btn-default page-scroll" href="#scatterplot_div">Click Me to Scroll Down!</a>
 				</div>
@@ -348,7 +346,6 @@
 		</div>
 	</section>
 
-	<!-- Popup window --!>
 	<div id = "player_info" class="modal fade player_info_modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
@@ -381,10 +378,12 @@
         		</div>
         	</div>
         </div>
+        <div class="row" id="player-stats">
         <div id="hot_frequency" class="col-sm-12"></div>
         <div id="reg_frequency" class="col-sm-12"></div>
         <div id="hot_fgp" class="col-sm-12"></div>
         <div id="reg_fgp" class="col-sm-12"></div>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

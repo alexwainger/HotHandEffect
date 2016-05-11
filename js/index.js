@@ -66,38 +66,6 @@ window.addEventListener('load', function () {
 				quarters.push(quarter_inputs[i].value)
 			}
 		}
-		// var q1 = messageForm.elements["q1_filter"].checked;
-		// if (q1 == true) {
-		// 	quarters.push(messageForm.elements["q1_filter"].value);
-		// }
-		// var q2 = messageForm.elements["q2_filter"].checked;
-		// if (q2 == true) {
-		// 	quarters.push(messageForm.elements["q2_filter"].value);
-		// }
-		// var q3 = messageForm.elements["q3_filter"].checked;
-		// if (q3 == true) {
-		// 	quarters.push(messageForm.elements["q3_filter"].value);
-		// }
-		// var q4 = messageForm.elements["q4_filter"].checked;
-		// if (q4 == true) {
-		// 	quarters.push(messageForm.elements["q4_filter"].value);
-		// }
-		// var ot1 = messageForm.elements["1ot_filter"].checked;
-		// if (ot1 == true) {
-		// 	quarters.push(messageForm.elements["1ot_filter"].value);
-		// }
-		// var ot2 = messageForm.elements["2ot_filter"].checked;
-		// if (ot2 == true) {
-		// 	quarters.push(messageForm.elements["2ot_filter"].value);
-		// }
-		// var ot3 = messageForm.elements["3ot_filter"].checked;
-		// if (ot3 == true) {
-		// 	quarters.push(messageForm.elements["3ot_filter"].value);
-		// }
-		// var ot4 = messageForm.elements["4ot_filter"].checked;
-		// if (ot4 == true) {
-		// 	quarters.push(messageForm.elements["4ot_filter"].value);
-		// }
 
 		post_string[2] = quarters;
 

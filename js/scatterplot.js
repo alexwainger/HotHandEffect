@@ -11,6 +11,10 @@ $(document).ready(function () {
 	var svg = null;
 
 	socket.on('hothandResult', function (res) {
+		if (res.length === 0) {
+			$("#no-result-modal").show();
+			return;
+		}
 		playerDict = res.playerDict;
 		d3.select("#alexsvg").remove();
 		data = parseData(playerDict);

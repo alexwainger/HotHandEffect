@@ -7,7 +7,7 @@ $(document).ready(function() {
 		
 		var formatCount = d3.format(",.0f");
 		var margin = {top: 20, right: 30, bottom: 30, left: 40};
-		var width = 1000- margin.left - margin.right;
+		var width = 850- margin.left - margin.right;
 		var height = 500 - margin.top - margin.bottom;
 
 		var trial_diffs = res.permutation_test_results.trial_diffs;

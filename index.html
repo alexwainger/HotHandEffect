@@ -273,7 +273,6 @@
 				<div class="col-sm-12">
 					<button class="btn btn-default" id="filter_button" type="submit" form="messagesForm" value="submit"> Submit </button>
 				</div>
-
 			</div>
 		</div>
 
@@ -284,26 +283,30 @@
 	<section id="scatterplot" class="scatterplot-section">
 		<div class="container">
 			<div class="row">
-				<div class="col-lg-12">
+				<div class="col-sm-12">
 					<h1>Scatterplot</h1>
 				</div>
-				<div class="col-lg-12" id="scatterplot_div">
-					<div class="col-lg-2" id="legend"></div>
-					<div class="col-lg-2">
-						<form>
-							<select name="coloring_options" id="coloring_options"  class="form-control">
-								<option value="None" selected="selected"> None </option>
-								<option value="Position"> Position </option>
-								<option value="Height"> Height </option>
-								<option value="Weight"> Weight</option>
-								<option value="avg_shot_distance"> Average Shot Distance </option>
-							</select>
+				<div class="col-sm-12">
+						<form name="coloring_options" id="coloring_options">
+							<label class="radio-inline"><input type="radio" name="optradio" checked="checked" value="None">None</label>
+							<label class="radio-inline"><input type="radio" name="optradio" value="Position">Position</label>
+							<label class="radio-inline"><input type="radio" name="optradio" value="Height">Height</label>
+							<label class="radio-inline"><input type="radio" name="optradio" value="Weight">Weight</label>
+							<label class="radio-inline"><input type="radio" name="optradio" value="avg_shot_distance">Average Shot Distance</label>
 						</form>
-					</div>	
+				</div>
+				<div class="col-sm-12 scatterplot-container">	
+					<div class="col-sm-8 col-sm-offset-1" id="scatterplot_div">
+						<div class="col-sm-2 alextooltip" id="alextooltip"></div>
+					</div>
+					<div class="col-sm-2 row">
+						<div class="col-sm-12 vcenter" id="legend"></div>
+					</div>
 				</div>
 			</div>
 		</div>
 	</section>
+
 
 	<!-- Histogram Section -->
 	<section id="histogram" class="histogram-section">
@@ -330,13 +333,62 @@
 	<section id="permutation_test" class="permutation-test-section">
 		<div class="container">
 			<div class="row">
-				<div class="col-lg-12">
+				<div class="col-sm-12">
 					<h1>Permutation Test</h1>
 				</div>
-				<div class="col-lg-12" id="permutation_test_div"></div>
+				<div class="col-sm-8 col-sm-offset-1" id="permutation_test_div"></div>
 			</div>
 		</div>
 	</section>
+
+
+	<div id = "player_info" class="modal fade player_info_modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Player Information</h4>    
+      </div>
+      <div class="modal-body">
+        <div class = "row" id = "basic-bio">
+        	<div class="col-sm-3 col-sm-offset-1" id="player-pic">
+        		<img src="images/nba-logo.jpg" class="img-circle img-responsive" alt="Cinque Terre">
+        	</div>
+        	<div id="player-bio" class="col-sm-6 col-sm-offset-2"> 
+        		<div class="col-sm-12"><h2 id="player-name"></h2></div>
+      			<div class="col-sm-12">
+						  <label>Team:</label>
+					  <div class="player-info-field" id="player-team"></div>
+        		</div>
+        		<div class="col-sm-12">
+						  <label>Age:</label>
+					  <div class="player-info-field" id="player-age"></div>
+        		</div>
+        		<div class="col-sm-12">
+						  <label>Height:</label>
+					  <div class="player-info-field" id="player-height"></div>
+        		</div>
+        		<div class="col-sm-12">
+						  <label>Weight:</label>
+					  <div class="player-info-field" id="player-weight"></div>
+        		</div>
+        		<div class="col-sm-12">
+						  <label>Average Shot Distance:</label>
+					  <div class="player-info-field" id="player-dist"></div>
+        		</div>
+        	</div>
+        </div>
+        <div id="player-stat-1" class="col-sm-12"></div>
+        <div id="player-stat-2" class="col-sm-12"></div>
+        <div id="player-stat-3" class="col-sm-12"></div>
+        <div id="player-stat-4" class="col-sm-12"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+  	</div>
+	</div>
+	</div>
 
 	<!-- jQuery -->
 	<script src="js/jquery.js"></script>

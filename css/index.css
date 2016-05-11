@@ -1,7 +1,13 @@
 #intro {
 	height: auto;
 }
-
+#permutation_test {
+	height: auto;
+}
+.section {
+	min-height: 300px;
+	padding-bottom: 20px;
+}
 input[type="checkbox"] {
 	/*margin-right: 8px;*/
 	float:left;
@@ -89,6 +95,7 @@ input[type="text"] {
 #data_filter_div {
 	height: auto;
 }
+
 #form_div {
 	border: 1px solid black;
 	padding-bottom: 30px;
@@ -111,4 +118,8 @@ input[type="text"] {
 .filter_div {
 	padding: 4px;
 	border-radius: 10px;
+}
+
+.player-info-field {
+	display: inline-block;
 }

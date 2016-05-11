@@ -259,7 +259,17 @@ io.sockets.on('connection', function (socket) {
 				players[result.rows[0].Player_ID].calculate_avg_shot_distance();
 				result.rows[0].avg_shot_distance = players[result.rows[0].Player_ID].avg_shot_distance;
 				
-				socket.emit('player_info_result', result.rows[0]);
+				teamQuery = "SELECT Team_abr FROM Player_Team_Pairs WHERE Player_ID = $1 Order By Year DESC LIMIT 1;";
+				conn.query(teamQuery, [result.rows[0].Player_ID], function(err, r) {
+					if (r.rows.length>0) {
+						result.rows[0].team = r.rows[0].Team_abr;
+						socket.emit('player_info_result', result.rows[0]);
+					} else if (err) {
+						console.log(err);
+					}
+				});
+				
+//				socket.emit('player_info_result', result.rows[0]);
 			} else if (err) {
 				console.log(err);
 			}

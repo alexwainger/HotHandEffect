@@ -290,14 +290,10 @@ $(document).ready(function () {
 		var point = data_points.get(player_link);
 		socket.emit('player_stats', player_link);
 		socket.emit('player_info', player_link);
-		
-		socket.on('player_info_result', function (res) {
-			
-			console.log("player info");
-			console.log(res);
-			
+
+		socket.on('player_info_result', function (res) {	
 			$('#player-name').text(point.player_name);
-			$('#player-team').text(" some team");
+			$('#player-team').text(res.team);
 			$('#player-height').text(Math.trunc(res.Height / 12) + "'" + (res.Height % 12) + "''");
 			$('#player-weight').text(res.Weight + ' lb.');
 			$('#player-dist').text(res.avg_shot_distance.toFixed(1) + ' ft.');

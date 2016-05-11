@@ -9,6 +9,8 @@
 	border: 0px;      
 	border-radius: 8px;           
 	pointer-events: none;
+	bottom:20%;
+	right: 15%;
 }
 
 .scatteraxis path,

@@ -67,7 +67,7 @@ io.sockets.on('connection', function (socket) {
 			console.log("That query took " + ((parseFloat(Date.now()) - start_time) / 1000) + " seconds");
 			if (!result || result.rows.length == 0) {
 				console.log("no results retrieved.");
-				socket.emit('hothandResult', {});
+				socket.emit('hothandResult', {playerDict: 0});
 				socket.emit('permutation_test_results', {});
 			} else if (result.rows.length > 0) {
 				players = calculate_percentages(result.rows);

@@ -11,8 +11,10 @@ $(document).ready(function () {
 	var svg = null;
 
 	socket.on('hothandResult', function (res) {
-		if (res.length === 0) {
-			$("#no-result-modal").show();
+		console.log("res length");
+		console.log(res);
+		if (res.noresult) {
+			$('#no-result-modal').modal('show');
 			return;
 		}
 		playerDict = res.playerDict;

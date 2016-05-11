@@ -1,13 +1,12 @@
 "use strict";
 var socket = io.connect();
 $(document).ready(function () {
-	var margin = {top: 20, right: 20, bottom: 30, left: 40},
-    canvas_width = 960 - margin.left - margin.right,
-    canvas_height = 500 - margin.top - margin.bottom;
+	//var margin = {top: 20, right: 20, bottom: 30, left: 40},
+  var canvas_width = 700;// - margin.left - margin.right,
+  var canvas_height = 500;// - margin.top - margin.bottom;
 	// var canvas_width = 70;
 	// var canvas_height = 500;
 	var margin = 40;
-	var radius = 4;
 	var data_points = d3.map();
 	var values;
 	var x_domain = ["-10%~-8%", "-8%~-6%", "-6%~-4%", "-4%~-2%", "-2%~0%", "0%~2%", "2%~4%", "4%~6%", "6%~8%", "8%~10%"];
@@ -21,12 +20,14 @@ $(document).ready(function () {
 		socket.emit("histogram_colors");
 		playerDict = res.playerDict;
 		d3.select("#histogramsvg").remove();
+		d3.select("#hist_legendsvg").remove();
 	});
 	socket.on("histogram_colorResult", function (res) {
 		// colorList = res.colorResults;
 		makeD3(playerDict, res.colorResults);
 		d3.select("#hist_coloring_options").on("change", function(change) {
 			d3.select("#histogramsvg").remove();
+			d3.select("#hist_legendsvg").remove();
 			makeD3(playerDict, res.colorResults);
 		});
 	});
@@ -81,10 +82,10 @@ $(document).ready(function () {
 		values = data_points.values();
 
 		var x = d3.scale.ordinal()
-		    .rangeRoundBands([0, canvas_width], .1);
+		    .rangeRoundBands([0, canvas_width-margin*2], .1);
 
 		var y = d3.scale.linear()
-		    .rangeRound([canvas_height, 0]);
+		    .rangeRound([canvas_height - margin * 2, 0]);
 
 		var xAxis = d3.svg.axis()
 		    .scale(x)
@@ -97,8 +98,8 @@ $(document).ready(function () {
 		    .tickFormat(d3.format(".2s"));
 
 		var svg = d3.select("#histogram_div").append("svg").attr("id", "histogramsvg")
-		    .attr("width", canvas_width + 40) // +left margin +right margin
-		    .attr("height", canvas_height + 70) // +top margin + bottom margin
+		    .attr("width", canvas_width+2*margin) // +left margin +right margin
+		    .attr("height", canvas_height+2*margin) // +top margin + bottom margin
 		  	.append("g")
 		    .attr("transform", "translate(" + 50 + "," + 10 + ")");
 
@@ -153,7 +154,7 @@ $(document).ready(function () {
 
 	  	svg.append("g")
 	      	.attr("class", "x axis histoaxis")
-	      	.attr("transform", "translate(0," + canvas_height + ")")
+	      	.attr("transform", "translate(0," + (canvas_height - margin*2 + 1) + ")")
 	      	.call(xAxis);
 
 	  	svg.append("g")
@@ -218,7 +219,8 @@ $(document).ready(function () {
 				}
 			}
 
-			var legend = svg.selectAll(".legend")
+			var legend = d3.select("#histo-legend").append("svg").attr("id", "hist_legendsvg")
+					.selectAll("g")
 			    .data(data)
 			    .enter().append("g")
 			    .attr("class", "legend")

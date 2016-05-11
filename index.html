@@ -315,16 +315,22 @@
 				<div class="col-sm-12">
 					<h1>Histogram</h1>
 				</div>
-				<div class="col-sm-12">
-						<form id="hist_coloring_options">
-							<label class="radio-inline"><input type="radio" name="hist_color_options" value="None" checked> None</label>
-							<label class="radio-inline"><input type="radio" name="hist_color_options" value="Position"> Position</label>
-							<label class="radio-inline"><input type="radio" name="hist_color_options" value="Height"> Height</label>
-							<label class="radio-inline"><input type="radio" name="hist_color_options" value="Weight"> Weight</label>
-							<label class="radio-inline"><input type="radio" name="hist_color_options" value="avg_shot_distance"> Average Shot Distance</label>
+				<div class="col-sm-12" id="histo-choices">
+						<form name="hist_color_options" id="hist_coloring_options">
+							<label class="radio-inline"><input type="radio" name="histopt" value="None" checked> None</label>
+							<label class="radio-inline"><input type="radio" name="histopt" value="Position"> Position</label>
+							<label class="radio-inline"><input type="radio" name="histopt" value="Height"> Height</label>
+							<label class="radio-inline"><input type="radio" name="histopt" value="Weight"> Weight</label>
+							<label class="radio-inline"><input type="radio" name="histopt" value="avg_shot_distance"> Average Shot Distance</label>
 						</form>
 				</div>	
-				<div class="col-sm-12" id="histogram_div"></div>
+				<div class="col-sm-12" id="histogram_div-container">
+					<div class="col-sm-8 col-sm-offset-1" id="histogram_div"></div>
+					<div class="col-sm-2 row">
+						<div class="col-sm-12" id="histo-legend"></div>
+					</div>
+				</div>
+
 			</div>
 		</div>
 	</section>

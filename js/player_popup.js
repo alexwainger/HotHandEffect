@@ -20,8 +20,6 @@ $(document).ready(function() {
 			}
 		}
 
-		console.log(hot_fgps);
-		console.log(hot_freqs);
 		var freqConfigs = {
 			svgID: "player_frequency_svg",
 			divID: "player_frequency",

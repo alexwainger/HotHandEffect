@@ -293,11 +293,7 @@ $(document).ready(function () {
 			// console.log(point);
 		socket.emit('player_info', player_link);
 		socket.on('player_info_result', function (res) {
-			
-			console.log("player info");
-			console.log(res);
-			
-			$('#player-team').text(" some team");
+			$('#player-team').text(res.team);
 			$('#player-height').text(Math.trunc(res.Height / 12) + "'" + (res.Height % 12) + "''");
 			$('#player-weight').text(res.Weight + ' lb.');
 			$('#player-dist').text(res.avg_shot_distance.toFixed(1) + ' ft.');

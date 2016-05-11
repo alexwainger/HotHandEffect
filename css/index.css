@@ -126,6 +126,11 @@ input[type="text"] {
 #player_info {
 	min-width: 1000px;
 }
+
+img {
+  width: 100%;
+}
+
 .modal-dialog {
 	min-width: 800px;
 }

@@ -48,7 +48,8 @@ $(document).ready(function() {
 
 		var createLineGraph = function(configs) {
 			d3.select("#" + configs.svgID).remove();
-
+			var w = $(document.getElementById("player_frequency")).width();
+			console.log("grpah to get height: "+w);
 			var margin = {top: 20, right: 20, bottom: 40, left: 70};
 			var width = 400 - margin.left - margin.right;
 			var height = 350 - margin.top - margin.bottom;

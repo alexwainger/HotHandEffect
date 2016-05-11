@@ -23,6 +23,9 @@ $(document).ready(function () {
 		d3.select("#hist_legendsvg").remove();
 	});
 	socket.on("histogram_colorResult", function (res) {
+		if (res.length === 0) {
+			return;
+		}
 		// colorList = res.colorResults;
 		makeD3(playerDict, res.colorResults);
 		d3.select("#hist_coloring_options").on("change", function(change) {

@@ -11,6 +11,12 @@ $(document).ready(function () {
 	var svg = null;
 
 	socket.on('hothandResult', function (res) {
+		console.log("res length");
+		console.log(res);
+		if (res.noresult) {
+			$('#no-result-modal').modal('show');
+			return;
+		}
 		playerDict = res.playerDict;
 		d3.select("#alexsvg").remove();
 		data = parseData(playerDict);
@@ -288,17 +294,21 @@ $(document).ready(function () {
 	function handleOnClick() {
 		var player_link = d3.select(this).attr("data-name");
 		var point = data_points.get(player_link);
+		$('#player-name').text(point.player_name);
+		var playername = player_link.substring(10, player_link.length - 5);
+//		console.log("playername " + playername);
+		var imgSrc = "http://d2cwpp38twqe55.cloudfront.net/req/201604170/images/players" + playername + ".png";
+		$('#player-pic-holder').attr('src', imgSrc);
 		socket.emit('player_stats', player_link);
 		socket.emit('player_info', player_link);
 
 		socket.on('player_info_result', function (res) {
-			$('#player-name').text(point.player_name);
 			$('#player-team').text(res.team);
 			$('#player-height').text(Math.trunc(res.Height / 12) + "'" + (res.Height % 12) + "''");
 			$('#player-weight').text(res.Weight + ' lb.');
 			$('#player-dist').text(res.avg_shot_distance.toFixed(1) + ' ft.');
+			$('#player_info').modal('show');
 		});
 
-		$('#player_info').modal('show');
 	}
 });

@@ -2,7 +2,9 @@
 var socket = io.connect();
 $(document).ready(function() {
 	socket.on('permutation_test_results', function(res) {
-		
+		if (res.length === 0) {
+			return;
+		}
 		d3.select("#permutation_svg").remove();
 		
 		var formatCount = d3.format(",.0f");

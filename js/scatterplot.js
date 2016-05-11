@@ -117,7 +117,7 @@ $(document).ready(function () {
 			.on("mouseout", handleMouseOut)
 			.on("click", handleOnClick)
 			.attr("r", radius)
-			.attr("fill", "black");
+			.attr("fill", "#225ea8");
 
 		handle_scatterplot_colors();
 		d3.select("#coloring_options").on("change", handle_scatterplot_colors);
@@ -129,7 +129,7 @@ $(document).ready(function () {
 			svg.selectAll("circle")
 				.transition()
 				.duration(1000)
-				.attr("fill", "black");
+				.attr("fill", "#225ea8");
 			removeLegend();
 		} else {
 			socket.emit('scatterplot_colors');

@@ -7,23 +7,23 @@ $(document).ready(function () {
 	// var canvas_width = 70;
 	// var canvas_height = 500;
 	var margin = 40;
-	var data_points = d3.map();
-	var values;
+	// var hist_data_points = d3.map();
+	// var hist_values;
 	var x_domain = ["-10%~-8%", "-8%~-6%", "-6%~-4%", "-4%~-2%", "-2%~0%", "0%~2%", "2%~4%", "4%~6%", "6%~8%", "8%~10%"];
     
 
     var all_diff_positions = ["Point Guard", "Shooting Guard", "Small Forward", "Power Forward", "Center"];
 
-	var playerDict = {};
+	var playerDict;
 	// var colorList; // Array
 	socket.on('hothandResult', function (res) {
 		socket.emit("histogram_colors");
 		playerDict = res.playerDict;
-		d3.select("#histogramsvg").remove();
-		d3.select("#hist_legendsvg").remove();
 	});
 	socket.on("histogram_colorResult", function (res) {
 		// colorList = res.colorResults;
+		d3.select("#histogramsvg").remove();
+		d3.select("#hist_legendsvg").remove();
 		makeD3(playerDict, res.colorResults);
 		d3.select("#hist_coloring_options").on("change", function(change) {
 			d3.select("#histogramsvg").remove();
@@ -40,9 +40,9 @@ $(document).ready(function () {
 
 		for (var i = 0; i < colorList.length; i++) {
 			var item = colorList[i];
-			console.log("itme in colorList = "+item);
-			colorDict.set(colorList[i].Player_ID, item[color_option]);
+			colorDict.set(item.Player_ID, item[color_option]);
 		}
+	    
 	    var colors;
 		if (color_option == 'Position') {
 			colors = function(position) {
@@ -73,13 +73,12 @@ $(document).ready(function () {
 				.range(["#ffffd9","#c7e9b4","#41b6c4","#225ea8","#081d58"]);
 		}
 
+		var hist_data_points = d3.map();
 		for (var key in rows) {
-			if (rows[key].hot_shots >= 50) {
-				data_points.set(key, rows[key]);
-			}
+			hist_data_points.set(key, rows[key]);
 		}
 
-		values = data_points.values();
+		var hist_values = hist_data_points.values();
 
 		var x = d3.scale.ordinal()
 		    .rangeRoundBands([0, canvas_width-margin*2], .1);
@@ -107,8 +106,7 @@ $(document).ready(function () {
 		var num_bin = 10;
 		var bin_elements_count = new Array(num_bin).fill(0);
 		var bin_values = d3.map();
-	  	values.forEach(function(d) {
-	    	var y0 = 0;
+	  	hist_values.forEach(function(d) {
 	    	d.diff = d.hot_fg-d.reg_fg;
 	    	var bin_int = Math.min(Math.max(Math.round(d.diff * 100), -10), 8);
 	    	if (bin_int%2 != 0) {
@@ -127,22 +125,23 @@ $(document).ready(function () {
 	    		temp.push(d);
 	    		bin_values.set(d.bin, temp);	
 	    	}
-	  	});
-	  	console.log(bin_values.keys());
 
-	  	for (var i = 0; i < bin_values.size(); i++) {
+	  	});
+
+	  	for (var i = 0; i < x_domain.length; i++) {
 	  		var y0 = 0;
 	  		var temp = bin_values.get(x_domain[i]);
-	  		if (i == bin_values.size()-1) {
-	  			console.log("8 TO 10");
-	  			console.log(temp);
-	  		}
+	  		console.log("temp = "+temp);
+
 	  		if (!temp) continue;
-	  		temp.sort(function(a, b) {
-	  			var record1 = String(colorDict.get(a.player_link));
-	  			var record2 = String(colorDict.get(b.player_link));
-	  			return record1.localeCompare(record2);
-	  		});
+	  		if (temp.length > 1) {
+	  			temp.sort(function(a, b) {
+		  			var record1 = String(colorDict.get(a.player_link));
+		  			var record2 = String(colorDict.get(b.player_link));
+		  			return record1.localeCompare(record2);
+	  			});
+	  		}
+	  		
 	  		for (var j = 0; j < temp.length; j++) {
 	  			temp[j].y0 = y0;
 	  			temp[j].y1 = y0 += 1;
@@ -179,7 +178,7 @@ $(document).ready(function () {
 		    .enter().append("rect")
 		    .attr("width", function(d) { return x.rangeBand();})
 		    .attr("y", function(d) {
-		    	if (d.y1 === undefined) console.log(d);
+		    	console.log(d);
 		    	return y(d.y1); })
 		    .attr("height", function(d) { 
 		    	return y(d.y0) - y(d.y1); })

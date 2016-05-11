@@ -19,17 +19,17 @@
 	<!-- D3.js -->
 
 	<!-- Custom CSS -->
-	<link href = "css/scrolling-nav.css" rel = "stylesheet">
-	<link href = "css/scatterplot.css" rel = "stylesheet">
-	<link href = "css/index.css" rel = "stylesheet">
-	<link href = "css/histogram.css" rel = "stylesheet">
-	<link href = "css/permutation_test.css" rel = "stylesheet">
-	<script src = "/socket.io/socket.io.js"></script>
-	<script src = "js/scatterplot.js"></script>
-	<script src = "js/index.js"></script>
-	<script src = "js/histogram.js"></script>
-	<script src = "js/permutation_test.js"></script>
-	<script src = "js/player_popup.js"></script>
+	<link href="css/scrolling-nav.css" rel="stylesheet">
+	<link href="css/scatterplot.css" rel="stylesheet">
+	<link href="css/index.css" rel="stylesheet">
+	<link href="css/histogram.css" rel="stylesheet">
+	<link href="css/permutation_test.css" rel="stylesheet">
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="js/scatterplot.js"></script>
+	<script src="js/index.js"></script>
+	<script src="js/histogram.js"></script>
+	<script src="js/permutation_test.js"></script>
+	<script src="js/player_popup.js"></script>
 	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 	<!--[if lt IE 9]>
@@ -84,10 +84,8 @@
 			<div class="row">
 				<div class="col-lg-12">
 					<h1>Overview</h1>
-					<p><strong>Usage Instructions:</strong> Make sure to include the <code>scrolling-nav.js</code>, <code>jquery.easing.min.js</code>, and <code>scrolling-nav.css</code> files. To make a link smooth scroll to another section on the page, give the link the <code>.page-scroll</code> class and set the link target to a corresponding ID on the page.</p>
-					<p><strong></strong></p>
 					<p>The “hot hand” in basketball is the belief that a player who has made a few shots in a row is more likely to make subsequent shots than he would be following a few misses or a mix of makes and misses. In other words, a player who has made a few shots in a row is considered to be “hot” and thus more likely to make the shots that follow; on the other end of the spectrum, a player who has missed a few shots in a row is considered to be “cold” and thus less likely to make the shots that follow. Our project aims to investigate the legitimacy of the “hot hand” effect in basketball — do players actually shoot more effectively following a made basket, or is the “hot hand” a fallacy?</p>
-					<a class="btn btn-default page-scroll" href="#scatterplot_div">Click Me to Scroll Down!</a>
+					<a class="btn btn-default page-scroll" href="#scatterplot">Click Me to Scroll Down!</a>
 				</div>
 			</div>
 
@@ -151,30 +149,30 @@
 								<!-- <div class = "quarter_checkboxes col-sm-12"> -->
 								<div class="col-sm-12">
 									<label class="checkbox-inline">
-										<input class = "quarter_check" type="checkbox" name="q1_filter" value="1" checked="checked">Q1</label>
+										<input class="quarter_check" type="checkbox" name="q1_filter" value="1" checked="checked">Q1</label>
 									<label class="checkbox-inline">
-										<input class = "quarter_check" type="checkbox" name="1ot_filter" value="5" checked="checked">1OT</label>
+										<input class="quarter_check" type="checkbox" name="1ot_filter" value="5" checked="checked">1OT</label>
 								</div>
 
 								<div class="col-sm-12">
 									<label class="checkbox-inline">
-										<input class = "quarter_check" type="checkbox" name="q2_filter" value="2" checked="checked"> Q2</label>
+										<input class="quarter_check" type="checkbox" name="q2_filter" value="2" checked="checked"> Q2</label>
 									<label class="checkbox-inline">
-										<input class = "quarter_check" type="checkbox" name="2ot_filter" value="6" checked="checked">2OT</label>
+										<input class="quarter_check" type="checkbox" name="2ot_filter" value="6" checked="checked">2OT</label>
 								</div>
 
 								<div class="col-sm-12">
 									<label class="checkbox-inline">
-										<input class = "quarter_check" type="checkbox" name="q3_filter" value="3" checked="checked"> Q3</label>
+										<input class="quarter_check" type="checkbox" name="q3_filter" value="3" checked="checked"> Q3</label>
 									<label class="checkbox-inline">
-										<input class = "quarter_check" type="checkbox" name="3ot_filter" value="7" checked="checked">3OT</label>
+										<input class="quarter_check" type="checkbox" name="3ot_filter" value="7" checked="checked">3OT</label>
 								</div>
 
 								<div class="col-sm-12">
 									<label class="checkbox-inline">
-										<input class = "quarter_check" type="checkbox" name="q4_filter" value="4" checked="checked"> Q4</label>
+										<input class="quarter_check" type="checkbox" name="q4_filter" value="4" checked="checked"> Q4</label>
 									<label class="checkbox-inline">
-										<input class = "quarter_check" type="checkbox" name="4ot_filter" value="8" checked="checked">4OT </label>
+										<input class="quarter_check" type="checkbox" name="4ot_filter" value="8" checked="checked">4OT </label>
 								</div>
 								<!-- </div>	 -->
 							</div>
@@ -249,17 +247,19 @@
 								<label>
 									<input type="text" name="time_span" class="form-control" value="20"> mins</label>
 							</div>
-							
-							<div class="col-sm-3 filter_div" id ="min_hothand"> 
-							<div class="filter_header"> Minimum Hot Hand Shots</div>
-								<label><input type = "text" name="min_hothand" class="form-control" value="50">
+
+							<div class="col-sm-3 filter_div" id="min_hothand">
+								<div class="filter_header"> Minimum Hot Hand Shots</div>
+								<label>
+									<input type="text" name="min_hothand" class="form-control" value="50">
 
 								</label>
 							</div>
 
-							<div class="col-sm-3 filter_div" id ="min_regular"> 
-							<div class="filter_header"> Minimum Regular Shots</div>
-								<label><input type = "text" name="min_regular" class="form-control" value="50">
+							<div class="col-sm-3 filter_div" id="min_regular">
+								<div class="filter_header"> Minimum Regular Shots</div>
+								<label>
+									<input type="text" name="min_regular" class="form-control" value="50">
 
 								</label>
 							</div>
@@ -288,15 +288,20 @@
 					<h1>Scatterplot</h1>
 				</div>
 				<div class="col-sm-12">
-						<form name="coloring_options" id="coloring_options">
-							<label class="radio-inline"><input type="radio" name="optradio" checked="checked" value="None">None</label>
-							<label class="radio-inline"><input type="radio" name="optradio" value="Position">Position</label>
-							<label class="radio-inline"><input type="radio" name="optradio" value="Height">Height</label>
-							<label class="radio-inline"><input type="radio" name="optradio" value="Weight">Weight</label>
-							<label class="radio-inline"><input type="radio" name="optradio" value="avg_shot_distance">Average Shot Distance</label>
-						</form>
+					<form name="coloring_options" id="coloring_options">
+						<label class="radio-inline">
+							<input type="radio" name="optradio" checked="checked" value="None">None</label>
+						<label class="radio-inline">
+							<input type="radio" name="optradio" value="Position">Position</label>
+						<label class="radio-inline">
+							<input type="radio" name="optradio" value="Height">Height</label>
+						<label class="radio-inline">
+							<input type="radio" name="optradio" value="Weight">Weight</label>
+						<label class="radio-inline">
+							<input type="radio" name="optradio" value="avg_shot_distance">Average Shot Distance</label>
+					</form>
 				</div>
-				<div class="col-sm-12 scatterplot-container">	
+				<div class="col-sm-12 scatterplot-container">
 					<div class="col-sm-10" id="scatterplot_div">
 						<div class="col-sm-2 alextooltip" id="alextooltip"></div>
 					</div>
@@ -317,14 +322,19 @@
 					<h1>Histogram</h1>
 				</div>
 				<div class="col-sm-12" id="histo-choices">
-						<form name="hist_color_options" id="hist_coloring_options">
-							<label class="radio-inline"><input type="radio" name="histopt" value="None" checked> None</label>
-							<label class="radio-inline"><input type="radio" name="histopt" value="Position"> Position</label>
-							<label class="radio-inline"><input type="radio" name="histopt" value="Height"> Height</label>
-							<label class="radio-inline"><input type="radio" name="histopt" value="Weight"> Weight</label>
-							<label class="radio-inline"><input type="radio" name="histopt" value="avg_shot_distance"> Average Shot Distance</label>
-						</form>
-				</div>	
+					<form name="hist_color_options" id="hist_coloring_options">
+						<label class="radio-inline">
+							<input type="radio" name="histopt" value="None" checked> None</label>
+						<label class="radio-inline">
+							<input type="radio" name="histopt" value="Position"> Position</label>
+						<label class="radio-inline">
+							<input type="radio" name="histopt" value="Height"> Height</label>
+						<label class="radio-inline">
+							<input type="radio" name="histopt" value="Weight"> Weight</label>
+						<label class="radio-inline">
+							<input type="radio" name="histopt" value="avg_shot_distance"> Average Shot Distance</label>
+					</form>
+				</div>
 				<div class="col-sm-12" id="histogram_div-container">
 					<div class="col-sm-8 col-sm-offset-1" id="histogram_div"></div>
 					<div class="col-sm-2 col-sm-offset-1">
@@ -348,7 +358,6 @@
 		</div>
 	</section>
 
-	<!-- Popup window --!>
 	<div id = "player_info" class="modal fade player_info_modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
@@ -359,9 +368,9 @@
       <div class="modal-body">
         <div class = "row" id = "basic-bio">
         	<div class="col-sm-3 col-sm-offset-1" id="player-pic">
-        		<img src="images/nba-logo.jpg" class="img-circle img-responsive" alt="Cinque Terre">
+        		<img src="images/nba-logo.jpg" class="img-circle img-responsive" id="player-pic-holder" alt="Cinque Terre">
         	</div>
-        	<div id="player-bio" class="col-sm-6 col-sm-offset-2"> 
+        	<div id="player-bio" class="col-sm-4 col-sm-offset-1"> 
         		<div class="col-sm-12"><h2 id="player-name"></h2></div>
       			<div class="col-sm-12">
 						  <label>Team:</label>
@@ -381,10 +390,10 @@
         		</div>
         	</div>
         </div>
-        <div id="hot_frequency" class="col-sm-12"></div>
-        <div id="reg_frequency" class="col-sm-12"></div>
-        <div id="hot_fgp" class="col-sm-12"></div>
-        <div id="reg_fgp" class="col-sm-12"></div>
+        <div class="row" id="player-stats">
+        <div id="player_frequency" class="col-sm-6"></div>
+        <div id="player_fgp" class="col-sm-6"></div>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -393,6 +402,23 @@
 	</div>
 	</div>
 
+
+
+	<div id="no-result-modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Oops!</h4>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger">
+				  <strong>Sorry!</strong> No result found.
+				</div>
+      </div>
+    </div>
+	  </div>
+	</div>
 	<!-- jQuery -->
 	<script src="js/jquery.js"></script>
 

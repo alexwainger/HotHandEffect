@@ -21,6 +21,9 @@ $(document).ready(function () {
 		playerDict = res.playerDict;
 	});
 	socket.on("histogram_colorResult", function (res) {
+		if (res.length === 0) {
+			return;
+		}
 		// colorList = res.colorResults;
 		d3.select("#histogramsvg").remove();
 		d3.select("#hist_legendsvg").remove();

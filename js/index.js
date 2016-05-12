@@ -143,6 +143,10 @@ window.addEventListener('load', function () {
 		/* notify the server of the newly submitted message */
 		error_msg.css("display", "none")
 		$('.filter_div').css("border-style", "hidden")
+
+		$(document.getElementById("loading-overlay")).css("display","block");
+		$(document.getElementById("page-top")).css("overflow", "hidden");
+	
 		socket.emit('filter', post_string);
 		// }
 

@@ -124,7 +124,27 @@ $(document).ready(function() {
 					"stroke-width": "3px",
 					"fill": "none"
 				});
-		
+
+			var three_point_g = svg.append("g")
+				.attr("class", "three-point")
+				.attr("transform", "translate(" + xScale(22) + ",0)");
+
+			three_point_g.append("line")
+				.attr({
+					"x1": 0,
+					"x2": 0,
+					"y1": 0,
+					"y2": height})
+				.style({
+					"stroke": "black",
+					"stroke-width": "1px",
+					"stroke-dasharray": "5,10"});
+			
+			three_point_g.append("text")
+				.text("3pt line")
+				.attr("x", 5)
+				.attr("y", 10);
+
 			var focus = svg.append('g').style('display', 'none');
 			focus.append('line')
 				.attr('id', configs.distFocusLineID)

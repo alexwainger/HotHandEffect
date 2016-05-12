@@ -14,7 +14,6 @@ $(document).ready(function () {
 		$(document.getElementById("loading-overlay")).css("display","none");
 		$(document.getElementById("page-top")).css("overflow", "auto");
 
-		console.log(res);
 		if (Object.keys(res.playerDict).length === 0) {
 			d3.select("#alexsvg").remove();
 			$('#no-result-modal').modal('show');

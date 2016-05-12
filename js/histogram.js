@@ -141,7 +141,6 @@ $(document).ready(function () {
 		for (var i = 0; i < x_domain.length; i++) {
 			var y0 = 0;
 			var temp = bin_values.get(x_domain[i]);
-			console.log("temp = " + temp);
 
 			if (!temp) continue;
 			if (temp.length > 1) {
@@ -197,7 +196,6 @@ $(document).ready(function () {
 				return x.rangeBand();
 			})
 			.attr("y", function (d) {
-				console.log(d);
 				return y(d.y1);
 			})
 			.attr("height", function (d) {

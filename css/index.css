@@ -134,3 +134,24 @@ img {
 .modal-dialog {
 	min-width: 800px;
 }
+
+#loading-overlay {
+	display: block;
+	z-index: 10;
+	background-color: #d1d1e0;
+	position: fixed;
+	height: 100%;
+	width:100%;
+	overflow: hidden;
+	top:0;
+	left: 0;
+	opacity: 0.7;
+}
+
+#spinning {
+	width:30%;
+	height: 30%;
+	margin: auto;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+}

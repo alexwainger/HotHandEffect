@@ -11,6 +11,9 @@ $(document).ready(function () {
 	var svg = null;
 
 	socket.on('hothandResult', function (res) {
+		$(document.getElementById("loading-overlay")).css("display","none");
+		$(document.getElementById("page-top")).css("overflow", "auto");
+	
 		console.log("res length");
 		console.log(res);
 		if (res.noresult) {

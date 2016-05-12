@@ -13,8 +13,7 @@ $(document).ready(function () {
 	socket.on('hothandResult', function (res) {
 		$(document.getElementById("loading-overlay")).css("display","none");
 		$(document.getElementById("page-top")).css("overflow", "auto");
-	
-		console.log("res length");
+
 		console.log(res);
 		if (Object.keys(res.playerDict).length === 0) {
 			d3.select("#alexsvg").remove();
@@ -288,8 +287,6 @@ $(document).ready(function () {
 		d3.select(this).style("stroke-width", 2) // set the stroke width
 			.style("stroke", "red");
 		tooltip.html(point.player_name + "<br>Hot FG%: " + (point.hot_fg * 100).toFixed(1) + "%<br>Regular FG%: " + (point.reg_fg * 100).toFixed(1) + "%<br>% Difference: " + difference + "%<br>Hot Shots Taken: " + point.hot_shots)
-			//.style("left", (d3.mouse(this)[0] + 100)+ "px")
-			//.style("top",  d3.mouse(this)[1] + "px");
 		tooltip.transition()
 			.duration(200)
 			.style("opacity", .9);

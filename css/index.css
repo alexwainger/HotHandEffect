@@ -4,9 +4,10 @@
 #permutation_test {
 	height: auto;
 }
-.section {
+section {
 	min-height: 300px;
 	padding-bottom: 20px;
+	padding-top: 30px;
 }
 input[type="checkbox"] {
 	/*margin-right: 8px;*/

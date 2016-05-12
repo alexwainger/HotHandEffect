@@ -291,18 +291,33 @@ $(document).ready(function () {
 			.style("opacity", .9);
 	};
 
+
 	function handleOnClick() {
 		var player_link = d3.select(this).attr("data-name");
 		var point = data_points.get(player_link);
-		$('#player-name').text(point.player_name);
-		var playername = player_link.substring(10, player_link.length - 5);
-//		console.log("playername " + playername);
-		var imgSrc = "http://d2cwpp38twqe55.cloudfront.net/req/201604170/images/players" + playername + ".png";
-		$('#player-pic-holder').attr('src', imgSrc);
+	
 		socket.emit('player_stats', player_link);
 		socket.emit('player_info', player_link);
+		
+		socket.emit('imagePNG', player_link);
+		socket.on('imagePNG_res', function(res_png) {
+			if (!res_png.isValid) {
+				socket.emit('imageJPG', player_link);
+				socket.on('imageJPG_res', function(res_jpg) {
+					if (!res_jpg.isValid) {
+						$('#player-pic-holder').attr('src', "images/nba-logo.jpg");
+					} else {
+						$('#player-pic-holder').attr('src', res_jpg.imgSrc);
+					}
+				});
+			} else {
+				$('#player-pic-holder').attr('src', res_png.imgSrc);
+			}
+		});
 
 		socket.on('player_info_result', function (res) {
+			
+			$('#player-name').text(point.player_name);
 			$('#player-team').text(res.team);
 			$('#player-height').text(Math.trunc(res.Height / 12) + "'" + (res.Height % 12) + "''");
 			$('#player-weight').text(res.Weight + ' lb.');

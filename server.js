@@ -254,35 +254,49 @@ io.sockets.on('connection', function (socket) {
 		queryString = "SELECT Player_Id, Height, Weight, Position FROM Players WHERE Player_Id=$1;";
 
 		conn.query(queryString, [player_link], function (err, result) {
-			//			console.log("player info " + result.rows);
 			if (!result || result.rows.length == 0) {
 				console.log("no results retrieved.");
 				socket.emit('player_info_result', {});
 			} else if (result.rows.length > 0) {
-				players[result.rows[0].Player_ID].calculate_avg_shot_distance();
-				result.rows[0].avg_shot_distance = players[result.rows[0].Player_ID].avg_shot_distance;
-
+				player = result.rows[0];
+				players[player.Player_ID].calculate_avg_shot_distance();
+				player.avg_shot_distance = players[player.Player_ID].avg_shot_distance;
 				teamQuery = "SELECT Team_abr FROM Player_Team_Pairs WHERE Player_ID = $1 Order By Year DESC LIMIT 1;";
-				conn.query(teamQuery, [result.rows[0].Player_ID], function (err, r) {
+				conn.query(teamQuery, [player.Player_ID], function (err, r) {
 					if (!r || r.rows.length == 0) {
 						console.log("no results retrieved.");
-						result.rows[0].team = "";
-						socket.emit('player_info_result', result.rows[0]);
+						player.team = "";
+						socket.emit('player_info_result', player);
 					} else if (r.rows.length > 0) {
-						result.rows[0].team = r.rows[0].Team_abr;
-						socket.emit('player_info_result', result.rows[0]);
+						player.team = r.rows[0].Team_abr;
+						socket.emit('player_info_result', player);
 					} else if (err) {
 						console.log(err);
 					}
 				});
-
-				//				socket.emit('player_info_result', result.rows[0]);
 			} else if (err) {
 				console.log(err);
 			}
 
 		});
 	});
+
+	socket.on('imagePNG', function(player_id) {	
+		check_url('imagePNG_res', '.png', player_id);
+	});
+
+	socket.on('imageJPG', function(player_id) {
+		check_url('imageJPG_res', '.jpg', player_id);
+	});
+
+	var check_url = function(emit_loc, ext, player_id) {
+		var regex = new RegExp('.*/(.*).html');
+		var player_id = regex.exec(player_id);
+		var imgSrc = "http://d2cwpp38twqe55.cloudfront.net/req/201604170/images/players/" + player_id[1] + ext;
+		http.get(imgSrc, function(res) {
+			socket.emit(emit_loc, {isValid: (res.statusCode == 200), imgSrc: imgSrc});
+		});
+	};
 
 	var handle_colorRequest = function (viz) {
 		queryString = "SELECT Player_Id, Height, Weight, Position FROM Players WHERE Player_Id IN (";

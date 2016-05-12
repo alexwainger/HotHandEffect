@@ -352,7 +352,14 @@
 				<div class="col-sm-12">
 					<h1>Permutation Test</h1>
 				</div>
-				<div class="col-sm-8 col-sm-offset-1" id="permutation_test_div"></div>
+				<div class="col-sm-2"></div>
+				<div class="col-sm-8">
+					<p>The permutation test helps determine whether the differences between the hot and regular FG% that we observe are statistically significant. This histogram shows the result of 100,000 iterations of the permutation test, with <font color="red">red</font> bars indicating a difference greater than the original difference, and <font color="steelblue">blue</font> indicating smaller differences.<p>
+					<h4 id="permutation_original_difference"></h4>
+					<h4 id="permutation_p_value"></h4>
+				</div>
+				<div class="col-sm-2"></div>
+				<div class="col-sm-12" id="permutation_test_div"></div>
 			</div>
 		</div>
 	</section>
@@ -388,7 +395,12 @@
 					  <div class="player-info-field" id="player-dist"></div>
         		</div>
         	</div>
-        </div>
+		</div>
+		<div class="col-sm-2"></div>
+		<div class="col-sm-8">
+			<h3>Shot Frequencies and FG%: <font color="red">HOT</font> vs. <font color="steelblue">REGULAR</font></h3>
+		</div>
+		<div class="col-sm-2"></div>
         <div class="row" id="player-stats">
         <div id="player_frequency" class="col-sm-6"></div>
         <div id="player_fgp" class="col-sm-6"></div>

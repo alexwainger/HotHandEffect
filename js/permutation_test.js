@@ -6,18 +6,21 @@ $(document).ready(function() {
 			return;
 		}
 		d3.select("#permutation_svg").remove();
-		
+	
 		var formatCount = d3.format(",.0f");
-		var margin = {top: 20, right: 30, bottom: 30, left: 40};
+		var margin = {top: 20, right: 30, bottom: 50, left: 40};
 		var width = 850- margin.left - margin.right;
 		var height = 500 - margin.top - margin.bottom;
 
 		var trial_diffs = res.permutation_test_results.trial_diffs;
 		var original_diff = res.permutation_test_results.original_diff;
 		var p_val = res.permutation_test_results.k;
-		console.log('P value: ' + p_val);
-		console.log('Orig diff: ' + original_diff);
-		
+
+		od_div = document.getElementById("permutation_original_difference");
+		pv_div = document.getElementById("permutation_p_value");		
+		od_div.innerHTML = "Original difference: " + original_diff.toFixed(5);
+		pv_div.innerHTML = "P-value: " + p_val.toFixed(4);
+
 		var x = d3.scale.linear()
 			.domain([d3.min(trial_diffs), d3.max(trial_diffs)])
 			.range([0, width]);
@@ -131,6 +134,13 @@ $(document).ready(function() {
 		permutation_svg.append("g")
 			.attr("class", "x axis")
 			.attr("transform", "translate(0," + height + ")")
-			.call(xAxis);
+			.call(xAxis)
+			.append("text")
+			.style({"font-size": "12px",
+					"font-family": "sans-serif",
+					"font-weight": "bold"})
+			.attr("transform", "translate(" + (width-3)/2 + "," + (margin.bottom-5) + ")")
+			.style("text-anchor", "middle")
+			.text("Difference between reshuffled samples");
 	});
 });

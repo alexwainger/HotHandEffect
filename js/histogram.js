@@ -2,11 +2,11 @@
 var socket = io.connect();
 $(document).ready(function () {
 	//var margin = {top: 20, right: 20, bottom: 30, left: 40},
-	var canvas_width = 700; // - margin.left - margin.right,
+	var canvas_width = 800; // - margin.left - margin.right,
 	var canvas_height = 500; // - margin.top - margin.bottom;
 	// var canvas_width = 70;
 	// var canvas_height = 500;
-	var margin = 40;
+	var margin = 60;
 	// var hist_data_points = d3.map();
 	// var hist_values;
 	var x_domain = ["-10%~-8%", "-8%~-6%", "-6%~-4%", "-4%~-2%", "-2%~0%", "0%~2%", "2%~4%", "4%~6%", "6%~8%", "8%~10%"];
@@ -107,8 +107,8 @@ $(document).ready(function () {
 			.tickFormat(d3.format(".2s"));
 
 		var svg = d3.select("#histogram_div").append("svg").attr("id", "histogramsvg")
-			.attr("width", canvas_width + 2 * margin) // +left margin +right margin
-			.attr("height", canvas_height + 2 * margin) // +top margin + bottom margin
+			.attr("width", canvas_width + margin) // +left margin +right margin
+			.attr("height", canvas_height + margin) // +top margin + bottom margin
 			.append("g")
 			.attr("transform", "translate(" + 50 + "," + 10 + ")");
 
@@ -164,17 +164,21 @@ $(document).ready(function () {
 		svg.append("g")
 			.attr("class", "x axis histoaxis")
 			.attr("transform", "translate(0," + (canvas_height - margin * 2 + 1) + ")")
-			.call(xAxis);
+			.call(xAxis)
+			.append("text")
+			.attr("class", "label")
+			.attr("transform", "translate(" + (canvas_width-20)/2 + "," + (margin-5) + ")")
+			.style("text-anchor", "middle")
+			.text("Hot FG% - Regular FG%");
 
 		svg.append("g")
 			.attr("class", "y axis histoaxis")
 			.call(yAxis)
 			.append("text")
-			.attr("transform", "rotate(-90)")
-			.attr("y", 6)
-			.attr("dy", ".71em")
-			.style("text-anchor", "end")
-			.text("# People");
+			.attr("class", "label")
+			.attr("transform", "translate(-40,"+((canvas_height-margin-50)/2)+")rotate(-90)")
+			.style("text-anchor", "middle")
+			.text("# of Players");
 
 		var bin = svg.selectAll(".bin")
 			.data(bin_values.values())

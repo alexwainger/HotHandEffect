@@ -3,7 +3,7 @@ var socket = io.connect();
 $(document).ready(function () {
 	var canvas_width = 700;
 	var canvas_height = 500;
-	var margin = 40;
+	var margin = 60;
 	var radius = 5;
 	var data_points = d3.map();
 
@@ -77,9 +77,8 @@ $(document).ready(function () {
 			.call(xAxis)
 			.append("text")
 			.attr("class", "label")
-			.attr("x", canvas_width - margin * 2)
-			.attr("y", -6)
-			.attr("text-anchor", "end")
+			.attr("transform", "translate(" + canvas_width/2 + "," + (margin-5) + ")")
+			.style("text-anchor", "middle")
 			.text("Regular FG%");
 
 		svg.append("g")
@@ -88,10 +87,8 @@ $(document).ready(function () {
 			.call(yAxis)
 			.append("text")
 			.attr("class", "label")
-			.attr("transform", "rotate(-90)")
-			.attr("y", 12)
-			.attr("x", -40)
-			.style("text-anchor", "end")
+			.attr("transform", "translate(-50,"+(canvas_height/2)+")rotate(-90)")
+			.style("text-anchor", "middle")
 			.text("Hot Hand FG%");
 
 		svg.append("line")

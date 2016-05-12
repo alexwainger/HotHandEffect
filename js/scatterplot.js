@@ -16,7 +16,8 @@ $(document).ready(function () {
 	
 		console.log("res length");
 		console.log(res);
-		if (res.noresult) {
+		if (Object.keys(res.playerDict).length === 0) {
+			d3.select("#alexsvg").remove();
 			$('#no-result-modal').modal('show');
 			return;
 		}

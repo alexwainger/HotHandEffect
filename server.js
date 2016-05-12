@@ -31,7 +31,6 @@ io.sockets.on('connection', function (socket) {
 		span_req = data[8];
 		min_hotshots = data[9];
 		min_regshots = data[10];
-		console.log("min hot " + min_hotshots);
 
 		// get quarters filter
 		var quarters = data[2];
@@ -68,7 +67,7 @@ io.sockets.on('connection', function (socket) {
 			if (!result || result.rows.length == 0) {
 				console.log("no results retrieved.");
 				socket.emit('hothandResult', {playerDict: 0});
-				socket.emit('permutation_test_results', {});
+				socket.emit('permutation_test_results', {permutation_test_results: 0});
 			} else if (result.rows.length > 0) {
 				players = calculate_percentages(result.rows);
 				socket.emit('hothandResult', {

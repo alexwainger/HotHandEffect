@@ -2,7 +2,7 @@
 var socket = io.connect();
 $(document).ready(function() {
 	socket.on('permutation_test_results', function(res) {
-		if (res.length === 0) {
+		if (res.length === 0 || Object.keys(res.permutation_test_results).length === 0) {
 			return;
 		}
 		d3.select("#permutation_svg").remove();

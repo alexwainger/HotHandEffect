@@ -186,11 +186,11 @@ $(document).ready(function () {
 	function drawLegend(color_option, color_scale, vals) {
 		removeLegend();
 		var li = {
-			w: 120
-			, h: 40
-			, s: 3
-			, r: 3
-			, num_bins: 5
+			w: 120, 
+			h: 40, 
+			s: 3, 
+			r: 3,
+			num_bins: 5
 		};
 
 		data = [];
@@ -273,14 +273,14 @@ $(document).ready(function () {
 
 	function handleMouseOut() {
 		tooltip.transition().duration(500).style("opacity", 0);
-		d3.select(this).style("stroke-width", 0) // set the stroke width
+		d3.select(this).style("stroke-width", 0)
 	};
 
 	function handleMouseIn() {
 		var player_link = d3.select(this).attr("data-name");
 		var point = data_points.get(player_link);
 		var difference = ((point.hot_fg - point.reg_fg) * 100).toFixed(1);
-		d3.select(this).style("stroke-width", 2) // set the stroke width
+		d3.select(this).style("stroke-width", 2)
 			.style("stroke", "red");
 		tooltip.html(point.player_name + "<br>Hot FG%: " + (point.hot_fg * 100).toFixed(1) + "%<br>Regular FG%: " + (point.reg_fg * 100).toFixed(1) + "%<br>% Difference: " + difference + "%<br>Hot Shots Taken: " + point.hot_shots)
 		tooltip.transition()

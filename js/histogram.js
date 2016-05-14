@@ -1,21 +1,15 @@
 "use strict";
 var socket = io.connect();
 $(document).ready(function () {
-	//var margin = {top: 20, right: 20, bottom: 30, left: 40},
-	var canvas_width = 800; // - margin.left - margin.right,
-	var canvas_height = 500; // - margin.top - margin.bottom;
-	// var canvas_width = 70;
-	// var canvas_height = 500;
+	var canvas_width = 800;
+	var canvas_height = 500;
 	var margin = 60;
-	// var hist_data_points = d3.map();
-	// var hist_values;
 	var x_domain = ["-10%~-8%", "-8%~-6%", "-6%~-4%", "-4%~-2%", "-2%~0%", "0%~2%", "2%~4%", "4%~6%", "6%~8%", "8%~10%"];
 
 
 	var all_diff_positions = ["Point Guard", "Shooting Guard", "Small Forward", "Power Forward", "Center"];
 
 	var playerDict;
-	// var colorList; // Array
 	socket.on('hothandResult', function (res) {
 		if (Object.keys(res.playerDict).length === 0) {
 			d3.select("#histogramsvg").remove();
@@ -29,7 +23,6 @@ $(document).ready(function () {
 		if (res.length === 0) {
 			return;
 		}
-		// colorList = res.colorResults;
 		d3.select("#histogramsvg").remove();
 		d3.select("#hist_legendsvg").remove();
 		makeD3(playerDict, res.colorResults);
@@ -44,7 +37,6 @@ $(document).ready(function () {
 	function makeD3(rows, colorList) {
 		var colorDict = d3.map();
 		var color_option = $("#hist_coloring_options input:radio:checked").val();
-		//var color_option = "Height";
 
 		for (var i = 0; i < colorList.length; i++) {
 			var item = colorList[i];
@@ -107,8 +99,8 @@ $(document).ready(function () {
 			.tickFormat(d3.format(".2s"));
 
 		var svg = d3.select("#histogram_div").append("svg").attr("id", "histogramsvg")
-			.attr("width", canvas_width + margin) // +left margin +right margin
-			.attr("height", canvas_height + margin) // +top margin + bottom margin
+			.attr("width", canvas_width + margin)
+			.attr("height", canvas_height + margin)
 			.append("g")
 			.attr("transform", "translate(" + 50 + "," + 10 + ")");
 
@@ -157,7 +149,7 @@ $(document).ready(function () {
 			}
 		}
 
-		x.domain(x_domain); //bin_value.domain()
+		x.domain(x_domain);
 		y.domain([0, d3.max(bin_elements_count)]);
 
 		svg.append("g")
@@ -265,6 +257,5 @@ $(document).ready(function () {
 					return d.text;
 				});
 		}
-
 	}
 });

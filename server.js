@@ -1,32 +1,32 @@
-var express = require('express')
-	, bodyParser = require('body-parser')
-	, anyDB = require('any-db')
-	, http = require('http');
+var express = require('express'),
+	bodyParser = require('body-parser'),
+	anyDB = require('any-db'),
+	http = require('http');
 
 var conn = anyDB.createConnection('sqlite3://data/database.sqlite3');
 var app = express();
-
-//app.set('port', (process.env.PORT || 5000));
 
 // add socket.io
 var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 
 app.use(express.static(__dirname));
-//app.use('/data/shooting_numbers.csv', express.static(__dirname + '../data/shooting_numbers.csv'));
-//app.get('*', function(req, res) {
-//	res.render(__dirname + '/code/index.html');
-//})
 
-console.log('yup');
+/************************/
+/*** INITIAL ENDPOINT ***/
+/************************/
+// Creates a new environment for each connected user
 io.sockets.on('connection', function (socket) {
-	console.log("user connected");
+	
+	// Global vars for each connection, helps keep state
+	// so that later API calls know which players have been seen
 	var glob_queryStr;
 	var makes_req;
 	var span_req;
 	var players;
+
+	// Handles submission of data filters / hot hand definitions
 	socket.on('filter', function (data) {
-		console.log(data);
 		makes_req = data[7];
 		span_req = data[8];
 		min_hotshots = data[9];
@@ -58,35 +58,33 @@ io.sockets.on('connection', function (socket) {
 			is_home = " AND Is_Home_Game=0";
 		}
 
+		// Construct SQL query strings
 		var queryStr = "SELECT Time, Quarter, Player_Name, Player_ID, Is_Make, Distance, Game_ID FROM RAW_SHOTS WHERE Year >=$1 AND Year<=$2 AND " + quarterfilter + " AND Distance>=$3 AND Distance<= $4" + is_home + is_two_pointer + ";";
 		glob_queryStr = "SELECT Time, Quarter, Is_Make, Distance, Game_ID, Year FROM RAW_SHOTS WHERE Year >= " + data[0] + " AND Year<= " + data[1] + " AND " + quarterfilter + is_home;
 
-		start_time = parseFloat(Date.now());
 		conn.query(queryStr, [data[0], data[1], data[3], data[4]], function (err, result) {
-			console.log("That query took " + ((parseFloat(Date.now()) - start_time) / 1000) + " seconds");
 			if (!result || result.rows.length == 0) {
-				console.log("no results retrieved.");
+				// If no shots are returned, send back empty results
 				socket.emit('hothandResult', {playerDict: 0});
 				socket.emit('permutation_test_results', {permutation_test_results: 0});
 			} else if (result.rows.length > 0) {
+				// Otherwise, calculate hot and regular percentages
 				players = calculate_percentages(result.rows);
 				socket.emit('hothandResult', {
 					playerDict: players
 				});
-				console.log("sent player Dict");
 
+				// Run permutation test
 				socket.emit('permutation_test_results', {
 					permutation_test_results: run_permutation_test(players)
 				});
-
-				console.log('emitted perm results');
 
 			} else if (err) {
 				console.log(err);
 			}
 		});
 
-
+		// Function to calculate hot and regular percentages
 		function calculate_percentages(data) {
 			player_dict = {};
 			hot_dict = {};
@@ -100,7 +98,7 @@ io.sockets.on('connection', function (socket) {
 				var curr_distance = data[i].Distance;
 
 				var id = curr_link;
-				/* If this is the first time we're seeing this player, add him to the dictionaries */
+				// If this is the first time we're seeing this player, add him to the dictionaries
 				if (!(id in player_dict)) {
 					player_dict[id] = new player_object(curr_link, curr_name);
 					hot_dict[id] = new hot_object(curr_game, curr_quarter, curr_time, makes_req, span_req);
@@ -136,6 +134,7 @@ io.sockets.on('connection', function (socket) {
 			return player_dict;
 		};
 
+		// Function to run permutation test
 		function run_permutation_test(players) {
 			hotPercentages = [];
 			regPercentages = [];
@@ -147,8 +146,9 @@ io.sockets.on('connection', function (socket) {
 			n = hotPercentages.length;
 			hot_avg = average(hotPercentages);
 			reg_avg = average(regPercentages);
-			original_diff = hot_avg - reg_avg
+			original_diff = hot_avg - reg_avg;
 
+			// Create master list of all percentages
 			all_elements = hotPercentages.concat(regPercentages);
 			k = 0;
 			trial_diffs = [];
@@ -163,6 +163,7 @@ io.sockets.on('connection', function (socket) {
 					all_elements[j] = temp;
 				}
 
+				// Compute differences, see if it's as extreme as original, log result
 				avg1 = average(all_elements.slice(0, n));
 				avg2 = average(all_elements.slice(-n));
 				trial_diff = avg1 - avg2;
@@ -176,12 +177,13 @@ io.sockets.on('connection', function (socket) {
 			k = k / iters;
 
 			return {
-				original_diff: original_diff
-				, trial_diffs: trial_diffs
-				, k: k
+				original_diff: original_diff,
+				trial_diffs: trial_diffs,
+				k: k
 			};
 		};
 
+		// Calculate average of values in arr
 		function average(arr) {
 			avg = 0.0;
 			for (var i = 0; i < arr.length; i++) {
@@ -190,13 +192,20 @@ io.sockets.on('connection', function (socket) {
 			return avg / arr.length;
 		};
 	});
+	
+	
+	/****************************************************/
+	/*** CALCULATE INDIVIDUAL PLAYER'S STATS ENDPOINT ***/
+	/****************************************************/
 	socket.on('player_stats', function (player_link) {
+		// Keep filters from before, limit to only shots from 0 to 30 feet
 		var queryStr = glob_queryStr + " AND Distance <= 30 AND Player_ID = $1;";
 		conn.query(queryStr, [player_link], function (err, result) {
 			var shot_data = result.rows;
 			socket.emit('player_stats_result', calculate_player_stats(shot_data, player_link));
 		});
 
+		// Calculate hot and regular shooting percentages for each distance for given player
 		function calculate_player_stats(data, link) {
 			var distance_dict = {};
 			var player_obj = new player_object(link, "", 0);
@@ -241,20 +250,54 @@ io.sockets.on('connection', function (socket) {
 		};
 	});
 
+	// Emit color results to scatter plot
 	socket.on('scatterplot_colors', function () {
 		handle_colorRequest("scatterplot");
 	});
 
+	// Emit color results to histogram
 	socket.on('histogram_colors', function () {
 		handle_colorRequest("histogram");
 	});
 
+	// Gets height, weight, position, and average shot distance for each player
+	var handle_colorRequest = function (viz) {
+		queryString = "SELECT Player_Id, Height, Weight, Position FROM Players WHERE Player_Id IN (";
+		for (key in players) {
+			if (players[key].hot_shots >= 50) {
+				queryString += '"' + key + '",';
+				players[key].calculate_avg_shot_distance();
+			}
+		}
+
+		queryString = queryString.slice(0, -1);
+		queryString += ");";
+
+		conn.query(queryString, function (err, result) {
+			to_emit = [];
+			if (!result || result.rows.length == 0) {
+				socket.emit(viz + '_colorResult', {});
+			} else if (result.rows.length > 0) {
+				for (var i = 0; i < result.rows.length; i++) {
+					result.rows[i].avg_shot_distance = players[result.rows[i].Player_ID].avg_shot_distance;
+					to_emit.push(result.rows[i]);
+				}
+			} else if (err) {
+				console.log(err);
+			}
+
+			socket.emit(viz + '_colorResult', {
+				colorResults: to_emit
+			});
+		});
+	};
+
+	// Gets data for individual player popup
 	socket.on('player_info', function (player_link) {
 		queryString = "SELECT Player_Id, Height, Weight, Position FROM Players WHERE Player_Id=$1;";
 
 		conn.query(queryString, [player_link], function (err, result) {
 			if (!result || result.rows.length == 0) {
-				console.log("no results retrieved.");
 				socket.emit('player_info_result', {});
 			} else if (result.rows.length > 0) {
 				player = result.rows[0];
@@ -263,7 +306,6 @@ io.sockets.on('connection', function (socket) {
 				teamQuery = "SELECT Team_abr FROM Player_Team_Pairs WHERE Player_ID = $1 Order By Year DESC LIMIT 1;";
 				conn.query(teamQuery, [player.Player_ID], function (err, r) {
 					if (!r || r.rows.length == 0) {
-						console.log("no results retrieved.");
 						player.team = "";
 						socket.emit('player_info_result', player);
 					} else if (r.rows.length > 0) {
@@ -280,14 +322,17 @@ io.sockets.on('connection', function (socket) {
 		});
 	});
 
+	// Checks if the player's picture on basketball-reference is a png
 	socket.on('imagePNG', function(player_id) {	
 		check_url('imagePNG_res', '.png', player_id);
 	});
 
+	// Checks if picture is a jpg
 	socket.on('imageJPG', function(player_id) {
 		check_url('imageJPG_res', '.jpg', player_id);
 	});
 
+	// Visits url and checks if it's a 404 or 200 status code
 	var check_url = function(emit_loc, ext, player_id) {
 		var regex = new RegExp('.*/(.*).html');
 		var player_id = regex.exec(player_id);
@@ -296,40 +341,14 @@ io.sockets.on('connection', function (socket) {
 			socket.emit(emit_loc, {isValid: (res.statusCode == 200), imgSrc: imgSrc});
 		});
 	};
-
-	var handle_colorRequest = function (viz) {
-		queryString = "SELECT Player_Id, Height, Weight, Position FROM Players WHERE Player_Id IN (";
-		for (key in players) {
-			if (players[key].hot_shots >= 50) {
-				queryString += '"' + key + '",';
-				players[key].calculate_avg_shot_distance();
-			}
-		}
-
-		queryString = queryString.slice(0, -1);
-		queryString += ");";
-
-		conn.query(queryString, function (err, result) {
-			to_emit = [];
-			if (!result || result.rows.length == 0) {
-				console.log("no results retrieved.");
-				socket.emit(viz + '_colorResult', {});
-			} else if (result.rows.length > 0) {
-				for (var i = 0; i < result.rows.length; i++) {
-					result.rows[i].avg_shot_distance = players[result.rows[i].Player_ID].avg_shot_distance;
-					to_emit.push(result.rows[i]);
-				}
-			} else if (err) {
-				console.log(err);
-			}
-
-			socket.emit(viz + '_colorResult', {
-				colorResults: to_emit
-			});
-		});
-	};
 });
 
+/*************************************/
+/*** Objects used for calculations ***/
+/*************************************/
+
+
+// Each player has a hot object, which keeps track of whether or not they are hot
 function hot_object(curr_game, curr_quarter, curr_time, makes_req, interval) {
 	this.time_between_shots = interval;
 	this.req_consec_makes = makes_req;
@@ -368,6 +387,7 @@ function hot_object(curr_game, curr_quarter, curr_time, makes_req, interval) {
 	};
 };
 
+// The player object logs the various numbers of hot and regular shots each player has taken
 function player_object(curr_link, curr_name) {
 	this.player_link = curr_link;
 	this.player_name = curr_name;
@@ -421,6 +441,8 @@ function player_object(curr_link, curr_name) {
 	};
 };
 
+// The distance objects are used for the player popups, keeping track of
+// a player's stats from each distance
 function distance_object() {
 	this.hot_makes = 0;
 	this.hot_shots = 0;
@@ -476,6 +498,3 @@ function distance_object() {
 
 //Visit localhost:8080
 server.listen(8080);
-//app.listen(app.get('port'), function() {
-//  console.log('Node app is running on port', app.get('port'));
-//});

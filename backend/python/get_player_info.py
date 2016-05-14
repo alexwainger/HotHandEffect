@@ -5,41 +5,49 @@ import urllib2
 import re
 import sqlite3
 
+###############################################
+### GETS HEIGHT, WEIGHT, POSITION, AND TEAM ###
+###  FOR EACH PLAYER IN OUR SHOTS DATABASE  ###
+###############################################
 def main():
 	try:
 		connection = sqlite3.connect("data/database.sqlite3");
 		c = connection.cursor();
 
-		players_seen = set();
-
+		# GET ALL PLAYER ID'S THAT WE ALREADY HAVENT COMPLETED THIS SCRIPT FOR 
+		# (WE LOG EACH PLAYER WE FINISH IN CASE IT CRASHES HALF WAY THROUGH
 		rows = c.execute('SELECT DISTINCT player_id FROM raw_shots where player_id not in (SELECT player_id from completed);').fetchall();
 		for row in rows:
 			player_id = row[0];
-		
+
+			# Go to player's page
 			response = urllib2.urlopen("http://www.basketball-reference.com" + player_id, 'lxml').read();
 			soup = BeautifulSoup(response, 'lxml');
 
-			if player_id not in players_seen:
-				players_seen.add(player_id);
+			players_seen.add(player_id);
 			
-				info_box = soup.find(id = 'info_box');
-				player_info = info_box.find("p", {"class": "padding_bottom_half"});
+			info_box = soup.find(id = 'info_box');
+			player_info = info_box.find("p", {"class": "padding_bottom_half"});
 
-				full_name = info_box.find('h1').get_text().encode('utf-8');
-				position = player_info.contents[1].strip(u' \xa0\u25aa\xa0').encode('utf-8').split(' and ')[0];
-				height = player_info.contents[6].strip(u' \xa0\u25aa\xa0').encode('utf-8');
-				weight = player_info.contents[8].strip(u' \xa0\u25aa\xa0').rstrip().encode('utf-8');
+			# Get html for full name, position, height, and weight
+			full_name = info_box.find('h1').get_text().encode('utf-8');
+			position = player_info.contents[1].strip(u' \xa0\u25aa\xa0').encode('utf-8').split(' and ')[0];
+			height = player_info.contents[6].strip(u' \xa0\u25aa\xa0').encode('utf-8');
+			weight = player_info.contents[8].strip(u' \xa0\u25aa\xa0').rstrip().encode('utf-8');
 			
-				height_reg = re.compile('([5678])-([0-9]+)');
-				weight_reg = re.compile('([0-9]+) lbs\.');
+			height_reg = re.compile('([5678])-([0-9]+)');
+			weight_reg = re.compile('([0-9]+) lbs\.');
 
-				height_res = height_reg.search(height);
-				height = int(height_res.group(1)) * 12 + int(height_res.group(2));
-				weight = int(weight_reg.search(weight).group(1));
+			height_res = height_reg.search(height);
+			height = int(height_res.group(1)) * 12 + int(height_res.group(2));
+			weight = int(weight_reg.search(weight).group(1));
 
-				c.execute("INSERT INTO Players VALUES(?,?,?,?);", (player_id, height, weight, position));
-				c.execute("UPDATE Raw_Shots SET Player_Name = ? WHERE Player_ID = ?;", (full_name, player_id));
+			# Log height, weight, position, update raw_shots with full name
+			# (we collected abbreviated name in the other script)
+			c.execute("INSERT INTO Players VALUES(?,?,?,?);", (player_id, height, weight, position));
+			c.execute("UPDATE Raw_Shots SET Player_Name = ? WHERE Player_ID = ?;", (full_name, player_id));
 
+			# For each year this player played, get the team they were on
 			years = c.execute('SELECT DISTINCT Year from raw_shots WHERE player_id =? ;', (player_id,)).fetchall();
 			for year in years:
 				year = year[0];

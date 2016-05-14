@@ -4,6 +4,9 @@ import csv
 import numpy as np
 import sqlite3
 
+######################################
+### OBJECTS TO KEEP TRACK OF STATS ###
+######################################
 class hot_object:
 
 	def __init__(self, curr_game, curr_quarter, curr_time, makes_req, interval):
@@ -81,11 +84,13 @@ class player_object:
 		else:
 			self.reg_fg = self.reg_makes/self.reg_shots;
 
-##########################################################
-################# Permutation Test #######################
-##########################################################
 
 
+########################
+### Permutation Test ###
+########################
+
+## Calculate hot and regular percentages
 def calculate_percentages(rows, makes, time_between_shots):
 	regular = []
 	hothand = []
@@ -126,13 +131,16 @@ def calculate_percentages(rows, makes, time_between_shots):
 
 	return regular, hothand
 
+## Actually runs the permutation test
 def permutation_test():	
 	connection = sqlite3.connect("data/database.sqlite3");
 	cursor = connection.cursor();
 	
-	queryString = "SELECT Time, Quarter, Player_ID, Is_Make, Game_ID FROM RAW_SHOTS;";# WHERE Year >= 2002 AND Year<=2016;";
+	# Use entire dataset
+	queryString = "SELECT Time, Quarter, Player_ID, Is_Make, Game_ID FROM RAW_SHOTS;"
 	rows = cursor.execute(queryString).fetchall();
 
+	# Hot hand definitions with consecutive makes 1-4 and timespan 1-8
 	for makes in range(1,5):
 		for span in range(1, 9):
 			regular, hothand = calculate_percentages(rows, makes, span);
@@ -147,6 +155,7 @@ def permutation_test():
 				if diff < np.abs(np.mean(total[:n]) - np.mean(total[n:])):
 					k += 1;
 
+			# Print results
 			print "For makes: " + str(makes) + ", and span: " + str(span) + " ---> " + str(float(k)/iters) + "  (" + str(n) + " data points, " + str(np.mean(hothand) - np.mean(regular)) + " difference)";
 
 if __name__ == '__main__':

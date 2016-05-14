@@ -10,7 +10,6 @@ section {
 	padding-top: 30px;
 }
 input[type="checkbox"] {
-	/*margin-right: 8px;*/
 	float:left;
   clear:both;
 }
@@ -19,11 +18,7 @@ input[type="radio"] {
 	float:left;
   clear:both;
 }
-/*.inputdiv {
-	text-align: center
-}*/
 .inputdiv {
-	/*width: 70%;*/
 	display: inline-block;
 }
 input[type="text"] {
@@ -31,58 +26,32 @@ input[type="text"] {
   border:solid 1px gray;
 }
 #season_filter_div {
-	/*border: 2px solid black;
-	border-left-width: 4px;*/
-	/*height: 200px;*/
-	/*width: 20%;*/
-	/*display: inline-block;*/
 	float: left;
 }
 #quarter_filter_div {
-	/*border: 2px solid black;*/
-	/*height: 200px;*/
-	/*width: 20%;*/
-	/*display: inline-block;*/
-	/*float: left;	*/
 	text-align: center;
 }
 
 #shot_distance_filter {
-	/*border: 2px solid black;*/
-	/*height: 200px;*/
-	/*width: 20%;*/
-	/*display: inline-block;*/
-	/*float: left;*/
 	text-align: center;
 }
 
 #shot_type_filter {
-	/*border: 2px solid black;*/
-	/*height: 200px;*/
-	/*width: 20%;*/
-	/*display: inline-block;*/
 	float: left;
 	text-align: center;
 }
 
 #game_type_filter {
-	/*border: 2px solid black;
-	border-right-width: 4px;*/
-	/*height: 200px;*/
-	/*width: 20%;*/
-	/*display: inline-block;*/
 	float: left;
 	text-align: center;
 }
 
 #consecutive_shots_filter {
-	/*width: 50%;*/
 	display: inline-block;
 	float: left;
 }
 
 #time_span_filter {
-	/*width: 50%;*/
 	display: inline-block;
 	float: left;
 }

@@ -84,8 +84,6 @@ window.addEventListener('load', function () {
 		} else {
 			post_string[3] = shot_distance_min;
 			post_string[4] = shot_distance_max;
-			//messageForm.elements["shot_distance_min"].value = "";
-			//messageForm.elements["shot_distance_max"].value = "";
 			if (shot_distance_error_check) {
 				var distance_div = document.getElementById("shot_distance_filter");
 				distance_div.removeChild(distance_div.lastChild);
@@ -139,7 +137,6 @@ window.addEventListener('load', function () {
 		post_string[9] = min_hothand;
 		post_string[10] = min_regular;
 
-		// else {
 		/* notify the server of the newly submitted message */
 		error_msg.css("display", "none")
 		$('.filter_div').css("border-style", "hidden")
@@ -148,9 +145,7 @@ window.addEventListener('load', function () {
 		$(document.getElementById("page-top")).css("overflow", "hidden");
 	
 		socket.emit('filter', post_string);
-		// }
-
-
+		
 	}
 }, false);
 

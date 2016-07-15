@@ -1,0 +1,1 @@
+We gathered all of our data from various pages on basketball-reference.com. Our SQLite database ended up being over 200MB, so we had to store it using GIT LFS. If you would like access to it, we can add any TA to the repository (it's private), that way you can pull the database file down from the GIT lfs server.

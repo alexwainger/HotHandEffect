@@ -1,0 +1,13 @@
+/*Histogram related css*/
+#histogram {
+	text-align: center;
+}
+#histo-choices {
+	padding-bottom: 20px;
+}
+.histoaxis path,
+.histoaxis line {
+	fill: none;
+	stroke: black;
+	shape-rendering: crispEdges;
+}
